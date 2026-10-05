@@ -4,9 +4,9 @@ import time
 
 app = Flask(__name__)
 
-# Automated Multi-Sport Parser pulling from our cloud data configurations
 LIVE_SPORTS_DATA = {
     "last_update": f"{time.strftime('%I:%M %p')} EST",
+    "ticker_message": "⚡ CEE ENGINE ACTIVE >> NFL CHANNELS ONLINE >> CFB NODES MONITORING >> NHL SPREAD CORES LOCKED >> MLB DATA BLOCKED (SILENCED) ⚡",
     "nfl_games": [
         {
             "matchup": "Atlanta Falcons @ New Orleans Saints",
@@ -57,7 +57,7 @@ LIVE_SPORTS_DATA = {
 }
 
 SYSTEM_STATE = {
-    "version": "5.4 Multi-Sport-Injury-Stream",
+    "version": "5.5 Live-Ticker-Premium",
     "status": "AWS Cloud Slices Synchronized",
     "milestone_baseline": "20.00"
 }
@@ -68,9 +68,15 @@ HTML_LAYOUT = """
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>CEE Live Stream v5.4</title>
+    <title>CEE Live Stream v5.5</title>
     <style>
         body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background-color: #0A0A0C; color: #E4E4E7; padding: 15px; margin: 0; }
+        
+        /* Ultra-Lightweight CSS Ticker Architecture */
+        .ticker-wrap { width: 100%; background-color: #111115; overflow: hidden; white-space: nowrap; box-sizing: border-box; padding: 8px 0; border: 1px solid #22222A; border-radius: 8px; margin-bottom: 15px; }
+        .ticker-text { display: inline-block; padding-left: 100%; animation: marquee 25s linear infinite; color: #00E676; font-family: monospace; font-size: 13px; font-weight: bold; letter-spacing: 1px; }
+        @keyframes marquee { 0% { transform: translate3d(0, 0, 0); } 100% { transform: translate3d(-100%, 0, 0); } }
+        
         .header { display: flex; align-items: center; justify-content: space-between; padding-bottom: 10px; border-bottom: 2px solid #1F2937; margin-bottom: 15px; }
         .header h2 { margin: 0; color: #00E676; font-size: 18px; font-weight: 800; letter-spacing: 0.5px; }
         .status-badge { background-color: rgba(0, 230, 118, 0.15); color: #00E676; padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: bold; }
@@ -81,7 +87,6 @@ HTML_LAYOUT = """
         .data-row { background: #16161F; padding: 10px; border-radius: 6px; margin-bottom: 6px; font-size: 13px; border-left: 3px solid #00B0FF; }
         .badge-premium { background: rgba(0, 230, 118, 0.12); color: #00E676; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: bold; float: right; }
         
-        /* Injury Reporting Component Tokens */
         .injury-header { font-size: 11px; font-weight: 800; color: #EF4444; letter-spacing: 0.5px; margin: 12px 0 6px 0; border-top: 1px dashed #2D3748; padding-top: 8px; }
         .injury-row { background: #1A1315; border: 1px solid #3A1F24; padding: 8px; border-radius: 6px; margin-bottom: 5px; font-size: 12px; }
         .injury-status { color: #EF4444; font-weight: bold; float: right; font-size: 11px; background: rgba(239, 68, 68, 0.15); padding: 1px 5px; border-radius: 3px; }
@@ -91,6 +96,11 @@ HTML_LAYOUT = """
     </style>
 </head>
 <body>
+    <!-- LIVE ANIMATED MARQUEE TICKER -->
+    <div class="ticker-wrap">
+        <div class="ticker-text">{{ feeds.ticker_message }}</div>
+    </div>
+
     <div class="header">
         <h2>CEE REAL-TIME DATA v{{ state.version }}</h2>
         <div class="status-badge">ONLINE</div>
@@ -124,7 +134,7 @@ HTML_LAYOUT = """
         {% endfor %}
     </div>
 
-    <!-- NHL DATA STREAM CARD WITH EXTENDED INJURY CONTAINER -->
+    <!-- NHL DATA STREAM CARD -->
     <div class="card">
         <h3>🏒 Active NHL Contrarian Totals</h3>
         {% for game in feeds.nhl_games %}
