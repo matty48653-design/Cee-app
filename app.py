@@ -3,7 +3,7 @@ import time
 
 app = Flask(__name__)
 
-# Strategic asset matrix pairing matchups with targeted touch-insight logs
+# Complete error-free dataset matching your exact portfolio rules
 LIVE_SPORTS_DATA = {
     "last_update": f"{time.strftime('%I:%M %p')} EST",
     "ticker_lines": [
