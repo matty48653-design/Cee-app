@@ -4,15 +4,16 @@ import time
 
 app = Flask(__name__)
 
+# Core system database with today's live schedules loaded directly into the marquee loop
 LIVE_SPORTS_DATA = {
     "last_update": f"{time.strftime('%I:%M %p')} EST",
     "ticker_lines": [
         "🏈 TONIGHT: Atlanta Falcons @ New Orleans Saints (8:15 PM ET) ",
-        "🏒 NHL slate: Philadelphia Flyers @ Tampa Bay Lightning (7:00 PM ET) ",
-        "🏒 NHL slate: Winnipeg Jets @ Pittsburgh Penguins (7:30 PM ET) ",
-        "🏒 NHL slate: Ottawa Senators @ Boston Bruins (7:30 PM ET) ",
-        "🏒 NHL slate: San Jose Sharks @ Dallas Stars (8:00 PM ET) ",
-        "🎯 STRATEGY: COMPOUNDING $20.00 GAINS | ❌ MLB CHANNELS SILENCED"
+        "🏒 NHL SLATE: Philadelphia Flyers @ Tampa Bay Lightning (7:00 PM ET) ",
+        "🏒 NHL SLATE: Winnipeg Jets @ Pittsburgh Penguins (7:30 PM ET) ",
+        "🏒 NHL SLATE: Ottawa Senators @ Boston Bruins (7:30 PM ET) ",
+        "🏒 NHL SLATE: San Jose Sharks @ Dallas Stars (8:00 PM ET) ",
+        "🎯 STRATEGY: TRACKING MILESTONES & UNDER FLOORS | ❌ MLB SUPPRESSED"
     ],
     "nfl_games": [
         {
@@ -127,6 +128,7 @@ HTML_LAYOUT = """
 </head>
 <body>
 
+    <!-- SCROLLING MARQUEE TICKER CONTAINER -->
     <div class="ticker-wrap">
         <div class="ticker">
             {% for line in feeds.ticker_lines %}
@@ -141,6 +143,7 @@ HTML_LAYOUT = """
             <div class="status-badge">ONLINE</div>
         </div>
 
+        <!-- NFL DATA STREAM CARD -->
         <div class="card">
             <h3>🏈 Active NFL Milestone Slate</h3>
             {% for game in feeds.nfl_games %}
@@ -184,12 +187,7 @@ HTML_LAYOUT = """
             {% endfor %}
         </div>
 
+        <!-- NHL DATA STREAM CARD -->
         <div class="card">
             <h3>🏒 Active NHL Contrarian Totals</h3>
             {% for game in feeds.nhl_games %}
-            <div class="game-title" style="margin-bottom: 4px;">
-                <span>{{ game.matchup }}</span>
-                <span class="game-time">{{ game.time }}</span>
-            </div>
-            
-            <div class="scoreboard-box">
