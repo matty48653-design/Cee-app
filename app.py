@@ -32,7 +32,6 @@ def fetch_active_matrix_data():
     Live streaming engine mapping real game data slates for tonight.
     Processes your strict filters (Blocks MLB & Puck Lines entirely).
     """
-    # Live engine dictionary maps real matchups directly
     return [
         {
             "id": "nfl_falcons_saints_2026",
