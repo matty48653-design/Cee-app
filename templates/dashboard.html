@@ -194,33 +194,22 @@
                 <div style="flex: 1;">TARGET MILESTONE</div>
                 <div style="flex: 1; text-align: right;">INTEGRITY</div>
             </div>
+            
+            <!-- This clean loop automatically pulls all players dynamically without repeating anything -->
             {% for player in match.players %}
             <div class="props-row">
                 <div class="col-player">{{ player.name }}</div>
                 <div class="col-target">{{ player.milestone }}</div>
                 <div class="col-integrity">
-                    <span class="badge-integrity">{{ player.integrity }}</span>
+                    <!-- Dynamic coloring logic based on flags -->
+                    {% if "SHARP" in player.integrity %}
+                    <span class="badge-integrity" style="border-color: #ff4d4d; color: #ff4d4d; background: rgba(255,77,77,0.05);">{{ player.integrity }}</span>
+                    {% else %}
+                    <span class="badge-integrity" style="border-color: #00e676; color: #00e676; background: rgba(0,230,118,0.05);">{{ player.integrity }}</span>
+                    {% endif %}
                 </div>
             </div>
             {% endfor %}
-            
-            <!-- Chris Olave Tracking Block -->
-            <div class="props-row">
-                <div class="col-player">Chris Olave (WR)</div>
-                <div class="col-target">8+ Receptions (+122)</div>
-                <div class="col-integrity">
-                    <span class="badge-integrity" style="border-color: #ff4d4d; color: #ff4d4d; background: rgba(255,77,77,0.05);">SHARP MILESTONE</span>
-                </div>
-            </div>
-
-            <!-- Juwan Johnson Tracking Block -->
-            <div class="props-row">
-                <div class="col-player">Juwan Johnson (TE)</div>
-                <div class="col-target">Over 35.5 Yards</div>
-                <div class="col-integrity">
-                    <span class="badge-integrity" style="border-color: #00e676; color: #00e676; background: rgba(0,230,118,0.05);">PREMIUM FLOOR</span>
-                </div>
-            </div>
         </div>
 
         <div class="deficit-stream-title">⚠️ MORALE DEFICIT STREAM: CRITICAL DEFENSIVE DEFICIT</div>
