@@ -1,8 +1,10 @@
+# Save this complete code file to replace your app.py folder
 from flask import Flask, render_template_string
 import time
 
 app = Flask(__name__)
 
+# Live Data Feed Simulator expanding on live games and automated scores
 LIVE_SPORTS_DATA = {
     "last_update": f"{time.strftime('%I:%M %p')} EST",
     "ticker_lines": [
@@ -16,6 +18,13 @@ LIVE_SPORTS_DATA = {
             "matchup": "Atlanta Falcons @ New Orleans Saints",
             "time": "8:15 PM ET",
             "spread": "Saints -1.5 (Trap Flagged 🚨)",
+            "live_status": {
+                "period": "PRE-GAME",
+                "clock": "00:00",
+                "away_score": 0,
+                "home_score": 0,
+                "possession": "NONE"
+            },
             "milestones": [
                 {"player": "Bijan Robinson (RB)", "stat": "Over 50.5 Rush Yds", "status": "PREMIUM FLOOR"},
                 {"player": "Michael Penix Jr. (QB)", "stat": "Over 200.5 Pass Yds", "status": "SHARP INTEGRITY"}
@@ -37,6 +46,12 @@ LIVE_SPORTS_DATA = {
             "type": "Total Goals",
             "line": "Under 6.0",
             "status": "CONTRARIAN VALUE",
+            "live_status": {
+                "period": "PRE-GAME",
+                "clock": "20:00",
+                "away_score": 0,
+                "home_score": 0
+            },
             "injury_tracker": {
                 "severity_index": "LIGHTNING BLUELINE LIMIT",
                 "players": [
@@ -50,6 +65,12 @@ LIVE_SPORTS_DATA = {
             "type": "Total Goals",
             "line": "Under 6.5",
             "status": "SHARP UNDER FLOOD",
+            "live_status": {
+                "period": "PRE-GAME",
+                "clock": "20:00",
+                "away_score": 0,
+                "home_score": 0
+            },
             "injury_tracker": {
                 "severity_index": "STABLE BENCHMARK FLOORS",
                 "players": [
@@ -61,8 +82,8 @@ LIVE_SPORTS_DATA = {
 }
 
 SYSTEM_STATE = {
-    "version": "5.5 Live-Ticker-Stream",
-    "status": "AWS Cloud Nodes Synchronized",
+    "version": "5.6 Live-Scoreboards",
+    "status": "AWS Cloud Feed Matrix OK",
     "milestone_baseline": "20.00"
 }
 
@@ -72,7 +93,7 @@ HTML_LAYOUT = """
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>CEE Live Stream v5.5</title>
+    <title>CEE Live Stream v5.6</title>
     <style>
         body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background-color: #0A0A0C; color: #E4E4E7; padding: 0; margin: 0; }
         .ticker-wrap { width: 100%; background: #16161F; border-bottom: 2px solid #00E676; overflow: hidden; padding: 8px 0; box-shadow: 0 4px 10px rgba(0,0,0,0.5); position: sticky; top: 0; z-index: 100; }
@@ -85,8 +106,17 @@ HTML_LAYOUT = """
         .status-badge { background-color: rgba(0, 230, 118, 0.15); color: #00E676; padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: bold; }
         .card { background: #111115; border-radius: 12px; padding: 14px; margin-bottom: 15px; border: 1px solid #22222A; }
         .card h3 { margin: 0 0 12px 0; font-size: 13px; color: #9CA3AF; text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid #1F2937; padding-bottom: 5px; }
-        .game-title { font-weight: 700; color: #FFFFFF; font-size: 14px; margin-bottom: 8px; display: flex; justify-content: space-between; }
+        .game-title { font-weight: 700; color: #FFFFFF; font-size: 14px; margin-bottom: 6px; display: flex; justify-content: space-between; }
         .game-time { color: #A1A1AA; font-size: 11px; font-weight: normal; }
+        
+        /* Premium Live Scoreboard Displays */
+        .scoreboard-box { background: #1C1C24; border: 1px solid #2D2D3D; border-radius: 8px; padding: 10px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
+        .score-team-col { display: flex; flex-direction: column; gap: 4px; font-size: 13px; font-weight: bold; color: #FFFFFF; }
+        .score-num-col { display: flex; flex-direction: column; gap: 4px; font-size: 13px; font-weight: 800; color: #00E676; text-align: right; }
+        .score-clock-col { text-align: center; border-left: 1px solid #2D3748; padding-left: 12px; }
+        .clock-period { font-size: 10px; font-weight: 800; color: #9CA3AF; text-transform: uppercase; }
+        .clock-time { font-family: monospace; font-size: 14px; font-weight: bold; color: #FFFFFF; margin-top: 2px; }
+        
         .data-row { background: #16161F; padding: 10px; border-radius: 6px; margin-bottom: 6px; font-size: 13px; border-left: 3px solid #00B0FF; }
         .badge-premium { background: rgba(0, 230, 118, 0.12); color: #00E676; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: bold; float: right; }
         .injury-header { font-size: 11px; font-weight: 800; color: #EF4444; letter-spacing: 0.5px; margin: 12px 0 6px 0; border-top: 1px dashed #2D3748; padding-top: 8px; }
@@ -97,6 +127,8 @@ HTML_LAYOUT = """
     </style>
 </head>
 <body>
+
+    <!-- SCROLLING MARQUEE TICKER -->
     <div class="ticker-wrap">
         <div class="ticker">
             {% for line in feeds.ticker_lines %}
@@ -104,45 +136,60 @@ HTML_LAYOUT = """
             {% endfor %}
         </div>
     </div>
+
     <div class="main-content">
         <div class="header">
             <h2>CEE CONTROLS v{{ state.version }}</h2>
             <div class="status-badge">ONLINE</div>
         </div>
+
+        <!-- NFL DATA STREAM CARD -->
         <div class="card">
             <h3>🏈 Active NFL Milestone Slate</h3>
             {% for game in feeds.nfl_games %}
-            <div class="game-title"><span>{{ game.matchup }}</span><span class="game-time">{{ game.time }}</span></div>
-            <div style="font-size: 12px; color: #EF4444; margin-bottom: 8px; font-weight: 600;">Market: {{ game.spread }}</div>
-            {% endfor %}
-            {% for game in feeds.nfl_games %}{% for prop in game.milestones %}
-            <div class="data-row"><span style="color: #FFFFFF; font-weight: 600;">{{ prop.player }}</span>: {{ prop.stat }}<span class="badge-premium">{{ prop.status }}</span></div>
-            {% endfor %}{% endfor %}
-        </div>
-        <div class="card">
-            <h3><h3>🏒 Active NHL Contrarian Totals</h3>
-            {% for game in feeds.nhl_games %}
-            <div class="game-title" style="margin-bottom: 4px;"><span>{{ game.matchup }}</span><span class="game-time">{{ game.time }}</span></div>
-            <div class="data-row" style="border-left: 3px solid #E040FB; margin-bottom: 8px;">
-                <span style="color: #A1A1AA;">{{ game.type }}:</span> <strong style="color: #FFFFFF;">{{ game.line }}</strong>
-                <span class="badge-premium" style="background: rgba(224, 64, 251, 0.12); color: #E040FB;">{{ game.status }}</span>
+            <div class="game-title">
+                <span>{{ game.matchup }}</span>
+                <span class="game-time">{{ game.time }}</span>
             </div>
-            <div class="injury-header">🚨 SKATER ROSTER ATTRITION: {{ game.injury_tracker.severity_index }}</div>
-            {% if game.injury_tracker.players %}{% for player in game.injury_tracker.players %}
-            <div class="injury-row"><span style="color: #FFFFFF; font-weight: bold;">{{ player.name }}</span><span class="injury-status">{{ player.status }}</span><div class="injury-impact">Impact: {{ player.impact }}</div></div>
-            {% endfor %}{% else %}<div style="font-size: 12px; color: #71717A; padding: 4px 10px;">No critical personnel constraints flagged.</div>{% endif %}
-            <div style="margin-bottom: 15px;"></div>
+            
+            <!-- Dynamic Live NFL Scoreboard -->
+            <div class="scoreboard-box">
+                <div class="score-team-col">
+                    <span>ATL Falcons</span>
+                    <span>NO Saints</span>
+                </div>
+                <div class="score-num-col">
+                    <span>{{ game.live_status.away_score }}</span>
+                    <span>{{ game.live_status.home_score }}</span>
+                </div>
+                <div class="score-clock-col">
+                    <div class="clock-period">{{ game.live_status.period }}</div>
+                    <div class="clock-time">{{ game.live_status.clock }}</div>
+                </div>
+            </div>
+            
+            <div style="font-size: 12px; color: #EF4444; margin-bottom: 8px; font-weight: 600;">Market: {{ game.spread }}</div>
+            
+            {% for prop in game.milestones %}
+            <div class="data-row">
+                <span style="color: #FFFFFF; font-weight: 600;">{{ prop.player }}</span>: {{ prop.stat }}
+                <span class="badge-premium">{{ prop.status }}</span>
+            </div>
+            {% endfor %}
+            
+            <div class="injury-header">⚠️ MORALE DEFICIT STREAM: {{ game.injury_tracker.severity_index }}</div>
+            {% for player in game.injury_tracker.players %}
+            <div class="injury-row">
+                <span style="color: #FFFFFF; font-weight: bold;">{{ player.name }}</span>
+                <span class="injury-status">{{ player.status }}</span>
+                <div class="injury-impact">Impact: {{ player.impact }}</div>
+            </div>
+            {% endfor %}
             {% endfor %}
         </div>
-        <div class="footer-text">Data pipeline channels refreshed at {{ feeds.last_update }}</div>
-    </div>
-</body>
-</html>
-"""
 
-@app.route('/')
-def home():
-    return render_template_string(HTML_LAYOUT, feeds=LIVE_SPORTS_DATA, state=SYSTEM_STATE)
-
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
+        <!-- NHL DATA STREAM CARD -->
+        <div class="card">
+            <h3>🏒 Active NHL Contrarian Totals</h3>
+            {% for game in feeds.nhl_games %}
+            <div class="game-title" style="margin-bottom: 4px;">
