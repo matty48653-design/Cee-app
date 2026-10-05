@@ -4,14 +4,15 @@ import time
 
 app = Flask(__name__)
 
-# Live Data Feed Simulator expanding on live games and automated scores
 LIVE_SPORTS_DATA = {
     "last_update": f"{time.strftime('%I:%M %p')} EST",
     "ticker_lines": [
-        "🎯 BASELINE: 20.00 COMPOUNDING INCREMENTAL GROWTH",
-        "🏈 NFL ALERT: SAINTS LINE DROP FROM -2.5 TO -1.5 -> SHARP MONEY FLOOD DETECTED",
-        "🏒 NHL PROJECTION: DEFENSIVE UNDER-FLOORS VALUE DETECTED ACROSS 4-GAME TONIGHT SLATE",
-        "❌ FILTER ACTIVE: MLB BASEBALL DATA CHANNELS COMPLETELY SUPPRESSED"
+        "🏈 TONIGHT: Atlanta Falcons @ New Orleans Saints (8:15 PM ET) ",
+        "🏒 NHL slate: Philadelphia Flyers @ Tampa Bay Lightning (7:00 PM ET) ",
+        "🏒 NHL slate: Winnipeg Jets @ Pittsburgh Penguins (7:30 PM ET) ",
+        "🏒 NHL slate: Ottawa Senators @ Boston Bruins (7:30 PM ET) ",
+        "🏒 NHL slate: San Jose Sharks @ Dallas Stars (8:00 PM ET) ",
+        "🎯 STRATEGY: COMPOUNDING $20.00 GAINS | ❌ MLB CHANNELS SILENCED"
     ],
     "nfl_games": [
         {
@@ -22,8 +23,7 @@ LIVE_SPORTS_DATA = {
                 "period": "PRE-GAME",
                 "clock": "00:00",
                 "away_score": 0,
-                "home_score": 0,
-                "possession": "NONE"
+                "home_score": 0
             },
             "milestones": [
                 {"player": "Bijan Robinson (RB)", "stat": "Over 50.5 Rush Yds", "status": "PREMIUM FLOOR"},
@@ -82,7 +82,7 @@ LIVE_SPORTS_DATA = {
 }
 
 SYSTEM_STATE = {
-    "version": "5.6 Live-Scoreboards",
+    "version": "5.6 Matchup-Ticker",
     "status": "AWS Cloud Feed Matrix OK",
     "milestone_baseline": "20.00"
 }
@@ -109,7 +109,6 @@ HTML_LAYOUT = """
         .game-title { font-weight: 700; color: #FFFFFF; font-size: 14px; margin-bottom: 6px; display: flex; justify-content: space-between; }
         .game-time { color: #A1A1AA; font-size: 11px; font-weight: normal; }
         
-        /* Premium Live Scoreboard Displays */
         .scoreboard-box { background: #1C1C24; border: 1px solid #2D2D3D; border-radius: 8px; padding: 10px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
         .score-team-col { display: flex; flex-direction: column; gap: 4px; font-size: 13px; font-weight: bold; color: #FFFFFF; }
         .score-num-col { display: flex; flex-direction: column; gap: 4px; font-size: 13px; font-weight: 800; color: #00E676; text-align: right; }
@@ -128,7 +127,6 @@ HTML_LAYOUT = """
 </head>
 <body>
 
-    <!-- SCROLLING MARQUEE TICKER -->
     <div class="ticker-wrap">
         <div class="ticker">
             {% for line in feeds.ticker_lines %}
@@ -143,7 +141,6 @@ HTML_LAYOUT = """
             <div class="status-badge">ONLINE</div>
         </div>
 
-        <!-- NFL DATA STREAM CARD -->
         <div class="card">
             <h3>🏈 Active NFL Milestone Slate</h3>
             {% for game in feeds.nfl_games %}
@@ -152,7 +149,6 @@ HTML_LAYOUT = """
                 <span class="game-time">{{ game.time }}</span>
             </div>
             
-            <!-- Dynamic Live NFL Scoreboard -->
             <div class="scoreboard-box">
                 <div class="score-team-col">
                     <span>ATL Falcons</span>
@@ -188,8 +184,12 @@ HTML_LAYOUT = """
             {% endfor %}
         </div>
 
-        <!-- NHL DATA STREAM CARD -->
         <div class="card">
             <h3>🏒 Active NHL Contrarian Totals</h3>
             {% for game in feeds.nhl_games %}
             <div class="game-title" style="margin-bottom: 4px;">
+                <span>{{ game.matchup }}</span>
+                <span class="game-time">{{ game.time }}</span>
+            </div>
+            
+            <div class="scoreboard-box">
