@@ -4,7 +4,7 @@ import time
 
 app = Flask(__name__)
 
-# Strictly keyed data vault ensuring players cannot cross over to incorrect teams
+# System database with built-in strategy triggers telling you exactly what to take
 LIVE_SPORTS_DATA = {
     "last_update": f"{time.strftime('%I:%M %p')} EST",
     "ticker_lines": [
@@ -24,10 +24,10 @@ LIVE_SPORTS_DATA = {
             "time": "8:15 PM ET",
             "spread": "Saints -1.5 (Trap Flagged 🚨)",
             "live_status": {"period": "PRE-GAME", "clock": "00:00", "away_score": 0, "home_score": 0},
-            # Explicit team validation keys locking players strictly to their rosters
             "validated_roster_props": [
-                {"team": "Atlanta Falcons", "player": "Bijan Robinson (RB)", "stat": "Over 50.5 Rush Yds", "status": "PREMIUM FLOOR"},
-                {"team": "Atlanta Falcons", "player": "Michael Penix Jr. (QB)", "stat": "Over 200.5 Pass Yds", "status": "SHARP INTEGRITY"}
+                # Added 'action' keys telling you precisely how to play the milestone slider
+                {"team": "Atlanta Falcons", "player": "Bijan Robinson (RB)", "stat": "Over 50.5 Rush Yds", "status": "PREMIUM FLOOR", "action": "TAKE MORE (SLIDER)"},
+                {"team": "Atlanta Falcons", "player": "Michael Penix Jr. (QB)", "stat": "Over 200.5 Pass Yds", "status": "SHARP INTEGRITY", "action": "TAKE MORE (SLIDER)"}
             ],
             "injury_tracker": {
                 "severity_index": "CRITICAL DEFENSIVE DEFICIT",
@@ -48,6 +48,8 @@ LIVE_SPORTS_DATA = {
             "type": "Total Goals",
             "line": "Under 6.0",
             "status": "CONTRARIAN VALUE",
+            # Action trigger for hockey under totals
+            "action": "TAKE LESS / UNDER",
             "live_status": {"period": "PRE-GAME", "clock": "20:00", "away_score": 0, "home_score": 0},
             "injury_tracker": {
                 "severity_index": "LIGHTNING BLUELINE LIMIT",
@@ -58,7 +60,7 @@ LIVE_SPORTS_DATA = {
 }
 
 SYSTEM_STATE = {
-    "version": "5.8 Roster-Validation",
+    "version": "5.9 Action-Triggers",
     "status": "AWS Cloud Feed Matrix OK",
     "milestone_baseline": "20.00"
 }
@@ -69,7 +71,7 @@ HTML_LAYOUT = """
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>CEE Live Stream v5.8</title>
+    <title>CEE Live Stream v5.9</title>
     <style>
         body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background-color: #0A0A0C; color: #E4E4E7; padding: 0; margin: 0; }
         .ticker-wrap { width: 100%; background: #16161F; border-bottom: 2px solid #00E676; overflow: hidden; padding: 8px 0; box-shadow: 0 4px 10px rgba(0,0,0,0.5); position: sticky; top: 0; z-index: 100; }
@@ -94,6 +96,10 @@ HTML_LAYOUT = """
         .clock-time { font-family: monospace; font-size: 14px; font-weight: bold; color: #FFFFFF; margin-top: 2px; }
         .data-row { background: #16161F; padding: 10px; border-radius: 6px; margin-bottom: 6px; font-size: 13px; border-left: 3px solid #00B0FF; }
         .badge-premium { background: rgba(0, 230, 118, 0.12); color: #00E676; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: bold; float: right; }
+        
+        /* Green Action Button Badges */
+        .action-badge { background: #00E676; color: #000000; font-weight: 900; font-size: 10px; padding: 2px 6px; border-radius: 4px; float: right; margin-left: 5px; text-transform: uppercase; box-shadow: 0 0 8px rgba(0,230,118,0.4); }
+        
         .injury-header { font-size: 11px; font-weight: 800; color: #EF4444; letter-spacing: 0.5px; margin: 12px 0 6px 0; border-top: 1px dashed #2D3748; padding-top: 8px; }
         .injury-row { background: #1A1315; border: 1px solid #3A1F24; padding: 8px; border-radius: 6px; margin-bottom: 5px; font-size: 12px; }
         .injury-status { color: #EF4444; font-weight: bold; float: right; font-size: 11px; background: rgba(239, 68, 68, 0.15); padding: 1px 5px; border-radius: 3px; }
@@ -134,11 +140,6 @@ HTML_LAYOUT = """
             </div>
             <div style="font-size: 12px; color: #EF4444; margin-bottom: 8px; font-weight: 600;">Market: {{ game.spread }}</div>
             {% for prop in game.validated_roster_props %}
-            <div class="data-row"><span style="color: #FFFFFF; font-weight: 600;">[{{ prop.team }}] {{ prop.player }}</span>: {{ prop.stat }}<span class="badge-premium">{{ prop.status }}</span></div>
-            {% endfor %}
-            <div class="injury-header">⚠️ MORALE DEFICIT STREAM: {{ game.injury_tracker.severity_index }}</div>
-            {% for player in game.injury_tracker.players %}
-            <div class="injury-row"><span style="color: #FFFFFF; font-weight: bold;">[{{ player.team }}] {{ player.name }}</span><span class="injury-status">{{ player.status }}</span><div class="injury-impact">Impact: {{ player.impact }}</div></div>
-            {% endfor %}
-            {% endfor %}
-        </div>
+            <div class="data-row">
+                <span style="color: #FFFFFF; font-weight: 600;">[{{ prop.team }}] {{ prop.player }}</span>: {{ prop.stat }}
+                <span class="action-badge">{{ prop.action }}</span>
