@@ -3,19 +3,9 @@ import time
 
 app = Flask(__name__)
 
-# Complete error-free dataset matching your exact portfolio rules
+# Clean dataset locking player metrics directly to their specific team nodes
 LIVE_SPORTS_DATA = {
     "last_update": f"{time.strftime('%I:%M %p')} EST",
-    "ticker_lines": [
-        "🏈 TONIGHT: Atlanta Falcons @ New Orleans Saints (8:15 PM ET) ",
-        "🏒 NHL SLATE: Philadelphia Flyers @ Tampa Bay Lightning (7:00 PM ET) ",
-        "🏒 NHL SLATE: Winnipeg Jets @ Pittsburgh Penguins (7:30 PM ET) ",
-        "🎯 STRATEGY: TRACKING MILESTONES & UNDER FLOORS | ❌ MLB SUPPRESSED"
-    ],
-    "yesterday_traps": [
-        {"game": "New England @ Buffalo", "final": "NE 29 - 26 BUF", "script": "Public Trap: Bills heavily backed at home. Sharp money forced line movement layout from -6.5 to -4.5. Result: Straight up upset."},
-        {"game": "Kansas City @ Las Vegas", "final": "KC 30 - 27 LV", "script": "Public Trap: Chiefs over-backed heavily. House inflated milestone yardage lines to isolate high-value under floors."}
-    ],
     "nfl_games": [
         {
             "away_team": "Atlanta Falcons",
@@ -24,28 +14,14 @@ LIVE_SPORTS_DATA = {
             "spread": "Saints -1.5 (Trap Flagged 🚨)",
             "live_status": {"period": "PRE-GAME", "clock": "00:00", "away_score": 0, "home_score": 0},
             "validated_roster_props": [
-                {
-                    "team": "Atlanta Falcons", 
-                    "player": "Bijan Robinson (RB)", 
-                    "stat": "Over 50.5 Rush Yds", 
-                    "status": "PREMIUM FLOOR", 
-                    "action": "TAKE MORE",
-                    "insight": "CEE SCRIPT BREAKDOWN:\\n\\n• Target Selection: Bijan Robinson (RB)\\n• Action: TAKE MORE (Slider Floor)\\n\\nLOGIC: New Orleans has sustained a critical defensive morale deficit, losing starting LBs Kaden Elliss and Carl Granderson. Atlanta outside-zone blocking maps for premium yardage floors against a thin front-seven backup rotation. Lock alternate line slider down to 50.5 yards for maximum insulation."
-                },
-                {
-                    "team": "Atlanta Falcons", 
-                    "player": "Michael Penix Jr. (QB)", 
-                    "stat": "Over 200.5 Pass Yds", 
-                    "status": "SHARP INTEGRITY", 
-                    "action": "TAKE MORE",
-                    "insight": "CEE SCRIPT BREAKDOWN:\\n\\n• Target Selection: Michael Penix Jr. (QB)\\n• Action: TAKE MORE (Slider Floor)\\n\\nLOGIC: Clean pocket passing script confirmed. With the Saints linebacking tier missing critical pass-rush depth, Penix Jr. is projected to hold optimal clean pocket integrity. Dropping his milestone slider line to 200.5 yards minimizes volatility against corporate television script variations."
-                }
+                {"team": "Atlanta Falcons", "player": "Bijan Robinson (RB)", "stat": "Over 50.5 Rush Yds", "status": "PREMIUM FLOOR"},
+                {"team": "Atlanta Falcons", "player": "Michael Penix Jr. (QB)", "stat": "Over 200.5 Pass Yds", "status": "SHARP INTEGRITY"}
             ],
             "injury_tracker": {
                 "severity_index": "CRITICAL DEFENSIVE DEFICIT",
                 "players": [
                     {"team": "New Orleans Saints", "name": "Kaden Elliss (LB)", "status": "OUT", "impact": "Front-Seven Depth Core Collapse"},
-                    {"team": "New Orleans Saints", "name": "Carl Granderson (DE)", "status": "OUT", "impact": "Pass Rush Containment Void"}
+                    {"name": "Carl Granderson (DE)", "status": "OUT", "impact": "Pass Rush Containment Void"}
                 ]
             }
         }
@@ -58,8 +34,6 @@ LIVE_SPORTS_DATA = {
             "type": "Total Goals",
             "line": "Under 6.0",
             "status": "CONTRARIAN VALUE",
-            "action": "TAKE LESS",
-            "insight": "CEE HOCKEY BREAKDOWN:\\n\\n• Target Selection: Total Goals\\n• Line: Under 6.0\\n• Action: TAKE LESS / UNDER\\n\\nLOGIC: Reverse Line Elasticity module identifies massive public volume backing the over, yet Vegas totals hold stiff resistance at 6.0. Emil Lilleberg is out, disrupting Tampa's third pairing depth, prompting a defensive, tight game flow. Sharp money is heavily flood-fading public bias.",
             "live_status": {"period": "PRE-GAME", "clock": "20:00", "away_score": 0, "home_score": 0},
             "injury_tracker": {
                 "severity_index": "LIGHTNING BLUELINE LIMIT",
@@ -70,7 +44,7 @@ LIVE_SPORTS_DATA = {
 }
 
 SYSTEM_STATE = {
-    "version": "6.0 Interactive-Touch",
+    "version": "5.3 Clean-Table-Matrix",
     "status": "AWS Cloud Feed Matrix OK",
     "milestone_baseline": "20.00"
 }
@@ -81,14 +55,9 @@ HTML_LAYOUT = """
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>CEE Live Stream v6.0</title>
+    <title>CEE Live Stream v5.3</title>
     <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background-color: #0A0A0C; color: #E4E4E7; padding: 0; margin: 0; }
-        .ticker-wrap { width: 100%; background: #16161F; border-bottom: 2px solid #00E676; overflow: hidden; padding: 8px 0; box-shadow: 0 4px 10px rgba(0,0,0,0.5); position: sticky; top: 0; z-index: 100; }
-        .ticker { display: inline-block; white-space: nowrap; padding-left: 100%; animation: marquee 25s linear infinite; }
-        .ticker-item { display: inline-block; padding: 0 25px; font-family: monospace; font-size: 12px; font-weight: bold; color: #00E676; letter-spacing: 0.5px; }
-        @keyframes marquee { 0% { transform: translate3d(0, 0, 0); } 100% { transform: translate3d(-100%, 0, 0); } }
-        .main-content { padding: 15px; }
+        body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background-color: #0A0A0C; color: #E4E4E7; padding: 15px; margin: 0; }
         .header { display: flex; align-items: center; justify-content: space-between; padding-bottom: 10px; border-bottom: 2px solid #1F2937; margin-bottom: 15px; }
         .header h2 { margin: 0; color: #FFFFFF; font-size: 18px; font-weight: 800; letter-spacing: 0.5px; }
         .status-badge { background-color: rgba(0, 230, 118, 0.15); color: #00E676; padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: bold; }
@@ -96,26 +65,14 @@ HTML_LAYOUT = """
         .card h3 { margin: 0 0 12px 0; font-size: 13px; color: #9CA3AF; text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid #1F2937; padding-bottom: 5px; }
         .game-title { font-weight: 700; color: #FFFFFF; font-size: 14px; margin-bottom: 6px; display: flex; justify-content: space-between; }
         .game-time { color: #A1A1AA; font-size: 11px; font-weight: normal; }
-        .trap-row { background: #1C1212; border: 1px solid #3D1A1A; padding: 10px; border-radius: 6px; margin-bottom: 6px; font-size: 12px; }
-        .trap-title { font-weight: bold; color: #FF5252; display: flex; justify-content: space-between; margin-bottom: 4px; }
         .scoreboard-box { background: #1C1C24; border: 1px solid #2D2D3D; border-radius: 8px; padding: 10px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
         .score-team-col { display: flex; flex-direction: column; gap: 4px; font-size: 13px; font-weight: bold; color: #FFFFFF; }
         .score-num-col { display: flex; flex-direction: column; gap: 4px; font-size: 13px; font-weight: 800; color: #00E676; text-align: right; }
         .score-clock-col { text-align: center; border-left: 1px solid #2D3748; padding-left: 12px; }
         .clock-period { font-size: 10px; font-weight: 800; color: #9CA3AF; text-transform: uppercase; }
         .clock-time { font-family: monospace; font-size: 14px; font-weight: bold; color: #FFFFFF; margin-top: 2px; }
-        
-        .data-row { background: #16161F; padding: 12px; border-radius: 6px; margin-bottom: 6px; font-size: 13px; border-left: 3px solid #00B0FF; cursor: pointer; transition: background 0.2s; }
-        .data-row:active { background: #1F1F2E; }
+        .data-row { background: #16161F; padding: 10px; border-radius: 6px; margin-bottom: 6px; font-size: 13px; border-left: 3px solid #00B0FF; }
         .badge-premium { background: rgba(0, 230, 118, 0.12); color: #00E676; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: bold; float: right; }
-        .action-badge { background: #00E676; color: #000000; font-weight: 900; font-size: 10px; padding: 2px 6px; border-radius: 4px; float: right; margin-left: 5px; text-transform: uppercase; }
-        
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 1000; align-items: center; justify-content: center; padding: 20px; box-sizing: border-box; }
-        .modal-content { background: #111115; border: 2px solid #00E676; border-radius: 16px; width: 100%; max-width: 400px; padding: 20px; box-shadow: 0 0 20px rgba(0,230,118,0.3); }
-        .modal-header { font-weight: 800; font-size: 16px; color: #00E676; margin-bottom: 12px; border-bottom: 1px solid #1F2937; padding-bottom: 8px; }
-        .modal-body { font-size: 13px; color: #E4E4E7; line-height: 1.5; white-space: pre-wrap; font-family: -apple-system, sans-serif; }
-        .modal-close { background: #16161F; color: #9CA3AF; border: 1px solid #22222A; width: 100%; padding: 12px; border-radius: 8px; margin-top: 15px; font-weight: bold; font-size: 14px; }
-        
         .injury-header { font-size: 11px; font-weight: 800; color: #EF4444; letter-spacing: 0.5px; margin: 12px 0 6px 0; border-top: 1px dashed #2D3748; padding-top: 8px; }
         .injury-row { background: #1A1315; border: 1px solid #3A1F24; padding: 8px; border-radius: 6px; margin-bottom: 5px; font-size: 12px; }
         .injury-status { color: #EF4444; font-weight: bold; float: right; font-size: 11px; background: rgba(239, 68, 68, 0.15); padding: 1px 5px; border-radius: 3px; }
@@ -124,6 +81,47 @@ HTML_LAYOUT = """
     </style>
 </head>
 <body>
-    <div class="ticker-wrap">
-        <div class="ticker">
-            {% for line in feeds.ticker_lines %}
+    <div class="header">
+        <h2>CEE CONTROLS v{{ state.version }}</h2>
+        <div class="status-badge">ONLINE</div>
+    </div>
+    <div class="card">
+        <h3>🏈 Active NFL Milestone Slate</h3>
+        {% for game in feeds.nfl_games %}
+        <div class="game-title"><span>{{ game.away_team }} @ {{ game.home_team }}</span><span class="game-time">{{ game.time }}</span></div>
+        <div class="scoreboard-box">
+            <div class="score-team-col"><span>{{ game.away_team }}</span><span>{{ game.home_team }}</span></div>
+            <div class="score-num-col"><span>{{ game.live_status.away_score }}</span><span>{{ game.live_status.home_score }}</span></div>
+            <div class="score-clock-col"><div class="clock-period">{{ game.live_status.period }}</div><div class="clock-time">{{ game.live_status.clock }}</div></div>
+        </div>
+        <div style="font-size: 12px; color: #EF4444; margin-bottom: 8px; font-weight: 600;">Market: {{ game.spread }}</div>
+        {% for prop in game.validated_roster_props %}
+        <div class="data-row"><span style="color: #FFFFFF; font-weight: 600;">[{{ prop.team }}] {{ prop.player }}</span>: {{ prop.stat }}<span class="badge-premium">{{ prop.status }}</span></div>
+        {% endfor %}
+        <div class="injury-header">⚠️ MORALE DEFICIT STREAM: {{ game.injury_tracker.severity_index }}</div>
+        {% for player in game.injury_tracker.players %}
+        <div class="injury-row"><span style="color: #FFFFFF; font-weight: bold;">[{{ player.team }}] {{ player.name }}</span><span class="injury-status">{{ player.status }}</span><div class="injury-impact">Impact: {{ player.impact }}</div></div>
+        {% endfor %}
+        {% endfor %}
+    </div>
+    <div class="card">
+        <h3>🏒 Active NHL Contrarian Totals</h3>
+        {% for game in feeds.nhl_games %}
+        <div class="game-title" style="margin-bottom: 4px;"><span>{{ game.away_team }} @ {{ game.home_team }}</span><span class="game-time">{{ game.time }}</span></div>
+        <div class="data-row" style="border-left: 3px solid #E040FB; margin-bottom: 8px;">
+            <span style="color: #A1A1AA;">{{ game.type }}</span>: <strong style="color: #FFFFFF;">{{ game.line }}</strong>
+            <span class="badge-premium" style="background: rgba(224, 64, 251, 0.12); color: #E040FB; float: right;">{{ game.status }}</span>
+        </div>
+        {% endfor %}
+    </div>
+    <div class="footer-text">Data pipeline channels refreshed at {{ feeds.last_update }}</div>
+</body>
+</html>
+"""
+
+@app.route('/')
+def home():
+    return render_template_string(HTML_LAYOUT, feeds=LIVE_SPORTS_DATA, state=SYSTEM_STATE)
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=5000)
