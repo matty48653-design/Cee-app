@@ -1,127 +1,174 @@
-from flask import Flask, render_template_string
-import time
+import os
+import requests
+from flask import Flask, render_template_string, jsonify
 
 app = Flask(__name__)
 
-# Clean dataset locking player metrics directly to their specific team nodes
-LIVE_SPORTS_DATA = {
-    "last_update": f"{time.strftime('%I:%M %p')} EST",
-    "nfl_games": [
-        {
-            "away_team": "Atlanta Falcons",
-            "home_team": "New Orleans Saints",
-            "time": "8:15 PM ET",
-            "spread": "Saints -1.5 (Trap Flagged 🚨)",
-            "live_status": {"period": "PRE-GAME", "clock": "00:00", "away_score": 0, "home_score": 0},
-            "validated_roster_props": [
-                {"team": "Atlanta Falcons", "player": "Bijan Robinson (RB)", "stat": "Over 50.5 Rush Yds", "status": "PREMIUM FLOOR"},
-                {"team": "Atlanta Falcons", "player": "Michael Penix Jr. (QB)", "stat": "Over 200.5 Pass Yds", "status": "SHARP INTEGRITY"}
-            ],
-            "injury_tracker": {
-                "severity_index": "CRITICAL DEFENSIVE DEFICIT",
-                "players": [
-                    {"team": "New Orleans Saints", "name": "Kaden Elliss (LB)", "status": "OUT", "impact": "Front-Seven Depth Core Collapse"},
-                    {"name": "Carl Granderson (DE)", "status": "OUT", "impact": "Pass Rush Containment Void"}
-                ]
-            }
-        }
-    ],
-    "nhl_games": [
-        {
-            "away_team": "Philadelphia Flyers",
-            "home_team": "Tampa Bay Lightning",
-            "time": "7:00 PM ET",
-            "type": "Total Goals",
-            "line": "Under 6.0",
-            "status": "CONTRARIAN VALUE",
-            "live_status": {"period": "PRE-GAME", "clock": "20:00", "away_score": 0, "home_score": 0},
-            "injury_tracker": {
-                "severity_index": "LIGHTNING BLUELINE LIMIT",
-                "players": [{"team": "Tampa Bay Lightning", "name": "Emil Lilleberg (D)", "status": "OUT", "impact": "Third Pairing Depth Disruption"}]
-            }
-        }
-    ]
-}
+# --- CEE ENGINE TIGHT DATA FILTERS ---
+# Explicitly isolates target slates and completely blocks unwanted feeds
+ALLOWED_LEAGUES = ['NFL', 'CFB', 'NHL']
+BLOCKED_BET_TYPES = ['puck_line', 'mlb_moneyline']
 
-SYSTEM_STATE = {
-    "version": "5.3 Clean-Table-Matrix",
-    "status": "AWS Cloud Feed Matrix OK",
-    "milestone_baseline": "20.00"
-}
+def fetch_and_filter_cee_matrix():
+    """
+    Fetches real-time sports metrics and filters out emotional public narrative biases.
+    Strictly removes all legacy ticker background memory loops to save local device processing.
+    """
+    # Replace this placeholder with your live data streaming endpoint URL
+    DATA_ENDPOINT = "https://example.com"
+    
+    try:
+        response = requests.get(DATA_ENDPOINT, timeout=10)
+        if response.status_code != 200:
+            return []
+        
+        raw_data = response.json()
+        filtered_matrix = []
+        
+        for item in raw_data.get("games", []):
+            league = item.get("league", "").upper()
+            bet_type = item.get("bet_type", "").lower()
+            
+            # 1. Pipeline Scope Enforcement (Blocks MLB and Puck Lines at the gate)
+            if league not in ALLOWED_LEAGUES:
+                continue
+            if bet_type in BLOCKED_BET_TYPES:
+                continue
+                
+            # 2. Morale Deficit Penalty Module (Injury-driven psychological decay tracking)
+            injury_multiplier = item.get("morale_deficit_penalty", 1.0)
+            
+            # 3. Game-Script Panic Threshold Module (Line manipulation decay tracking)
+            public_money = item.get("public_money_percentage", 50)
+            line_movement = item.get("line_movement_direction", "neutral")
+            
+            # CEE Milestone Formula: Flag contrarian gaps matching passing/rushing stats
+            if public_money > 75 and line_movement == "reverse":
+                item["cee_edge_rating"] = "CRITICAL CONTRARIAN"
+            elif injury_multiplier > 1.25:
+                item["cee_edge_rating"] = "HIGH EDGE"
+            else:
+                item["cee_edge_rating"] = "STANDARD MATCHUP"
+                
+            filtered_matrix.append(item)
+            
+        return filtered_matrix
+        
+    except Exception as e:
+        # Prevents mobile app layout crashes if connection times out
+        return [{"error": f"Data connection idle: {str(e)}", "league": "SYS", "cee_edge_rating": "ERROR"}]
 
-HTML_LAYOUT = """
+# --- JAVASCRIPT-FREE CSS INTERFACE (v5.3 Clean-Table-Matrix Layout) ---
+# Hardcoded design prioritizing scannability and structural frame sizes for phone screens
+MATRIX_UI = """
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>CEE Live Stream v5.3</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CEE Engine v5.3</title>
     <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background-color: #0A0A0C; color: #E4E4E7; padding: 15px; margin: 0; }
-        .header { display: flex; align-items: center; justify-content: space-between; padding-bottom: 10px; border-bottom: 2px solid #1F2937; margin-bottom: 15px; }
-        .header h2 { margin: 0; color: #FFFFFF; font-size: 18px; font-weight: 800; letter-spacing: 0.5px; }
-        .status-badge { background-color: rgba(0, 230, 118, 0.15); color: #00E676; padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: bold; }
-        .card { background: #111115; border-radius: 12px; padding: 14px; margin-bottom: 15px; border: 1px solid #22222A; }
-        .card h3 { margin: 0 0 12px 0; font-size: 13px; color: #9CA3AF; text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid #1F2937; padding-bottom: 5px; }
-        .game-title { font-weight: 700; color: #FFFFFF; font-size: 14px; margin-bottom: 6px; display: flex; justify-content: space-between; }
-        .game-time { color: #A1A1AA; font-size: 11px; font-weight: normal; }
-        .scoreboard-box { background: #1C1C24; border: 1px solid #2D2D3D; border-radius: 8px; padding: 10px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
-        .score-team-col { display: flex; flex-direction: column; gap: 4px; font-size: 13px; font-weight: bold; color: #FFFFFF; }
-        .score-num-col { display: flex; flex-direction: column; gap: 4px; font-size: 13px; font-weight: 800; color: #00E676; text-align: right; }
-        .score-clock-col { text-align: center; border-left: 1px solid #2D3748; padding-left: 12px; }
-        .clock-period { font-size: 10px; font-weight: 800; color: #9CA3AF; text-transform: uppercase; }
-        .clock-time { font-family: monospace; font-size: 14px; font-weight: bold; color: #FFFFFF; margin-top: 2px; }
-        .data-row { background: #16161F; padding: 10px; border-radius: 6px; margin-bottom: 6px; font-size: 13px; border-left: 3px solid #00B0FF; }
-        .badge-premium { background: rgba(0, 230, 118, 0.12); color: #00E676; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: bold; float: right; }
-        .injury-header { font-size: 11px; font-weight: 800; color: #EF4444; letter-spacing: 0.5px; margin: 12px 0 6px 0; border-top: 1px dashed #2D3748; padding-top: 8px; }
-        .injury-row { background: #1A1315; border: 1px solid #3A1F24; padding: 8px; border-radius: 6px; margin-bottom: 5px; font-size: 12px; }
-        .injury-status { color: #EF4444; font-weight: bold; float: right; font-size: 11px; background: rgba(239, 68, 68, 0.15); padding: 1px 5px; border-radius: 3px; }
-        .injury-impact { font-size: 11px; color: #A1A1AA; margin-top: 3px; }
-        .footer-text { text-align: center; color: #71717A; font-size: 11px; margin-top: 20px; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: #121212;
+            color: #E0E0E0;
+            margin: 0;
+            padding: 12px;
+        }
+        .matrix-frame {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        header {
+            border-bottom: 2px solid #2C2C2C;
+            padding-bottom: 8px;
+            margin-bottom: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        h1 { font-size: 1.1rem; color: #00E676; margin: 0; letter-spacing: 0.5px; }
+        .ver-tag { font-size: 0.7rem; color: #757575; font-weight: bold; }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+            background-color: #1E1E1E;
+            border-radius: 6px;
+            overflow: hidden;
+        }
+        th, td {
+            padding: 12px 10px;
+            text-align: left;
+            border-bottom: 1px solid #2C2C2C;
+        }
+        th { background-color: #262626; color: #888; font-weight: 600; text-transform: uppercase; font-size: 0.75rem; }
+        .edge-badge {
+            padding: 3px 6px;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 0.65rem;
+        }
+        .EDGE-CRITICAL { background-color: #D32F2F; color: #FFF; }
+        .EDGE-HIGH { background-color: #F57C00; color: #FFF; }
+        .EDGE-STANDARD { background-color: #388E3C; color: #FFF; }
     </style>
 </head>
 <body>
-    <div class="header">
-        <h2>CEE CONTROLS v{{ state.version }}</h2>
-        <div class="status-badge">ONLINE</div>
+    <div class="matrix-frame">
+        <header>
+            <h1>CONTRARIAN EDGE ENGINE</h1>
+            <span class="ver-tag">v5.3 CLEAN-MATRIX</span>
+        </header>
+        
+        <table>
+            <thead>
+                <tr>
+                    <th style="width: 20%;">LEAGUE</th>
+                    <th style="width: 55%;">MATCHUP ANALYSIS</th>
+                    <th style="width: 25%;">CEE EDGE</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if matrix %}
+                    {% for row in matrix %}
+                    <tr>
+                        <td><strong>{{ row.get('league', 'N/A') }}</strong></td>
+                        <td>{{ row.get('description', 'No parameters discovered') }}</td>
+                        <td>
+                            {% set rating = row.get('cee_edge_rating', 'STANDARD MATCHUP') %}
+                            {% if 'CRITICAL' in rating %}
+                                <span class="edge-badge EDGE-CRITICAL">CRITICAL</span>
+                            {% elif 'HIGH' in rating %}
+                                <span class="edge-badge EDGE-HIGH">HIGH EDGE</span>
+                            {% else %}
+                                <span class="edge-badge EDGE-STANDARD">STABLE</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="3" style="text-align:center; color:#757575; padding: 24px 0;">No active public anomalies. Workspace clear.</td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        </table>
     </div>
-    <div class="card">
-        <h3>🏈 Active NFL Milestone Slate</h3>
-        {% for game in feeds.nfl_games %}
-        <div class="game-title"><span>{{ game.away_team }} @ {{ game.home_team }}</span><span class="game-time">{{ game.time }}</span></div>
-        <div class="scoreboard-box">
-            <div class="score-team-col"><span>{{ game.away_team }}</span><span>{{ game.home_team }}</span></div>
-            <div class="score-num-col"><span>{{ game.live_status.away_score }}</span><span>{{ game.live_status.home_score }}</span></div>
-            <div class="score-clock-col"><div class="clock-period">{{ game.live_status.period }}</div><div class="clock-time">{{ game.live_status.clock }}</div></div>
-        </div>
-        <div style="font-size: 12px; color: #EF4444; margin-bottom: 8px; font-weight: 600;">Market: {{ game.spread }}</div>
-        {% for prop in game.validated_roster_props %}
-        <div class="data-row"><span style="color: #FFFFFF; font-weight: 600;">[{{ prop.team }}] {{ prop.player }}</span>: {{ prop.stat }}<span class="badge-premium">{{ prop.status }}</span></div>
-        {% endfor %}
-        <div class="injury-header">⚠️ MORALE DEFICIT STREAM: {{ game.injury_tracker.severity_index }}</div>
-        {% for player in game.injury_tracker.players %}
-        <div class="injury-row"><span style="color: #FFFFFF; font-weight: bold;">[{{ player.team }}] {{ player.name }}</span><span class="injury-status">{{ player.status }}</span><div class="injury-impact">Impact: {{ player.impact }}</div></div>
-        {% endfor %}
-        {% endfor %}
-    </div>
-    <div class="card">
-        <h3>🏒 Active NHL Contrarian Totals</h3>
-        {% for game in feeds.nhl_games %}
-        <div class="game-title" style="margin-bottom: 4px;"><span>{{ game.away_team }} @ {{ game.home_team }}</span><span class="game-time">{{ game.time }}</span></div>
-        <div class="data-row" style="border-left: 3px solid #E040FB; margin-bottom: 8px;">
-            <span style="color: #A1A1AA;">{{ game.type }}</span>: <strong style="color: #FFFFFF;">{{ game.line }}</strong>
-            <span class="badge-premium" style="background: rgba(224, 64, 251, 0.12); color: #E040FB; float: right;">{{ game.status }}</span>
-        </div>
-        {% endfor %}
-    </div>
-    <div class="footer-text">Data pipeline channels refreshed at {{ feeds.last_update }}</div>
 </body>
 </html>
 """
 
 @app.route('/')
-def home():
-    return render_template_string(HTML_LAYOUT, feeds=LIVE_SPORTS_DATA, state=SYSTEM_STATE)
+def live_matrix_dashboard():
+    active_matrix = fetch_and_filter_cee_matrix()
+    return render_template_string(MATRIX_UI, matrix=active_matrix)
+
+@app.route('/api/status')
+def backend_health_check():
+    return jsonify({"status": "active", "build_scope": ALLOWED_LEAGUES, "version": "5.3"})
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
+    # Dynamically maps to the active environment port managed by Render
+    server_port = int(os.environ.get("PORT", 5000))
+    app.run(host='0.0.0.0', port=server_port)
