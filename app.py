@@ -34,7 +34,8 @@ LIVE_SPORTS_DATA = {
                 "players": [
                     {"name": "Kaden Elliss (LB)", "status": "OUT", "impact": "Front-Seven Depth Core Collapse"},
                     {"name": "Carl Granderson (DE)", "status": "OUT", "impact": "Pass Rush Containment Void"},
-                    {"name": "Pete Werner (LB)", "status": "QUESTIONABLE", "impact": "Weakside Speed Restrictions"}
+                    {"name": "Anfernee Jennings (DE)", "status": "OUT", "impact": "Knee injury sustained against Raiders; thins defensive edge rotation"},
+                    {"name": "Pete Werner (LB)", "status": "QUESTIONABLE", "impact": "Shoulder injury; weakside speed limitations if active"}
                 ]
             }
         }
@@ -94,11 +95,8 @@ HTML_LAYOUT = """
         .card h3 { margin: 0 0 12px 0; font-size: 13px; color: #9CA3AF; text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid #1F2937; padding-bottom: 5px; }
         .game-title { font-weight: 700; color: #FFFFFF; font-size: 14px; margin-bottom: 6px; display: flex; justify-content: space-between; }
         .game-time { color: #A1A1AA; font-size: 11px; font-weight: normal; }
-        
-        /* Historical Strategy Log Layout */
         .trap-row { background: #1C1212; border: 1px solid #3D1A1A; padding: 10px; border-radius: 6px; margin-bottom: 6px; font-size: 12px; }
         .trap-title { font-weight: bold; color: #FF5252; display: flex; justify-content: space-between; margin-bottom: 4px; }
-        
         .scoreboard-box { background: #1C1C24; border: 1px solid #2D2D3D; border-radius: 8px; padding: 10px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
         .score-team-col { display: flex; flex-direction: column; gap: 4px; font-size: 13px; font-weight: bold; color: #FFFFFF; }
         .score-num-col { display: flex; flex-direction: column; gap: 4px; font-size: 13px; font-weight: 800; color: #00E676; text-align: right; }
@@ -115,7 +113,6 @@ HTML_LAYOUT = """
     </style>
 </head>
 <body>
-
     <div class="ticker-wrap">
         <div class="ticker">
             {% for line in feeds.ticker_lines %}
@@ -123,14 +120,11 @@ HTML_LAYOUT = """
             {% endfor %}
         </div>
     </div>
-
     <div class="main-content">
         <div class="header">
             <h2>CEE CONTROLS v{{ state.version }}</h2>
             <div class="status-badge">ONLINE</div>
         </div>
-
-        <!-- NEW HISTORICAL SCRIPT TRAP ARCHIVE CARD -->
         <div class="card">
             <h3>⚠️ Yesterday's Script Trap Analysis</h3>
             {% for trap in feeds.yesterday_traps %}
@@ -140,8 +134,6 @@ HTML_LAYOUT = """
             </div>
             {% endfor %}
         </div>
-
-        <!-- NFL DATA STREAM CARD -->
         <div class="card">
             <h3>🏈 Active NFL Milestone Slate</h3>
             {% for game in feeds.nfl_games %}
