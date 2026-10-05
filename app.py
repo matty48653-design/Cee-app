@@ -1,10 +1,9 @@
-# Save this complete code file to replace your app.py folder
 from flask import Flask, render_template_string
 import time
 
 app = Flask(__name__)
 
-# Complete system database mapping raw data to hyper-detailed click insights
+# Strategic asset matrix pairing matchups with targeted touch-insight logs
 LIVE_SPORTS_DATA = {
     "last_update": f"{time.strftime('%I:%M %p')} EST",
     "ticker_lines": [
@@ -14,8 +13,8 @@ LIVE_SPORTS_DATA = {
         "🎯 STRATEGY: TRACKING MILESTONES & UNDER FLOORS | ❌ MLB SUPPRESSED"
     ],
     "yesterday_traps": [
-        {"game": "New England @ Buffalo", "final": "NE 29 - 26 BUF", "script": "Public Trap: Bills heavily backed at home. Sharp line dropping from -6.5 to -4.5 flagged a massive public execution layout. Result: Upset."},
-        {"game": "Kansas City @ Las Vegas", "final": "KC 30 - 27 LV", "script": "Public Trap: Chiefs over-backed heavily by public volume. House inflated player milestones to force under value. Result: Safe Under floor hit."}
+        {"game": "New England @ Buffalo", "final": "NE 29 - 26 BUF", "script": "Public Trap: Bills heavily backed at home. Sharp money forced line movement layout from -6.5 to -4.5. Result: Straight up upset."},
+        {"game": "Kansas City @ Las Vegas", "final": "KC 30 - 27 LV", "script": "Public Trap: Chiefs over-backed heavily. House inflated milestone yardage lines to isolate high-value under floors."}
     ],
     "nfl_games": [
         {
@@ -31,7 +30,6 @@ LIVE_SPORTS_DATA = {
                     "stat": "Over 50.5 Rush Yds", 
                     "status": "PREMIUM FLOOR", 
                     "action": "TAKE MORE",
-                    # Click insight overlay text string
                     "insight": "CEE SCRIPT BREAKDOWN:\\n\\n• Target Selection: Bijan Robinson (RB)\\n• Action: TAKE MORE (Slider Floor)\\n\\nLOGIC: New Orleans has sustained a critical defensive morale deficit, losing starting LBs Kaden Elliss and Carl Granderson. Atlanta outside-zone blocking maps for premium yardage floors against a thin front-seven backup rotation. Lock alternate line slider down to 50.5 yards for maximum insulation."
                 },
                 {
@@ -107,13 +105,11 @@ HTML_LAYOUT = """
         .clock-period { font-size: 10px; font-weight: 800; color: #9CA3AF; text-transform: uppercase; }
         .clock-time { font-family: monospace; font-size: 14px; font-weight: bold; color: #FFFFFF; margin-top: 2px; }
         
-        /* Interactive Clickable Data Row Elements */
         .data-row { background: #16161F; padding: 12px; border-radius: 6px; margin-bottom: 6px; font-size: 13px; border-left: 3px solid #00B0FF; cursor: pointer; transition: background 0.2s; }
         .data-row:active { background: #1F1F2E; }
         .badge-premium { background: rgba(0, 230, 118, 0.12); color: #00E676; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: bold; float: right; }
         .action-badge { background: #00E676; color: #000000; font-weight: 900; font-size: 10px; padding: 2px 6px; border-radius: 4px; float: right; margin-left: 5px; text-transform: uppercase; }
         
-        /* Interactive JavaScript Modal Styles */
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 1000; align-items: center; justify-content: center; padding: 20px; box-sizing: border-box; }
         .modal-content { background: #111115; border: 2px solid #00E676; border-radius: 16px; width: 100%; max-width: 400px; padding: 20px; box-shadow: 0 0 20px rgba(0,230,118,0.3); }
         .modal-header { font-weight: 800; font-size: 16px; color: #00E676; margin-bottom: 12px; border-bottom: 1px solid #1F2937; padding-bottom: 8px; }
@@ -123,3 +119,11 @@ HTML_LAYOUT = """
         .injury-header { font-size: 11px; font-weight: 800; color: #EF4444; letter-spacing: 0.5px; margin: 12px 0 6px 0; border-top: 1px dashed #2D3748; padding-top: 8px; }
         .injury-row { background: #1A1315; border: 1px solid #3A1F24; padding: 8px; border-radius: 6px; margin-bottom: 5px; font-size: 12px; }
         .injury-status { color: #EF4444; font-weight: bold; float: right; font-size: 11px; background: rgba(239, 68, 68, 0.15); padding: 1px 5px; border-radius: 3px; }
+        .injury-impact { font-size: 11px; color: #A1A1AA; margin-top: 3px; }
+        .footer-text { text-align: center; color: #71717A; font-size: 11px; margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <div class="ticker-wrap">
+        <div class="ticker">
+            {% for line in feeds.ticker_lines %}
