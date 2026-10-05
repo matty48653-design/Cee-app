@@ -1,10 +1,10 @@
 # Save this complete code file to replace your app.py folder
-from flask import Flask, render_template_string, jsonify
+from flask import Flask, render_template_string
 import time
 
 app = Flask(__name__)
 
-# Live Data Feed Simulator structured exactly like our real-world background scraper
+# Live Data Feed Simulator expanding on our core strategy filters
 LIVE_SPORTS_DATA = {
     "last_update": f"{time.strftime('%I:%M %p')} EST",
     "nfl_games": [
@@ -15,7 +15,16 @@ LIVE_SPORTS_DATA = {
             "milestones": [
                 {"player": "Bijan Robinson (RB)", "stat": "Over 50.5 Rush Yds", "status": "PREMIUM FLOOR"},
                 {"player": "Michael Penix Jr. (QB)", "stat": "Over 200.5 Pass Yds", "status": "SHARP INTEGRITY"}
-            ]
+            ],
+            "injury_tracker": {
+                "source": "AWS Data Reader Loop",
+                "severity_index": "CRITICAL DEFENSIVE DEFICIT",
+                "players": [
+                    {"name": "Kaden Elliss (LB)", "status": "OUT", "impact": "Front-Seven Depth Core Collapse"},
+                    {"name": "Carl Granderson (DE)", "status": "OUT", "impact": "Pass Rush Containment Void"},
+                    {"name": "Pete Werner (LB)", "status": "QUESTIONABLE", "impact": "Weakside Speed Restrictions"}
+                ]
+            }
         }
     ],
     "nhl_games": [
@@ -24,21 +33,31 @@ LIVE_SPORTS_DATA = {
             "time": "7:00 PM ET",
             "type": "Total Goals",
             "line": "Under 6.0",
-            "status": "CONTRARIAN VALUE"
+            "status": "CONTRARIAN VALUE",
+            "injury_tracker": {
+                "source": "AWS Data Reader Loop",
+                "severity_index": "STABLE FLOORS",
+                "players": []
+            }
         },
         {
             "matchup": "Winnipeg Jets @ Pittsburgh Penguins",
             "time": "7:30 PM ET",
             "type": "Total Goals",
             "line": "Under 6.5",
-            "status": "SHARP UNDER FLOOD"
+            "status": "SHARP UNDER FLOOD",
+            "injury_tracker": {
+                "source": "AWS Data Reader Loop",
+                "severity_index": "STABLE FLOORS",
+                "players": []
+            }
         }
     ]
 }
 
 SYSTEM_STATE = {
-    "version": "5.2 Data-Stream",
-    "status": "Feeds Synchronized",
+    "version": "5.3 AWS-Injury-Stream",
+    "status": "AWS Nodes Synchronized",
     "milestone_baseline": "20.00"
 }
 
@@ -48,7 +67,7 @@ HTML_LAYOUT = """
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>CEE Live Stream v5.2</title>
+    <title>CEE Live Stream v5.3</title>
     <style>
         body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background-color: #0A0A0C; color: #E4E4E7; padding: 15px; margin: 0; }
         .header { display: flex; align-items: center; justify-content: space-between; padding-bottom: 10px; border-bottom: 2px solid #1F2937; margin-bottom: 15px; }
@@ -59,18 +78,24 @@ HTML_LAYOUT = """
         .game-title { font-weight: 700; color: #FFFFFF; font-size: 14px; margin-bottom: 8px; display: flex; justify-content: space-between; }
         .game-time { color: #A1A1AA; font-size: 11px; font-weight: normal; }
         .data-row { background: #16161F; padding: 10px; border-radius: 6px; margin-bottom: 6px; font-size: 13px; border-left: 3px solid #00B0FF; }
-        .data-row:last-child { margin-bottom: 0; }
         .badge-premium { background: rgba(0, 230, 118, 0.12); color: #00E676; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: bold; float: right; }
+        
+        /* Injury reporting box layouts */
+        .injury-header { font-size: 11px; font-weight: 800; color: #EF4444; letter-spacing: 0.5px; margin: 12px 0 6px 0; border-top: 1px dashed #2D3748; padding-top: 8px; }
+        .injury-row { background: #1A1315; border: 1px solid #3A1F24; padding: 8px; border-radius: 6px; margin-bottom: 5px; font-size: 12px; }
+        .injury-status { color: #EF4444; font-weight: bold; float: right; font-size: 11px; background: rgba(239, 68, 68, 0.15); padding: 1px 5px; border-radius: 3px; }
+        .injury-impact { font-size: 11px; color: #A1A1AA; margin-top: 3px; }
+        
         .footer-text { text-align: center; color: #71717A; font-size: 11px; margin-top: 20px; }
     </style>
 </head>
 <body>
     <div class="header">
         <h2>CEE REAL-TIME DATA v{{ state.version }}</h2>
-        <div class="status-badge">SYNCED</div>
+        <div class="status-badge">ONLINE</div>
     </div>
 
-    <!-- NFL DATA STREAM CARD -->
+    <!-- NFL DATA STREAM CARD WITH INJURIES -->
     <div class="card">
         <h3>🏈 Active NFL Milestone Slate</h3>
         {% for game in feeds.nfl_games %}
@@ -79,15 +104,23 @@ HTML_LAYOUT = """
             <span class="game-time">{{ game.time }}</span>
         </div>
         <div style="font-size: 12px; color: #EF4444; margin-bottom: 8px; font-weight: 600;">Market: {{ game.spread }}</div>
+        
+        {% for prop in game.milestones %}
+        <div class="data-row">
+            <span style="color: #FFFFFF; font-weight: 600;">{{ prop.player }}</span>: {{ prop.stat }}
+            <span class="badge-premium">{{ prop.status }}</span>
+        </div>
         {% endfor %}
         
-        {% for game in feeds.nfl_games %}
-            {% for prop in game.milestones %}
-            <div class="data-row">
-                <span style="color: #FFFFFF; font-weight: 600;">{{ prop.player }}</span>: {{ prop.stat }}
-                <span class="badge-premium">{{ prop.status }}</span>
-            </div>
-            {% endfor %}
+        <!-- Live AWS Injury Stream Block -->
+        <div class="injury-header">⚠️ MORALE DEFICIT STREAM: {{ game.injury_tracker.severity_index }}</div>
+        {% for player in game.injury_tracker.players %}
+        <div class="injury-row">
+            <span style="color: #FFFFFF; font-weight: bold;">{{ player.name }}</span>
+            <span class="injury-status">{{ player.status }}</span>
+            <div class="injury-impact">Impact: {{ player.impact }}</div>
+        </div>
+        {% endfor %}
         {% endfor %}
     </div>
 
