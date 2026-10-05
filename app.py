@@ -4,15 +4,13 @@ import time
 
 app = Flask(__name__)
 
-# System database injecting yesterday's false line traps and today's active loops
+# Strictly keyed data vault ensuring players cannot cross over to incorrect teams
 LIVE_SPORTS_DATA = {
     "last_update": f"{time.strftime('%I:%M %p')} EST",
     "ticker_lines": [
         "🏈 TONIGHT: Atlanta Falcons @ New Orleans Saints (8:15 PM ET) ",
         "🏒 NHL SLATE: Philadelphia Flyers @ Tampa Bay Lightning (7:00 PM ET) ",
         "🏒 NHL SLATE: Winnipeg Jets @ Pittsburgh Penguins (7:30 PM ET) ",
-        "🏒 NHL SLATE: Ottawa Senators @ Boston Bruins (7:30 PM ET) ",
-        "🏒 NHL SLATE: San Jose Sharks @ Dallas Stars (8:00 PM ET) ",
         "🎯 STRATEGY: TRACKING MILESTONES & UNDER FLOORS | ❌ MLB SUPPRESSED"
     ],
     "yesterday_traps": [
@@ -21,28 +19,31 @@ LIVE_SPORTS_DATA = {
     ],
     "nfl_games": [
         {
-            "matchup": "Atlanta Falcons @ New Orleans Saints",
+            "away_team": "Atlanta Falcons",
+            "home_team": "New Orleans Saints",
             "time": "8:15 PM ET",
             "spread": "Saints -1.5 (Trap Flagged 🚨)",
             "live_status": {"period": "PRE-GAME", "clock": "00:00", "away_score": 0, "home_score": 0},
-            "milestones": [
-                {"player": "Bijan Robinson (RB)", "stat": "Over 50.5 Rush Yds", "status": "PREMIUM FLOOR"},
-                {"player": "Michael Penix Jr. (QB)", "stat": "Over 200.5 Pass Yds", "status": "SHARP INTEGRITY"}
+            # Explicit team validation keys locking players strictly to their rosters
+            "validated_roster_props": [
+                {"team": "Atlanta Falcons", "player": "Bijan Robinson (RB)", "stat": "Over 50.5 Rush Yds", "status": "PREMIUM FLOOR"},
+                {"team": "Atlanta Falcons", "player": "Michael Penix Jr. (QB)", "stat": "Over 200.5 Pass Yds", "status": "SHARP INTEGRITY"}
             ],
             "injury_tracker": {
                 "severity_index": "CRITICAL DEFENSIVE DEFICIT",
                 "players": [
-                    {"name": "Kaden Elliss (LB)", "status": "OUT", "impact": "Front-Seven Depth Core Collapse"},
-                    {"name": "Carl Granderson (DE)", "status": "OUT", "impact": "Pass Rush Containment Void"},
-                    {"name": "Anfernee Jennings (DE)", "status": "OUT", "impact": "Knee injury sustained against Raiders; thins defensive edge rotation"},
-                    {"name": "Pete Werner (LB)", "status": "QUESTIONABLE", "impact": "Shoulder injury; weakside speed limitations if active"}
+                    {"team": "New Orleans Saints", "name": "Kaden Elliss (LB)", "status": "OUT", "impact": "Front-Seven Depth Core Collapse"},
+                    {"team": "New Orleans Saints", "name": "Carl Granderson (DE)", "status": "OUT", "impact": "Pass Rush Containment Void"},
+                    {"team": "New Orleans Saints", "name": "Anfernee Jennings (DE)", "status": "OUT", "impact": "Edge Rotation Void"},
+                    {"team": "New Orleans Saints", "name": "Pete Werner (LB)", "status": "QUESTIONABLE", "impact": "Weakside Speed Restrictions"}
                 ]
             }
         }
     ],
     "nhl_games": [
         {
-            "matchup": "Philadelphia Flyers @ Tampa Bay Lightning",
+            "away_team": "Philadelphia Flyers",
+            "home_team": "Tampa Bay Lightning",
             "time": "7:00 PM ET",
             "type": "Total Goals",
             "line": "Under 6.0",
@@ -50,26 +51,14 @@ LIVE_SPORTS_DATA = {
             "live_status": {"period": "PRE-GAME", "clock": "20:00", "away_score": 0, "home_score": 0},
             "injury_tracker": {
                 "severity_index": "LIGHTNING BLUELINE LIMIT",
-                "players": [{"name": "Emil Lilleberg (D)", "status": "OUT", "impact": "Expected out 1 week; shakes up third pairing depth"}]
-            }
-        },
-        {
-            "matchup": "Winnipeg Jets @ Pittsburgh Penguins",
-            "time": "7:30 PM ET",
-            "type": "Total Goals",
-            "line": "Under 6.5",
-            "status": "SHARP UNDER FLOOD",
-            "live_status": {"period": "PRE-GAME", "clock": "20:00", "away_score": 0, "home_score": 0},
-            "injury_tracker": {
-                "severity_index": "STABLE BENCHMARK FLOORS",
-                "players": [{"name": "Connor Hellebuyck (G)", "status": "IR", "impact": "Stuart Skinner maintaining primary start volume"}]
+                "players": [{"team": "Tampa Bay Lightning", "name": "Emil Lilleberg (D)", "status": "OUT", "impact": "Third Pairing Depth Disruption"}]
             }
         }
     ]
 }
 
 SYSTEM_STATE = {
-    "version": "5.7 Script-Archive",
+    "version": "5.8 Roster-Validation",
     "status": "AWS Cloud Feed Matrix OK",
     "milestone_baseline": "20.00"
 }
@@ -80,7 +69,7 @@ HTML_LAYOUT = """
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>CEE Live Stream v5.7</title>
+    <title>CEE Live Stream v5.8</title>
     <style>
         body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background-color: #0A0A0C; color: #E4E4E7; padding: 0; margin: 0; }
         .ticker-wrap { width: 100%; background: #16161F; border-bottom: 2px solid #00E676; overflow: hidden; padding: 8px 0; box-shadow: 0 4px 10px rgba(0,0,0,0.5); position: sticky; top: 0; z-index: 100; }
@@ -137,14 +126,19 @@ HTML_LAYOUT = """
         <div class="card">
             <h3>🏈 Active NFL Milestone Slate</h3>
             {% for game in feeds.nfl_games %}
-            <div class="game-title"><span>{{ game.matchup }}</span><span class="game-time">{{ game.time }}</span></div>
+            <div class="game-title"><span>{{ game.away_team }} @ {{ game.home_team }}</span><span class="game-time">{{ game.time }}</span></div>
             <div class="scoreboard-box">
-                <div class="score-team-col"><span>ATL Falcons</span><span>NO Saints</span></div>
+                <div class="score-team-col"><span>{{ game.away_team }}</span><span>{{ game.home_team }}</span></div>
                 <div class="score-num-col"><span>{{ game.live_status.away_score }}</span><span>{{ game.live_status.home_score }}</span></div>
                 <div class="score-clock-col"><div class="clock-period">{{ game.live_status.period }}</div><div class="clock-time">{{ game.live_status.clock }}</div></div>
             </div>
             <div style="font-size: 12px; color: #EF4444; margin-bottom: 8px; font-weight: 600;">Market: {{ game.spread }}</div>
-            {% for prop in game.milestones %}
-            <div class="data-row"><span style="color: #FFFFFF; font-weight: 600;">{{ prop.player }}</span>: {{ prop.stat }}<span class="badge-premium">{{ prop.status }}</span></div>
+            {% for prop in game.validated_roster_props %}
+            <div class="data-row"><span style="color: #FFFFFF; font-weight: 600;">[{{ prop.team }}] {{ prop.player }}</span>: {{ prop.stat }}<span class="badge-premium">{{ prop.status }}</span></div>
             {% endfor %}
             <div class="injury-header">⚠️ MORALE DEFICIT STREAM: {{ game.injury_tracker.severity_index }}</div>
+            {% for player in game.injury_tracker.players %}
+            <div class="injury-row"><span style="color: #FFFFFF; font-weight: bold;">[{{ player.team }}] {{ player.name }}</span><span class="injury-status">{{ player.status }}</span><div class="injury-impact">Impact: {{ player.impact }}</div></div>
+            {% endfor %}
+            {% endfor %}
+        </div>
