@@ -4,7 +4,7 @@ import time
 
 app = Flask(__name__)
 
-# Live Data Feed Simulator expanding on our core strategy filters
+# Automated Injury Parser simulating a live AWS cloud statistics database loop
 LIVE_SPORTS_DATA = {
     "last_update": f"{time.strftime('%I:%M %p')} EST",
     "nfl_games": [
@@ -80,7 +80,7 @@ HTML_LAYOUT = """
         .data-row { background: #16161F; padding: 10px; border-radius: 6px; margin-bottom: 6px; font-size: 13px; border-left: 3px solid #00B0FF; }
         .badge-premium { background: rgba(0, 230, 118, 0.12); color: #00E676; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: bold; float: right; }
         
-        /* Injury reporting box layouts */
+        /* Injury Reporting Layout System */
         .injury-header { font-size: 11px; font-weight: 800; color: #EF4444; letter-spacing: 0.5px; margin: 12px 0 6px 0; border-top: 1px dashed #2D3748; padding-top: 8px; }
         .injury-row { background: #1A1315; border: 1px solid #3A1F24; padding: 8px; border-radius: 6px; margin-bottom: 5px; font-size: 12px; }
         .injury-status { color: #EF4444; font-weight: bold; float: right; font-size: 11px; background: rgba(239, 68, 68, 0.15); padding: 1px 5px; border-radius: 3px; }
@@ -95,7 +95,7 @@ HTML_LAYOUT = """
         <div class="status-badge">ONLINE</div>
     </div>
 
-    <!-- NFL DATA STREAM CARD WITH INJURIES -->
+    <!-- NFL DATA STREAM CARD WITH INTEGRATED INJURY REPORTING -->
     <div class="card">
         <h3>🏈 Active NFL Milestone Slate</h3>
         {% for game in feeds.nfl_games %}
@@ -112,7 +112,7 @@ HTML_LAYOUT = """
         </div>
         {% endfor %}
         
-        <!-- Live AWS Injury Stream Block -->
+        <!-- Live Injury Stream Interface -->
         <div class="injury-header">⚠️ MORALE DEFICIT STREAM: {{ game.injury_tracker.severity_index }}</div>
         {% for player in game.injury_tracker.players %}
         <div class="injury-row">
