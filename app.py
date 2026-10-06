@@ -1,16 +1,18 @@
 import os
-from flask import Flask, render_template
+import json
+from flask import Flask, render_template, jsonify, request
 
 app = Flask(__name__)
 
-# THE UNIFIED MULTI-SPORT STRATEGY ENGINE POOL (ALL CURRENT WEEK MATRICES)
-COMPLETE_DASHBOARD_SLATES = [
-    # 🏒 TONIGHT'S NHL MARQUEE TRACKING SLATES (OCTOBER 6)
+CACHE_FILE = "cee_live_cache.json"
+
+# Safe initialization baseline matching your actual DraftKings slip
+INITIAL_SLATES = [
     {
         "sport_tag": "🏒 ACTIVE HOCKEY SLATE",
         "game": "New York Islanders @ New York Rangers",
         "live_clock": "TONIGHT - 7:30 PM ET",
-        "score_string": "PRE-GAME",
+        "score_string": "0 - 0",
         "closing_line": "O/U 5.5",
         "sim_total": "Sim Total: 6.0",
         "pacing_status": "Pacing 🔥 EVALUATING",
@@ -26,7 +28,7 @@ COMPLETE_DASHBOARD_SLATES = [
         "sport_tag": "🏒 ACTIVE HOCKEY SLATE",
         "game": "Ottawa Senators @ Detroit Red Wings",
         "live_clock": "TONIGHT - 7:00 PM ET",
-        "score_string": "PRE-GAME",
+        "score_string": "0 - 0",
         "closing_line": "O/U 6.5",
         "sim_total": "Sim Total: 5.5",
         "pacing_status": "Pacing 📉 UNDER",
@@ -42,7 +44,7 @@ COMPLETE_DASHBOARD_SLATES = [
         "sport_tag": "🏒 ACTIVE HOCKEY SLATE",
         "game": "Florida Panthers @ Los Angeles Kings",
         "live_clock": "TONIGHT - 10:00 PM ET",
-        "score_string": "PRE-GAME",
+        "score_string": "0 - 0",
         "closing_line": "O/U 6.0",
         "sim_total": "Sim Total: 7.0",
         "pacing_status": "Pacing 💥 OVER",
@@ -52,55 +54,6 @@ COMPLETE_DASHBOARD_SLATES = [
         ],
         "morale": [
             {"unit": "Kings Netminder Group", "status": "WARN", "alert_text": "Public Favorite Trap: High volume public backing exposure. High risk variance alert."}
-        ]
-    },
-    # 🏈 WEEK 5 NFL STRATEGY PORTFOLIO BOARDS (OCTOBER 8 - 12)
-    {
-        "sport_tag": "🏈 CONTRARIAN FOOTBALL SLATE",
-        "game": "Tampa Bay Buccaneers @ Dallas Cowboys",
-        "live_clock": "THU - 8:15 PM ET",
-        "score_string": "PRE-GAME",
-        "closing_line": "O/U 47.5",
-        "sim_total": "CEE Projected: 49",
-        "pacing_status": "Pacing 🔥 STABLE",
-        "players": [
-            {"name": "Dak Prescott", "position": "QB", "target": "Over 258.5 Passing Yards Floor", "is_floor": True},
-            {"name": "CeeDee Lamb", "position": "WR", "target": "Under 7.5 Receptions Ceiling", "is_floor": False}
-        ],
-        "morale": [
-            {"unit": "Buccaneers Front 7", "status": "WARN", "alert_text": "AWS Pass-Rush Score: Deficit tracked. Dak passing yard floor highly insulated."}
-        ]
-    },
-    {
-        "sport_tag": "🏈 CONTRARIAN FOOTBALL SLATE",
-        "game": "Chicago Bears @ Green Bay Packers",
-        "live_clock": "SUN - 1:00 PM ET",
-        "score_string": "PRE-GAME",
-        "closing_line": "O/U 44.5",
-        "sim_total": "CEE Projected: 41",
-        "pacing_status": "Pacing 📉 UNDER",
-        "players": [
-            {"name": "D'Andre Swift", "position": "RB", "target": "Over 62.5 Rushing Yards Floor", "is_floor": True},
-            {"name": "DJ Moore", "position": "WR", "target": "Under 5.5 Receptions Ceiling", "is_floor": False}
-        ],
-        "morale": [
-            {"unit": "Packers Run Def", "status": "WARN", "alert_text": "Morale Deficit Flag engaged. Explosive public favorite trap bias active."}
-        ]
-    },
-    {
-        "sport_tag": "🏈 CONTRARIAN FOOTBALL SLATE",
-        "game": "Minnesota Vikings @ New Orleans Saints",
-        "live_clock": "SUN - 1:00 PM ET",
-        "score_string": "PRE-GAME",
-        "closing_line": "O/U 41.5",
-        "sim_total": "CEE Projected: 46",
-        "pacing_status": "Pacing 🔥 OVER",
-        "players": [
-            {"name": "Alvin Kamara", "position": "RB", "target": "Over 4.5 Live Receptions Floor", "is_floor": True},
-            {"name": "Chris Olave", "position": "WR", "target": "Under 6.5 Live Receptions Ceiling", "is_floor": False}
-        ],
-        "morale": [
-            {"unit": "Saints O-Line", "status": "WARN", "alert_text": "Game-Script Panic Threshold: High pocket pressure collapse trajectory expected."}
         ]
     },
     {
@@ -116,14 +69,40 @@ COMPLETE_DASHBOARD_SLATES = [
             {"name": "Amon-Ra St. Brown", "position": "WR", "target": "Under 7.5 Receptions Ceiling", "is_floor": False}
         ],
         "morale": [
-            {"unit": "Cardinals Secondary", "status": "WARN", "alert_text": "Contrarian Edge Engine: Heavy public money fade opportunity. Volume is high."}
+            {"unit": "Cardinals Secondary", "status": "WARN", "alert_text": "Game-Script Panic Threshold: Public heavily backing favorite. Line fade premium active."}
         ]
     }
 ]
 
+def load_live_matrix():
+    if os.path.exists(CACHE_FILE):
+        try:
+            with open(CACHE_FILE, "r") as f:
+                return json.load(f)
+        except:
+            return INITIAL_SLATES
+    return INITIAL_SLATES
+
 @app.route('/')
 def dashboard():
-    return render_template("dashboard.html", slates=COMPLETE_DASHBOARD_SLATES)
+    return render_template("dashboard.html", slates=load_live_matrix())
+
+# 🟢 THE INBOUND DATA GATE: Receives unblocked updates from your home computer
+@app.route('/api/gate', methods=['POST'])
+def data_gate_receiver():
+    incoming_payload = request.get_json()
+    if not incoming_payload or "slates" not in incoming_payload:
+        return jsonify({"status": "error", "message": "Invalid format"}), 400
+        
+    with open(CACHE_FILE, "w") as f:
+        json.dump(incoming_payload["slates"], f)
+        
+    return jsonify({"status": "success", "message": "Render live cache updated via gate channel"}), 200
+
+# Endpoint that your browser queries smoothly in the background
+@app.route('/api/state-json', methods=['GET'])
+def state_json():
+    return jsonify({"slates": load_live_matrix()})
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
