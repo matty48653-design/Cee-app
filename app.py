@@ -4,53 +4,60 @@ import os
 
 app = Flask(__name__)
 
-# Core source endpoints matching our v9.2 feed filters
 CFB_FEED = "https://espn.com"
 NHL_FEED = "https://espn.com"
 
 def fetch_live_game_data():
     games_list = []
     
-    with httpx.Client(timeout=10.0) as client:
-        # 1. Gather live College Football board parameters
-        try:
+    try:
+        with httpx.Client(timeout=10.0) as client:
+            # 1. Fetch live CFB tracking slots
             cfb_res = client.get(CFB_FEED).json()
             for event in cfb_res.get('events', []):
-                # Target the matching matchup constraint
                 if "Southern Miss" in event['name'] or "Troy" in event['name']:
-                    competitor = event['competitions'][0]
-                    home = competitor['competitors'][0]
-                    away = competitor['competitors'][1]
+                    competitions = event['competitions'][0]
+                    teams = competitions['competitors']
+                    # Map home/away fields safely
+                    away_team = teams[1]['team']['displayName']
+                    home_team = teams[0]['team']['displayName']
+                    away_score = teams[1]['score']
+                    home_score = teams[0]['score']
+                    
                     games_list.append({
                         "league": "CFB",
-                        "matchup": f"{away['team']['displayName']} @ {home['team']['displayName']}",
-                        "weather": competitor.get('venue', {}).get('address', {}).get('city', 'Outdoor Stadium') + " • Climate Preserved",
-                        "score": f"{away['score']} - {home['score']}",
+                        "matchup": f"{away_team} @ {home_team}",
+                        "weather": "Outdoor Open-Air • 72° • Clear • Wind: 5mph",
+                        "score": f"{away_score} - {home_score}",
                         "status": event['status']['type']['detail'].upper()
                     })
-        except Exception:
-            pass
+    except Exception:
+        pass
 
-        # 2. Gather live NHL board parameters
-        try:
+    try:
+        with httpx.Client(timeout=10.0) as client:
+            # 2. Fetch live NHL tracking slots
             nhl_res = client.get(NHL_FEED).json()
             for event in nhl_res.get('events', []):
-                # Target the matching matchup constraint
                 if "Senators" in event['name'] or "Red Wings" in event['name']:
-                    competitor = event['competitions'][0]
-                    home = competitor['competitors'][0]
-                    away = competitor['competitors'][1]
+                    competitions = event['competitions'][0]
+                    teams = competitions['competitors']
+                    away_team = teams[1]['team']['displayName']
+                    home_team = teams[0]['team']['displayName']
+                    away_score = teams[1]['score']
+                    home_score = teams[0]['score']
+                    
                     games_list.append({
                         "league": "NHL",
-                        "matchup": f"{away['team']['displayName']} @ {home['team']['displayName']}",
+                        "matchup": f"{away_team} @ {home_team}",
                         "weather": "Indoor Arena • Controlled Climate",
-                        "score": f"{away['score']} - {home['score']}",
+                        "score": f"{away_score} - {home_score}",
                         "status": event['status']['type']['detail'].upper()
                     })
-        except Exception:
-            pass
+    except Exception:
+        pass
 
-    # Fallback to display the baseline slots if feeds are empty or matching targets haven't hit the board yet
+    # Safe layout fallback if lines haven't hit the board yet
     if not games_list:
         games_list = [
             {
