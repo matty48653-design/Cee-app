@@ -6,7 +6,6 @@ app = Flask(__name__)
 
 CACHE_FILE = "cee_live_cache.json"
 
-# Safe initialization baseline matching your actual DraftKings slip
 INITIAL_SLATES = [
     {
         "sport_tag": "🏒 ACTIVE HOCKEY SLATE",
@@ -87,7 +86,6 @@ def load_live_matrix():
 def dashboard():
     return render_template("dashboard.html", slates=load_live_matrix())
 
-# 🟢 THE INBOUND DATA GATE: Receives unblocked updates from your home computer
 @app.route('/api/gate', methods=['POST'])
 def data_gate_receiver():
     incoming_payload = request.get_json()
@@ -99,7 +97,6 @@ def data_gate_receiver():
         
     return jsonify({"status": "success", "message": "Render live cache updated via gate channel"}), 200
 
-# Endpoint that your browser queries smoothly in the background
 @app.route('/api/state-json', methods=['GET'])
 def state_json():
     return jsonify({"slates": load_live_matrix()})
