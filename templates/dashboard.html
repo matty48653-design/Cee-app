@@ -14,30 +14,36 @@
         .matrix-table tr:last-child td { border-bottom: none; }
         .badge { background: #14532d; color: #4ade80; padding: 2px 6px; border-radius: 4px; font-size: 11px; font-weight: 600; display: inline-block; }
         .badge-alt { background: #7c2d12; color: #f97316; padding: 2px 6px; border-radius: 4px; font-size: 11px; font-weight: 600; display: inline-block; }
-        .card { background: #111827; border: 1px solid #1f2937; border-radius: 8px; padding: 16px; margin-bottom: 16px; }
-        .card-header { font-size: 14px; font-weight: 600; color: #f8fafc; margin-bottom: 8px; display: flex; justify-content: space-between; }
-        .card-body { font-size: 13px; color: #94a3b8; line-height: 1.5; }
+        .badge-nfl { background: #1e3a8a; color: #60a5fa; padding: 2px 6px; border-radius: 4px; font-size: 11px; font-weight: 600; display: inline-block; }
     </style>
 </head>
 <body>
 
     <div class="banner">⚡ ENGINE STATUS: VERTICAL COMPACT MATRIX LIVE</div>
 
-    <div class="section-title">NFL Trap Channels</div>
-    {% if cache.trap_analysis_models.active_cards %}
-        {% for key, card in cache.trap_analysis_models.active_cards.items() %}
-        <div class="card">
-            <div class="card-header">
-                <span>{{ card.matchup }}</span>
-                <span class="badge-alt">{{ card.type }}</span>
-            </div>
-            <div class="card-body">
-                <div><b>Rules Applied:</b> {{ card.rules_applied }}</div>
-                <div style="margin-top: 4px;"><b>Public Bias:</b> <span style="color: #f87171;">{{ card.public_bias }}</span></div>
-            </div>
-        </div>
-        {% endfor %}
-    {% endif %}
+    <div class="section-title">NFL Passing & Rushing Milestones</div>
+    <table class="matrix-table">
+        <thead>
+            <tr>
+                <th>Player</th>
+                <th>Metric</th>
+                <th>Line</th>
+                <th>Safety Floor</th>
+                <th>Edge Matrix</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for prop in cache.nfl_player_props.milestones %}
+            <tr>
+                <td><b>{{ prop.player }}</b> <small style="color: #64748b;">{{ prop.team }} {{ prop.matchup }}</small></td>
+                <td>{{ prop.metric }}</td>
+                <td><span style="color: #f87171;">{{ prop.house_line }}</span></td>
+                <td><span style="color: #4ade80; font-weight: bold;">{{ prop.safety_floor }}</span></td>
+                <td><span class="badge-nfl">{{ prop.edge_status }}</span></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 
     <div class="section-title">NHL Slate Matrix</div>
     <table class="matrix-table">
