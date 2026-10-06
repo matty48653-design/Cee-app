@@ -1,6 +1,7 @@
-# app.py - Complete v5.9 - Corrected Real-World Matchups & Syndicate Feed
+# app.py - Complete v6.0 - Anti-Cache Insulated Matrix Setup
 from flask import Flask, render_template, jsonify
 import os
+import time
 
 app = Flask(__name__)
 app.secret_key = os.urandom(24)
@@ -32,7 +33,7 @@ def dashboard():
         ]
     }
     
-    # 🎯 CORRECTED REAL-WORLD WEEK 5 SLATE MATRIX
+    # Strictly enforced real-world Week 5 slate data variables
     early_board = {
         "slate_date": "Sunday Slate Open (Week 5)",
         "games": [
@@ -46,9 +47,11 @@ def dashboard():
 
 @app.route('/api/feed')
 def live_feed():
+    """Forces anti-cache execution by feeding a precise system millisecond block."""
     return jsonify({
         "status": "Pipeline Active",
-        "version": "5.9-True-Slate",
+        "version": "6.0-Anti-Cache",
+        "cache_buster": time.time(),
         "sentiment_updates": {
             "Alpha Syndicate": "94% Public Resistance",
             "Wallet #4092 (High-Stakes)": "87% Public Resistance",
