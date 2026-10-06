@@ -1,6 +1,5 @@
 import os
 import json
-import requests
 from flask import Flask, request, jsonify, render_template
 
 app = Flask(__name__)
@@ -31,9 +30,7 @@ def get_aws_nextgen_pressure_metrics(team_id):
     """
     Simulated AWS Next Gen Stats Endpoint Wrapper.
     Evaluates defensive pass-rush pressure scores and pocket collapse rates.
-    Higher pressure scores against low-morale lines trigger checkdown flags.
     """
-    # Base schema maps real-time pass rush engagement tracking variables
     aws_tracking_feed = {
         "NO": {"defensive_pressure_score": 38.4, "avg_time_to_pressure": 2.42},
         "ATL": {"defensive_pressure_score": 22.1, "avg_time_to_pressure": 2.85}
@@ -45,7 +42,6 @@ def fetch_active_matrix_data():
     Automated Background Feed Engine.
     Streams actual slates and processes live AWS advanced metrics data layers.
     """
-    # Pull real-time defensive pressure indicators
     saints_defensive_pressure = get_aws_nextgen_pressure_metrics("NO")
     falcons_defensive_pressure = get_aws_nextgen_pressure_metrics("ATL")
 
@@ -56,7 +52,7 @@ def fetch_active_matrix_data():
             "away_team": "Atlanta Falcons",
             "home_team": "New Orleans Saints",
             "time": "8:15 PM ET",
-            "market_alert": f"Saints -1.5 (ATL Pass Rush Pressure Score: {falcons_pressure['defensive_pressure_score'] if 'falcons_pressure' in locals() else 22.1}%)",
+            "market_alert": f"Saints -1.5 (ATL Pass Rush Pressure Score: {falcons_defensive_pressure['defensive_pressure_score']}% 🚨)",
             "players": [
                 {"name": "Bijan Robinson (RB)", "milestone": "Over 50.5 Rush Yds", "integrity": "PREMIUM FLOOR"},
                 {"name": "Drake London (WR)", "milestone": "Over 65.5 Rec Yds", "integrity": "SHARP MILESTONE"},
