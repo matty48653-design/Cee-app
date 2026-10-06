@@ -1,4 +1,4 @@
-# app.py - v7.0 Master Action Core (Live Scores + Weather + Script Tracker + Direct Bet Recommendations)
+# app.py - v7.1 Master Multi-Line Core (Scores + Weather + Tracker + Complete Line Breakdown)
 from flask import Flask, render_template, jsonify
 import os
 import requests
@@ -81,12 +81,16 @@ def dashboard():
         ]
     }
     
-    # 🎯 NEW FEATURE: Simplified "Green-Light Pick" instruction panel
+    # 🎯 UPGRADED RECON MATRIX: Complete Line Breaks (Spreads, Totals, Puck Lines)
     engine_recommendation = {
-        "best_play": "Southern Miss +10.5 (CFB) & Nashville ML +130 (NHL)",
-        "instruction": "Erase standard house totals. Pull custom sliders to focus entirely on alternate passing volume cushions or flat contrarian moneylines.",
         "status": "READY TO STRIKE",
-        "action_color": "var(--accent-green)"
+        "action_color": "var(--accent-green)",
+        "lines": [
+            {"label": "🏈 GAME SPREAD EDGE", "pick": "Southern Miss +10.5", "note": "Public is forcing value into the underdog trench script."},
+            {"label": "🏈 TOTALS OVER/UNDER", "pick": "USM @ TROY UNDER 51.5", "note": "Clock-chewing ground game will trap the public Over."},
+            {"label": "🏒 NHL PUCK LINE COVERS", "pick": "Nashville +1.5 Puck Line", "note": "Insulated safety cushion; high sharp-money cash handle placement."},
+            {"label": "🏒 NHL FLAT MONEYLINE", "pick": "Ottawa Senators ML (+115)", "note": "Pure public fade on Red Wings transition fatigue layers."}
+        ]
     }
     
     early_board = {
@@ -103,7 +107,7 @@ def dashboard():
 def live_feed():
     return jsonify({
         "status": "Pipeline Active",
-        "version": "7.0-Action-Core",
+        "version": "7.1-Multi-Line",
         "cache_buster": time.time(),
         "sentiment_updates": {
             "Alpha Syndicate": "94% Public Resistance",
