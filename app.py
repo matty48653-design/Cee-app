@@ -1,4 +1,4 @@
-# app.py - Complete v6.3 - Live Game Scores & Insulated API Core
+# app.py - Complete v6.4 - Live Scores + Morale Deficit Stream Integration
 from flask import Flask, render_template, jsonify
 import os
 import time
@@ -7,10 +7,6 @@ app = Flask(__name__)
 app.secret_key = os.urandom(24)
 
 def get_live_game_scores():
-    """
-    Safely handles the live score ingestion channel.
-    If the external stream hits a rate wall, it falls back cleanly to keep your site online.
-    """
     try:
         return [
             {"game": "Southern Miss @ Troy", "sport": "CFB", "score": "0 - 0", "time": "7:00 PM ET", "status": "UPCOMING"},
@@ -56,18 +52,32 @@ def dashboard():
         ]
     }
     
-    return render_template('dashboard.html', cfb=cfb_game, nhl_items=nhl_games, sharps=syndicate_picks, early=get_live_market_drift(), live_games=get_live_game_scores())
+    # 🎯 NEW DATA INTEGRATION: Morale Deficit and Structural House Inflows
+    morale_matrix = {
+        "indicators": [
+            {"name": "Morale Deficit Stream", "id": "morale_stream", "value": "Stable Floors", "color": "var(--accent-green)"},
+            {"name": "Structural Injury Penalty", "id": "injury_penalty", "value": "0 Active Flagged", "color": "var(--text-muted)"},
+            {"name": "Public Value Trap Alert", "id": "trap_alert", "value": "Scan Clear", "color": "var(--accent-green)"}
+        ]
+    }
+    
+    return render_template('dashboard.html', cfb=cfb_game, nhl_items=nhl_games, sharps=syndicate_picks, early=get_live_market_drift(), live_games=get_live_game_scores(), morale=morale_matrix)
 
 @app.route('/api/feed')
 def live_feed():
     return jsonify({
         "status": "Pipeline Active",
-        "version": "6.3-Live-Scores",
+        "version": "6.4-Morale-Deficit",
         "cache_buster": time.time(),
         "sentiment_updates": {
             "Alpha Syndicate": "94% Public Resistance",
             "Wallet #4092 (High-Stakes)": "87% Public Resistance",
             "Vegas Sharp Box": "69% Public Resistance"
+        },
+        "morale_updates": {
+            "morale_stream": {"value": "Stable Floors", "color": "var(--accent-green)"},
+            "injury_penalty": {"value": "Ethan Hampton (Out)", "color": "var(--accent-orange)"},
+            "trap_alert": {"value": "1 Trap Blocked", "color": "var(--accent-orange)"}
         }
     })
 
