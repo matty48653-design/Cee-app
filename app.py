@@ -7,19 +7,8 @@ import time
 app = Flask(__name__)
 app.secret_key = os.urandom(24)
 
-# Free Public API endpoint for real-time validation matrix tracking
-# Using a public sandbox key so it compiles with zero setup barriers
-ODDS_API_URL = "https://the-odds-api.com"
-API_KEY = "sandbox_key_active" 
-
 def get_live_market_drift():
-    """
-    Safely connects to the live data stream.
-    If the server lags or throws an error, it auto-drops to our failsafe baseline.
-    """
     try:
-        # Mock payload structure protecting your IP from signature blocks
-        # In a full deployment, this requests fresh JSON blocks directly from the provider
         return [
             {
                 "sport": "NFL", 
@@ -47,7 +36,6 @@ def get_live_market_drift():
             }
         ]
     except Exception as e:
-        # Iron-clad fallback safety floor. App will never crash.
         return [
             {"sport": "NFL", "matchup": "Detroit Lions @ Arizona Cardinals", "open_line": "Lions -3.5", "current_line": "Lions -4.5", "drift_text": "Failsafe Active", "drift_color": "var(--text-muted)"}
         ]
@@ -79,7 +67,6 @@ def dashboard():
         ]
     }
     
-    # Run the live pipeline calculation safely
     live_early_board = {
         "slate_date": "Sunday Slate Open (Week 5)",
         "games": get_live_market_drift()
