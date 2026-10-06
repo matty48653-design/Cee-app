@@ -5,119 +5,252 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cee Engine HUD</title>
     <style>
-        :root { --bg-color: #0b0f19; --card-bg: rgba(255, 255, 255, 0.03); --border-color: rgba(255, 255, 255, 0.08); --accent-green: #00e676; --accent-orange: #ff9100; --text-main: #f5f6f9; --text-muted: #8a99ad; }
-        body { background-color: var(--bg-color); color: var(--text-main); font-family: -apple-system, sans-serif; padding: 16px; margin: 0; }
-        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; border-bottom: 1px solid var(--border-color); padding-bottom: 12px; }
-        .section-title { font-size: 1.1rem; text-transform: uppercase; color: var(--text-muted); margin: 24px 0 12px 0; }
-        .grid-box { background: rgba(255, 255, 255, 0.01); border: 1px solid var(--border-color); border-radius: 8px; padding: 14px; margin-top: 10px; }
-        .grid-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.02); font-size: 0.95rem; }
-        .grid-row:last-child { border-bottom: none; }
-        .action-card { background: linear-gradient(135deg, rgba(0,230,118,0.04) 0%, rgba(11,15,25,0.6) 100%); border: 1px dashed var(--accent-green); border-radius: 8px; padding: 16px; margin-top: 10px; }
-        .quantum-card { background: linear-gradient(135deg, rgba(255,145,0,0.04) 0%, rgba(11,15,25,0.6) 100%); border: 1px dashed var(--accent-orange); border-radius: 8px; padding: 16px; margin-top: 10px; }
-        .line-item { padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.03); }
-        .line-item:last-child { border-bottom: none; }
-        .badge { background: rgba(0, 230, 118, 0.15); color: var(--accent-green); padding: 4px 8px; border-radius: 4px; font-size: 0.85rem; font-weight: bold; }
-        .badge-orange { background: rgba(255, 145, 0, 0.15); color: var(--accent-orange); }
+        :root {
+            --bg-color: #0b0f19;
+            --card-bg: rgba(255, 255, 255, 0.03);
+            --border-color: rgba(255, 255, 255, 0.08);
+            --accent-green: #00e676;
+            --accent-orange: #ff9100;
+            --accent-red: #ff3d00;
+            --text-main: #f5f6f7;
+            --text-muted: #8a99ad;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        /* Mobile Dashboard Layout */
+        .hud-container {
+            width: 100%;
+            max-width: 480px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        /* Glassmorphism Panel Header */
+        .hud-header {
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+            position: relative;
+        }
+
+        .hud-header h1 {
+            font-size: 1.5rem;
+            letter-spacing: 1px;
+            color: var(--text-main);
+            text-transform: uppercase;
+        }
+
+        .engine-status {
+            font-size: 0.75rem;
+            color: var(--accent-green);
+            text-transform: uppercase;
+            margin-top: 5px;
+            font-weight: bold;
+            letter-spacing: 2px;
+        }
+
+        /* Contrarian Matrix Grid */
+        .matrix-section {
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 15px;
+        }
+
+        .section-title {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            margin-bottom: 12px;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+
+        .grid-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        /* Compact Data Line Cards */
+        .data-card {
+            background: rgba(255, 255, 255, 0.01);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: transform 0.2s ease;
+        }
+
+        .data-card:active {
+            transform: scale(0.98);
+        }
+
+        .matchup-info {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .matchup-teams {
+            font-size: 0.95rem;
+            font-weight: bold;
+        }
+
+        .matchup-league {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .metrics-block {
+            text-align: right;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .edge-metric {
+            font-size: 0.95rem;
+            color: var(--accent-green);
+            font-weight: bold;
+        }
+
+        .slider-floor {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+        }
+
+        /* Morale Deficit Alerts */
+        .alert-stream {
+            background: rgba(255, 61, 0, 0.05);
+            border: 1px solid rgba(255, 61, 0, 0.15);
+            border-radius: 12px;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .alert-item {
+            font-size: 0.8rem;
+            color: #ff8a80;
+            line-height: 1.3;
+        }
+
+        /* Interactive Simulator Controller Dock */
+        .hud-dock {
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 15px;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+        }
+
+        .dock-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            padding: 10px 16px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .dock-btn:active {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: var(--text-muted);
+        }
+
+        .dock-btn.active {
+            border-color: var(--accent-orange);
+            color: var(--accent-orange);
+        }
     </style>
 </head>
 <body>
-    <div class="header">
-        <h1 style="font-size: 1.4rem; margin: 0;">CEE ENGINE HUD</h1>
-        <div class="badge" id="pipeline-badge">Pipeline Active v9.5</div>
-    </div>
-    <div class="status-container" style="text-align: right; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 15px;">
-        Last Checked: <span id="sync-time">Just Now</span>
+
+    <div class="hud-container">
+        
+        <!-- Glassmorphism Header Panel -->
+        <header class="hud-header">
+            <h1>Cee Engine HUD</h1>
+            <div class="engine-status">● Matrix Engine v9.5 Live</div>
+        </header>
+
+        <!-- Contrarian Edge Matrix -->
+        <section class="matrix-section">
+            <div class="section-title">Contrarian Edge Matrix</div>
+            <div class="grid-container">
+                {% if tracking_items %}
+                    {% for item in tracking_items %}
+                    <div class="data-card">
+                        <div class="matchup-info">
+                            <span class="matchup-teams">{{ item.teams }}</span>
+                            <span class="matchup-league">{{ item.league }}</span>
+                        </div>
+                        <div class="metrics-block">
+                            <span class="edge-metric">{{ item.edge }}</span>
+                            <span class="slider-floor">Milestone: {{ item.milestone }}</span>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="data-card" style="justify-content: center;">
+                        <span class="slider-floor">Awaiting Next Verified Grid Shifts...</span>
+                    </div>
+                {% endif %}
+            </div>
+        </section>
+
+        <!-- Morale Deficit Stream -->
+        <section class="matrix-section" style="border-color: rgba(255, 61, 0, 0.15);">
+            <div class="section-title" style="color: var(--accent-red);">Morale Deficit Stream</div>
+            <div class="alert-stream">
+                <div class="alert-item">⚠️ System Monitoring Active: Intercepting high-volume public line spikes.</div>
+                <div class="alert-item">⚠️ Volatile 1Q/2Q micro-lines filtered out completely.</div>
+            </div>
+        </section>
+
+        <!-- Interactive Simulator HUD Dock -->
+        <footer class="hud-dock">
+            <button class="dock-btn active">Matrix</button>
+            <button class="dock-btn" onclick="location.reload()">Refresh Feed</button>
+        </footer>
+
     </div>
 
-    <div class="section-title">🟢 Cee Supreme Action Signals</div>
-    <div class="action-card">
-        {% for trigger in alert.triggers %}
-        <div class="line-item">
-            <div style="display: flex; justify-content: space-between; font-weight: bold; font-size: 0.92rem;">
-                <span style="color: var(--text-muted);">{{ trigger.market }}</span>
-                <span style="color: var(--accent-green);" id="cmd-text-{{ trigger.id }}">👉 {{ trigger.command }}</span>
-            </div>
-            <div style="font-size: 0.82rem; color: var(--text-main); padding-top: 3px;" id="cmd-note-{{ trigger.id }}">{{ trigger.alert_note }}</div>
-        </div>
-        {% endfor %}
-    </div>
-
-    <div class="section-title">🔒 Quantum Live Profit-Lock Triggers</div>
-    <div class="quantum-card">
-        {% for hedge in quantum.hedges %}
-        <div class="line-item">
-            <div style="display: flex; justify-content: space-between; font-weight: bold; font-size: 0.92rem;">
-                <span style="color: var(--text-muted);">{{ hedge.market }}</span>
-                <span style="color: var(--accent-orange);" id="quantum-txt-{{ hedge.id }}">⏳ {{ hedge.instruction }}</span>
-            </div>
-            <div style="font-size: 0.82rem; color: var(--text-main); padding-top: 3px;" id="quantum-note-{{ hedge.id }}">{{ hedge.note }}</div>
-        </div>
-        {% endfor %}
-    </div>
-
-    <div class="section-title">📺 Live Slate & Weather Monitor</div>
-    <div class="grid-box">
-        {% for match in live_games %}
-        <div class="grid-row" id="game-card-{{ match.id }}">
-            <div>
-                <span class="badge" style="font-size:0.75rem; padding: 2px 5px; background:rgba(255,255,255,0.05); color:var(--text-muted);">{{ match.sport }}</span>
-                <span style="font-weight: bold; margin-left: 5px;">{{ match.game }}</span><br>
-                <span style="font-size: 0.8rem; color: var(--accent-orange); display: block; padding-top: 4px;">{{ match.stadium }} • {{ match.weather }}</span>
-            </div>
-            <div style="text-align: right;">
-                <span style="font-weight: bold; color: var(--accent-green); font-size: 1.1rem;" id="score-{{ match.id }}">{{ match.score }}</span><br>
-                <span class="badge badge-orange" style="font-size: 0.75rem; margin-top: 4px; display: inline-block;" id="status-{{ match.id }}">{{ match.quarter }}</span>
-            </div>
-        </div>
-        {% endfor %}
-    </div>
-
-    <div class="section-title">🌅 Early Board Map</div>
-    <div class="grid-box">
-        {% for game in early.games %}
-        <div class="grid-row">
-            <div>
-                <span class="badge" style="font-size:0.75rem; padding: 2px 5px; background:rgba(255,255,255,0.05); color:var(--text-muted);">{{ game.sport }}</span>
-                <span style="font-weight: bold; margin-left: 5px;">{{ game.matchup }}</span><br>
-                <span style="font-size: 0.8rem; color: {{ game.drift_color }}; font-weight: 600; display: block; padding-top: 4px;">{{ game.drift_text }}</span>
-            </div>
-            <div style="text-align: right;">
-                <span style="font-size: 0.8rem; color: var(--text-muted);">Open: {{ game.open_line }}</span><br>
-                <span style="font-weight: bold; color: var(--accent-green); font-size: 1.05rem;">Live: {{ game.current_line }}</span>
-            </div>
-        </div>
-        {% endfor %}
-    </div>
-
-    <script>
-        function checkEnginePipeline() {
-            fetch('/api/feed').then(res => res.json()).then(data => {
-                if (data.status === "Pipeline Active") {
-                    document.getElementById('sync-time').innerText = new Date().toLocaleTimeString();
-                    Object.keys(data.score_updates).forEach(id => {
-                        const s = document.getElementById('score-' + id), q = document.getElementById('status-' + id);
-                        if (s && data.score_updates[id]) s.innerText = data.score_updates[id].score;
-                        if (q && data.score_updates[id]) q.innerText = data.score_updates[id].quarter;
-                    });
-                    Object.keys(data.sentiment_updates).forEach(k => { const e = document.getElementById('vol-' + k); if (e) e.innerText = data.sentiment_updates[k]; });
-                    if (data.live_bet_commands) {
-                        Object.keys(data.live_bet_commands).forEach(id => {
-                            const t = document.getElementById('cmd-text-' + id), n = document.getElementById('cmd-note-' + id);
-                            if (t) t.innerText = '👉 ' + data.live_bet_commands[id].command;
-                            if (n) n.innerText = data.live_bet_commands[id].note;
-                        });
-                    }
-                    if (data.quantum_updates) {
-                        Object.keys(data.quantum_updates).forEach(id => {
-                            const t = document.getElementById('quantum-txt-' + id), n = document.getElementById('quantum-note-' + id);
-                            if (t) t.innerText = '⏳ ' + data.quantum_updates[id].command;
-                            if (n) n.innerText = data.quantum_updates[id].note;
-                        });
-                    }
-                }
-            }).catch(e => { document.getElementById('pipeline-badge').innerText = "Syncing..."; });
-        }
-        setInterval(checkEnginePipeline, 15000);
-    </script>
 </body>
 </html>
