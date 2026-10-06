@@ -28,7 +28,7 @@
 </head>
 <body>
 
-    <div class="engine-alert">⚠️ ENGINE STATUS: MULTI-SPORT MATRIX INTEGRATION LIVE</div>
+    <div class="engine-alert">⚠️ ENGINE STATUS: FULL MULTI-SPORT SLATE RESTORED</div>
 
     <div class="scroll-container">
         {% for board in slates %}
@@ -37,11 +37,11 @@
             <div class="slate-title">{{ board.game }}</div>
             
             <div class="live-clock-bar">
-                🏁 STATUS: {{ board.live_clock }}
+                🏁 TIMING: {{ board.live_clock }}
             </div>
             
             <div class="sim-box">
-                📊 SIM ENGINE MODEL: {{ board.pacing_status }} (DK Lines: {{ board.closing_line }})
+                📊 SIM ENGINE MODEL: {{ board.pacing_status }} (DK Line: {{ board.closing_line }})
                 <div class="sim-total-text">{{ board.sim_total }}</div>
             </div>
 
