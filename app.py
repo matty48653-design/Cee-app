@@ -3,6 +3,7 @@ from flask import Flask, render_template, jsonify, request
 
 app = Flask(__name__)
 
+# Single state engine variable pool
 CURRENT_GAME_STATE = {
     "slate": {
         "game": "Detroit Lions @ Green Bay Packers",
@@ -23,19 +24,29 @@ CURRENT_GAME_STATE = {
 
 @app.route('/')
 def dashboard():
-    slate = CURRENT_GAME_STATE.get("slate")
-    players = CURRENT_GAME_STATE.get("players")
-    morale = CURRENT_GAME_STATE.get("morale")
-    return render_template("dashboard.html", slate=slate, players=players, morale=morale)
+    # Renders the current state directly so updates show on screen
+    return render_template(
+        "dashboard.html", 
+        slate=CURRENT_GAME_STATE["slate"], 
+        players=CURRENT_GAME_STATE["players"], 
+        morale=CURRENT_GAME_STATE["morale"]
+    )
 
 @app.route('/api/update-feed', methods=['POST'])
 def update_feed():
     global CURRENT_GAME_STATE
     incoming_data = request.get_json()
+    
     if not incoming_data:
         return jsonify({"status": "failed", "message": "No JSON payload found"}), 400
+        
     CURRENT_GAME_STATE = incoming_data
     return jsonify({"status": "success", "message": "Live CEE Matrix Updated"}), 200
+
+# NEW JSON ENDPOINT FOR ACCURATE BACKGROUND POLLS
+@app.route('/api/live-state', methods=['GET'])
+def get_live_state():
+    return jsonify(CURRENT_GAME_STATE)
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
