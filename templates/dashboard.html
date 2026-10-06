@@ -75,88 +75,77 @@
             margin-top: -10px;
             margin-bottom: 15px;
         }
-        .sharp-card {
+        .grid-box {
             background: rgba(255, 255, 255, 0.01);
             border: 1px solid var(--border-color);
             border-radius: 8px;
-            padding: 16px;
+            padding: 14px;
             margin-top: 10px;
         }
-        .sharp-row {
+        .grid-row {
             display: flex;
             justify-content: space-between;
             padding: 10px 0;
             border-bottom: 1px solid rgba(255,255,255,0.02);
             font-size: 0.95rem;
         }
-        .sharp-row:last-child { border-bottom: none; }
+        .grid-row:last-child { border-bottom: none; }
     </style>
 </head>
 <body>
 
     <div class="header">
-        <h1 style="font-size: 1.5rem; margin: 0;">CEE ENGINE HUD</h1>
-        <div class="badge" id="pipeline-badge">Pipeline Active v5.7</div>
+        <h1 style="font-size: 1.4rem; margin: 0;">CEE ENGINE HUD</h1>
+        <div class="badge" id="pipeline-badge">Pipeline Active v5.8</div>
     </div>
     
     <div class="status-container">
         Last Checked: <span id="sync-time">Just Now</span>
     </div>
 
-    <!-- College Football Targets -->
+    <!-- Active Slate Targets -->
     <div class="section-title">🏈 CFB Game Script</div>
     <table class="matrix-table">
-        <thead>
-            <tr>
-                <th>Target Player</th>
-                <th>Custom Slider Target</th>
-                <th>Edge</th>
-            </tr>
-        </thead>
         <tbody>
             {% for slider in cfb.sliders %}
             <tr>
                 <td style="font-weight: bold;">{{ slider.player }}</td>
                 <td><span class="badge badge-orange">{{ slider.target }} {{ slider.metric }}</span></td>
-                <td style="color: var(--accent-green); font-weight: bold;">{{ slider.yield }}</td>
+                <td style="color: var(--accent-green); font-weight: bold; text-align: right;">{{ slider.yield }}</td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
 
-    <!-- NHL Moneyline Splits -->
-    <div class="section-title">🏒 NHL Sharp Matrix</div>
-    <table class="matrix-table">
-        <thead>
-            <tr>
-                <th>Matchup</th>
-                <th>Engine Play</th>
-                <th>Handle Split</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for item in nhl_items %}
-            <tr>
-                <td>{{ item.away }} <br><span style="font-size:0.8rem; color:var(--text-muted);">@ {{ item.home }}</span></td>
-                <td style="font-weight: bold; color: var(--accent-green);">{{ item.play }}</td>
-                <td style="color: var(--accent-orange); font-size:0.9rem;">{{ item.handle }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-
-    <!-- Sharp Tracking Tracker Feed Module -->
-    <div class="section-title">🎯 Sharp Wallet & Syndicate Picks Tracker</div>
-    <div class="sharp-card" id="sharp-feed-container">
+    <!-- FEATURE 1 VIEW: Syndicate Tracking + Sentiment Volatility Score -->
+    <div class="section-title">🎯 Syndicate Consensus & Sentiment Volatility</div>
+    <div class="grid-box">
         {% for group in sharps.groups %}
-        <div class="sharp-row">
+        <div class="grid-row">
             <div>
                 <span style="font-weight: bold; color: var(--text-main);">{{ group.alias }}</span><br>
-                <span style="font-size: 0.85rem; color: var(--accent-orange);">Bet Size: {{ group.size }}</span>
+                <span style="font-size: 0.85rem; color: var(--text-muted);">Size: {{ group.size }}</span>
             </div>
-            <div style="text-align: right; padding-top: 5px;">
+            <div style="text-align: right;">
                 <span style="font-weight: bold; color: var(--text-main);">{{ group.target }}</span><br>
-                <span style="font-size: 0.85rem; font-weight: bold; color: {{ group.color }};">{{ group.status }}</span>
+                <span id="vol-{{ group.alias }}" style="font-size: 0.85rem; font-weight: bold; color: {{ group.v_color }};">{{ group.volatility }}</span>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- FEATURE 2 VIEW: Early Board Map -->
+    <div class="section-title">🌅 Early Board Map: {{ early.slate_date }}</div>
+    <div class="grid-box">
+        {% for game in early.games %}
+        <div class="grid-row">
+            <div>
+                <span class="badge" style="font-size:0.75rem; padding: 2px 5px; background:rgba(255,255,255,0.05); color:var(--text-muted);">{{ game.sport }}</span>
+                <span style="font-weight: bold; color: var(--text-main); margin-left: 5px;">{{ game.matchup }}</span>
+            </div>
+            <div style="text-align: right;">
+                <span style="font-weight: bold; color: var(--accent-green);">{{ game.open_line }}</span><br>
+                <span style="font-size: 0.8rem; color: var(--text-muted);">{{ game.movement }}</span>
             </div>
         </div>
         {% endfor %}
@@ -170,6 +159,12 @@
                     if (data.status === "Pipeline Active") {
                         const now = new Date();
                         document.getElementById('sync-time').innerText = now.toLocaleTimeString();
+                        
+                        // Dynamically scale the live public resistance metrics
+                        Object.keys(data.sentiment_updates).forEach(key => {
+                            const elem = document.getElementById(`vol-${key}`);
+                            if (elem) elem.innerText = data.sentiment_updates[key];
+                        });
                     }
                 })
                 .catch(err => {
