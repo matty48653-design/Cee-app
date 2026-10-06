@@ -5,111 +5,71 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CEE Dashboard v5.3</title>
     <style>
-        body { background-color: #0b0f19; color: #ffffff; font-family: -apple-system, sans-serif; padding: 15px; }
-        .engine-alert { background: rgba(255, 171, 0, 0.1); border: 1px solid #ffab00; color: #ffab00; padding: 10px; text-align: center; font-weight: bold; font-size: 13px; margin-bottom: 15px; border-radius: 4px; }
-        .card { background: #131a2c; border-radius: 8px; padding: 15px; margin-bottom: 15px; }
-        .slate-title { font-size: 18px; font-weight: bold; margin-bottom: 10px; color: #fff; }
-        .live-clock-bar { background: #3b1f5c; color: #e9d5ff; padding: 10px; border-radius: 6px; font-weight: bold; text-align: center; margin-bottom: 12px; }
-        .sim-box { border: 1px solid #1e293b; padding: 10px; border-radius: 6px; margin-bottom: 12px; font-size: 14px; }
-        .sim-total-text { color: #f87171; font-weight: bold; margin-top: 5px; }
+        body { background-color: #0b0f19; color: #ffffff; font-family: -apple-system, sans-serif; padding: 15px; margin: 0; }
+        .engine-alert { background: rgba(255, 171, 0, 0.1); border: 1px solid #ffab00; color: #ffab00; padding: 12px; text-align: center; font-weight: bold; font-size: 13px; margin-bottom: 20px; border-radius: 6px; letter-spacing: 0.5px; }
+        .scroll-container { display: flex; flex-direction: column; gap: 20px; padding-bottom: 40px; }
+        .card { background: #131a2c; border-radius: 12px; padding: 18px; border: 1px solid #1e293b; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2); }
+        .slate-title { font-size: 18px; font-weight: bold; margin-bottom: 12px; color: #ffffff; }
+        .live-clock-bar { background: #3b1f5c; color: #e9d5ff; padding: 10px; border-radius: 6px; font-weight: bold; text-align: center; margin-bottom: 14px; font-size: 14px; letter-spacing: 0.3px; }
+        .sim-box { border: 1px solid #1e293b; padding: 12px; border-radius: 6px; margin-bottom: 16px; font-size: 14px; background: rgba(30, 41, 59, 0.3); }
+        .sim-total-text { color: #f87171; font-weight: bold; margin-top: 6px; }
         .section-header { font-size: 11px; font-weight: bold; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; display: flex; justify-content: space-between; margin-bottom: 10px; padding-bottom: 5px; border-bottom: 1px solid #1e293b; }
-        .data-row { display: flex; justify-content: space-between; padding: 8px 0; font-size: 15px; }
+        .data-row { display: flex; justify-content: space-between; padding: 8px 0; font-size: 15px; align-items: center; }
         .player-name { font-weight: bold; }
         .player-pos { color: #94a3b8; font-weight: normal; font-size: 13px; }
-        .target-floor { color: #fde047; font-weight: 500; }
-        .target-ceiling { color: #fde047; font-weight: 500; }
-        .morale-header { color: #ffab00; font-weight: bold; font-size: 12px; margin-top: 10px; margin-bottom: 8px; }
-        .crossed-out { text-decoration: line-through; color: #ef4444; font-weight: bold; }
+        .target-floor { color: #fde047; font-weight: 500; text-align: right; }
+        .target-ceiling { color: #fde047; font-weight: 500; text-align: right; }
+        .morale-header { color: #ffab00; font-weight: bold; font-size: 12px; margin-top: 14px; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .crossed-out { text-decoration: line-through; color: #ef4444; font-weight: bold; font-size: 14px; white-space: nowrap; }
         .warn-tag { background: #ef4444; color: #fff; padding: 2px 6px; border-radius: 4px; font-size: 11px; font-weight: bold; }
-        .alert-desc { color: #94a3b8; font-size: 13px; margin-top: 4px; line-height: 1.4; }
+        .alert-desc { color: #94a3b8; font-size: 13px; line-height: 1.4; }
+        .morale-row { display: flex; gap: 12px; align-items: flex-start; margin-top: 10px; background: rgba(239, 68, 68, 0.05); padding: 10px; border-radius: 6px; border: 1px solid rgba(239, 68, 68, 0.1); }
     </style>
 </head>
 <body>
 
-    <div class="engine-alert">⚠️ ENGINE STATUS: LIVE SYSTEM TEST RUN ACTIVE</div>
+    <div class="engine-alert">⚠️ ENGINE STATUS: MULTI-BOARD SLATE SCROLLING ACTIVE</div>
 
-    <div class="card">
-        <div style="color: #f87171; font-size: 12px; font-weight: bold; margin-bottom: 4px;">🏈 ACTIVE FOOTBALL SLATE</div>
-        <div id="game-title" class="slate-title">{{ slate.game }}</div>
-        
-        <div id="live-clock" class="live-clock-bar">
-            🏁 LIVE CLOCK: {{ slate.live_clock }} | {{ slate.score_string }}
-        </div>
-        
-        <div class="sim-box">
-            <span id="pacing-status">📊 SIM ENGINE MODEL: {{ slate.pacing_status }} (Closing Line: {{ slate.closing_line }})</span>
-            <div id="projected-final" class="sim-total-text">Projected Final: {{ slate.score_string }} (Sim Total: {{ slate.sim_total }})</div>
-        </div>
+    <div class="scroll-container">
+        {% for board in slates %}
+        <div class="card">
+            <div style="color: #f87171; font-size: 12px; font-weight: bold; margin-bottom: 4px; letter-spacing: 0.5px;">🏈 ACTIVE FOOTBALL SLATE</div>
+            <div class="slate-title">{{ board.game }}</div>
+            
+            <div class="live-clock-bar">
+                🏁 LIVE CLOCK: {{ board.live_clock }} | {{ board.score_string }}
+            </div>
+            
+            <div class="sim-box">
+                📊 SIM ENGINE MODEL: {{ board.pacing_status }} (Closing Line: {{ board.closing_line }})
+                <div class="sim-total-text">Projected Final: {{ board.score_string }} (Sim Total: {{ board.sim_total }})</div>
+            </div>
 
-        <div class="section-header">
-            <span>Player Data Stream</span>
-            <span>Safety Floor Target</span>
-        </div>
-        
-        <div id="player-stream-container">
-            {% for player in players %}
+            <div class="section-header">
+                <span>Player Data Stream</span>
+                <span>Safety Target Matrix</span>
+            </div>
+            
+            {% for player in board.players %}
             <div class="data-row">
                 <span class="player-name">{{ player.name }} <span class="player-pos">({{ player.position }})</span></span>
                 <span class="{% if player.is_floor %}target-floor{% else %}target-ceiling{% endif %}">{{ player.target }}</span>
             </div>
             {% endfor %}
-        </div>
 
-        <div class="morale-header">⚠️ MORALE DEFICIT STREAM</div>
-        <div id="morale-stream-container">
-            {% for item in morale %}
-            <div style="display: flex; gap: 15px; align-items: flex-start; margin-top: 8px;">
-                <span class="crossed-out">{{ item.unit }}</span>
-                <span class="warn-tag">{{ item.status }}</span>
+            <div class="morale-header">⚠️ MORALE DEFICIT STREAM</div>
+            {% for item in board.morale %}
+            <div class="morale-row">
+                <div style="display: flex; flex-direction: column; gap: 4px; align-items: flex-start;">
+                    <span class="crossed-out">{{ item.unit }}</span>
+                    <span class="warn-tag">{{ item.status }}</span>
+                </div>
                 <div class="alert-desc">{{ item.alert_text }}</div>
             </div>
             {% endfor %}
         </div>
+        {% endfor %}
     </div>
-
-    <script>
-        async function fetchLiveMatrixUpdates() {
-            try {
-                const response = await fetch(window.location.origin + '/api/live-state');
-                if (!response.ok) return;
-                
-                const data = await response.json();
-                
-                document.getElementById('game-title').innerText = data.slate.game;
-                document.getElementById('live-clock').innerText = `🏁 LIVE CLOCK: ${data.slate.live_clock} | ${data.slate.score_string}`;
-                document.getElementById('pacing-status').innerText = `📊 SIM ENGINE MODEL: ${data.slate.pacing_status} (Closing Line: ${data.slate.closing_line})`;
-                document.getElementById('projected-final').innerText = `Projected Final: ${data.slate.score_string} (Sim Total: ${data.slate.sim_total})`;
-                
-                let playerHTML = '';
-                data.players.forEach(p => {
-                    let styleClass = p.is_floor ? 'target-floor' : 'target-ceiling';
-                    playerHTML += `
-                        <div class="data-row">
-                            <span class="player-name">${p.name} <span class="player-pos">(${p.position})</span></span>
-                            <span class="${styleClass}">${p.target}</span>
-                        </div>`;
-                });
-                document.getElementById('player-stream-container').innerHTML = playerHTML;
-
-                let moraleHTML = '';
-                data.morale.forEach(m => {
-                    moraleHTML += `
-                        <div style="display: flex; gap: 15px; align-items: flex-start; margin-top: 8px;">
-                            <span class="crossed-out">${m.unit}</span>
-                            <span class="warn-tag">${m.status}</span>
-                            <div class="alert-desc">${m.alert_text}</div>
-                        </div>`;
-                });
-                document.getElementById('morale-stream-container').innerHTML = moraleHTML;
-                
-            } catch (err) {
-                console.log("Sync error:", err);
-            }
-        }
-
-        // Auto-refresh script loops aggressively every 2 seconds
-        setInterval(fetchLiveMatrixUpdates, 2000);
-    </script>
 
 </body>
 </html>
