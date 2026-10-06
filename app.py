@@ -1,127 +1,225 @@
-# app.py - v7.1 Master Multi-Line Core (Scores + Weather + Tracker + Complete Line Breakdown)
-from flask import Flask, render_template, jsonify
-import os
-import requests
-import time
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cee Engine HUD</title>
+    <style>
+        :root {
+            --bg-color: #0b0f19;
+            --card-bg: rgba(255, 255, 255, 0.03);
+            --border-color: rgba(255, 255, 255, 0.08);
+            --accent-green: #00e676;
+            --accent-orange: #ff9100;
+            --text-main: #f5f6f9;
+            --text-muted: #8a99ad;
+        }
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 16px;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 12px;
+        }
+        .section-title {
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            margin: 24px 0 12px 0;
+        }
+        .matrix-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+        .matrix-table th, .matrix-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .badge {
+            background: rgba(0, 230, 118, 0.15);
+            color: var(--accent-green);
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            font-weight: bold;
+        }
+        .badge-orange {
+            background: rgba(255, 145, 0, 0.15);
+            color: var(--accent-orange);
+        }
+        .status-container {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            text-align: right;
+            margin-top: -10px;
+            margin-bottom: 15px;
+        }
+        .grid-box {
+            background: rgba(255, 255, 255, 0.01);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 14px;
+            margin-top: 10px;
+        }
+        .grid-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.02);
+            font-size: 0.95rem;
+        }
+        .grid-row:last-child { border-bottom: none; }
+        
+        .action-card {
+            background: linear-gradient(135deg, rgba(0,230,118,0.04) 0%, rgba(11,15,25,0.6) 100%);
+            border: 1px dashed var(--accent-green);
+            border-radius: 8px;
+            padding: 16px;
+            margin-top: 10px;
+        }
+        .line-item {
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.03);
+        }
+        .line-item:last-child { border-bottom: none; }
+    </style>
+</head>
+<body>
 
-app = Flask(__name__)
-app.secret_key = os.urandom(24)
-
-LATEST_SCORES_CACHE = {
-    "usm_troy": {"score": "0 - 0", "status": "UPCOMING", "stadium": "Outdoor Open-Air", "weather": "72° • Clear • Wind: 5mph", "quarter": "PRE-GAME"},
-    "ott_det": {"score": "0 - 0", "status": "UPCOMING", "stadium": "Indoor Arena", "weather": "Indoor • Climate Controlled", "quarter": "PRE-GAME"},
-    "nas_tor": {"score": "0 - 0", "status": "UPCOMING", "stadium": "Indoor Arena", "weather": "Indoor • Climate Controlled", "quarter": "PRE-GAME"},
-    "vgk_sea": {"score": "0 - 0", "status": "UPCOMING", "stadium": "Indoor Arena", "weather": "Indoor • Climate Controlled", "quarter": "PRE-GAME"}
-}
-
-def pull_live_unblocked_scores():
-    global LATEST_SCORES_CACHE
-    try:
-        url = "https://espn.com"
-        response = requests.get(url, timeout=3)
-        if response.status_code == 200:
-            data = response.json()
-            for event in data.get('events', []):
-                short_name = event.get('shortName', '')
-                if any(x in short_name for x in ["SWM", "TROY", "SMU"]):
-                    status = event.get('status', {}).get('type', {}).get('state', '').upper()
-                    display_status = "LIVE" if status == "INPROGRESS" else "UPCOMING"
-                    period = event.get('status', {}).get('period', 0)
-                    
-                    if period == 1: LATEST_SCORES_CACHE["usm_troy"]["quarter"] = "1ST QTR"
-                    elif period == 2: LATEST_SCORES_CACHE["usm_troy"]["quarter"] = "2ND QTR"
-                    elif period == 3: LATEST_SCORES_CACHE["usm_troy"]["quarter"] = "3RD QTR"
-                    elif period == 4: LATEST_SCORES_CACHE["usm_troy"]["quarter"] = "4TH QTR"
-                    
-                    competitors = event.get('competitors', [])
-                    score_str = f"{competitors.get('score', '0')} - {competitors.get('score', '0')}"
-                    LATEST_SCORES_CACHE["usm_troy"]["score"] = score_str
-                    LATEST_SCORES_CACHE["usm_troy"]["status"] = display_status
-    except Exception:
-        pass
-
-    return [
-        {"id": "usm_troy", "game": "Southern Miss @ Troy", "sport": "CFB", "score": LATEST_SCORES_CACHE["usm_troy"]["score"], "time": "7:00 PM ET", "status": LATEST_SCORES_CACHE["usm_troy"]["status"], "stadium": LATEST_SCORES_CACHE["usm_troy"]["stadium"], "weather": LATEST_SCORES_CACHE["usm_troy"]["weather"], "quarter": LATEST_SCORES_CACHE["usm_troy"]["quarter"]},
-        {"id": "ott_det", "game": "Ottawa Senators @ Detroit Red Wings", "sport": "NHL", "score": "0 - 0", "time": "7:00 PM ET", "status": "UPCOMING", "stadium": LATEST_SCORES_CACHE["ott_det"]["stadium"], "weather": LATEST_SCORES_CACHE["ott_det"]["weather"], "quarter": "1ST PER"},
-        {"id": "nas_tor", "game": "Nashville Predators @ Toronto Maple Leafs", "sport": "NHL", "score": "0 - 0", "time": "7:30 PM ET", "status": "UPCOMING", "stadium": LATEST_SCORES_CACHE["nas_tor"]["stadium"], "weather": LATEST_SCORES_CACHE["nas_tor"]["weather"], "quarter": "1ST PER"},
-        {"id": "vgk_sea", "game": "Vegas Golden Knights @ Seattle Kraken", "sport": "NHL", "score": "0 - 0", "time": "9:40 PM ET", "status": "UPCOMING", "stadium": LATEST_SCORES_CACHE["vgk_sea"]["stadium"], "weather": LATEST_SCORES_CACHE["vgk_sea"]["weather"], "quarter": "1ST PER"}
-    ]
-
-@app.route('/')
-def dashboard():
-    cfb_game = {
-        "home": "Troy", "away": "Southern Miss", "status": "UPCOMING",
-        "sliders": [
-            {"player": "Landry Lyddy (USM)", "metric": "200+ Pass Yards", "target": "OVER", "yield": "77%"},
-            {"player": "Goose Crowder (TROY)", "metric": "190+ Pass Yards", "target": "OVER", "yield": "72%"},
-            {"player": "Jaheim Merriweather (TROY)", "metric": "40+ Rush Yards", "target": "OVER", "yield": "47%"}
-        ]
-    }
+    <div class="header">
+        <h1 style="font-size: 1.4rem; margin: 0;">CEE ENGINE HUD</h1>
+        <div class="badge" id="pipeline-badge">Pipeline Active v7.1</div>
+    </div>
     
-    nhl_games = [
-        {"home": "Detroit Red Wings", "away": "Ottawa Senators", "angle": "Divisional Pivot", "play": "Ottawa ML (+115)", "handle": "71% Sharp Cash"},
-        {"home": "Toronto Maple Leafs", "away": "Nashville Predators", "angle": "Public Trap Fade", "play": "Nashville ML (+130)", "handle": "87% Public on TOR"},
-        {"home": "Seattle Kraken", "away": "Vegas Golden Knights", "angle": "Late Night Structure", "play": "Seattle ML (+142)", "handle": "Vegas Public Premium"}
-    ]
-    
-    syndicate_picks = {
-        "groups": [
-            {"alias": "Alpha Syndicate", "target": "Southern Miss +10.5", "size": "5x", "volatility": "91% Resistance", "v_color": "#ff9100"},
-            {"alias": "Wallet #4092 (High-Stakes)", "target": "Nashville ML (+130)", "size": "3.5x", "volatility": "84% Resistance", "v_color": "#ff9100"},
-            {"alias": "Vegas Sharp Box", "target": "Ottawa ML (+115)", "size": "2x", "volatility": "68% Resistance", "v_color": "#00e676"}
-        ]
-    }
-    
-    script_tracker = {
-        "phases": [
-            {"qtr": "1st Quarter", "id": "q1_bias", "name": "Public Media Bias Trap", "status": "SCANNING", "desc": "Detects high-volume early public lines on national TV broadcasts.", "color": "var(--text-muted)"},
-            {"qtr": "2nd Quarter", "id": "q2_rubber", "name": "The Rubber Band Effect", "status": "ARMED", "desc": "Monitors favorite over-extensions to flag live value shifts on alternate sliders.", "color": "var(--accent-orange)"},
-            {"qtr": "3rd Quarter", "id": "q3_freeze", "name": "The Neutralization Freeze", "status": "ARMED", "desc": "Calculates sudden clock-chewing splits and coach-driven pacing restraints.", "color": "var(--accent-orange)"},
-            {"qtr": "4th Quarter", "id": "q4_hook", "name": "The Trap Door Hook", "status": "ARMED", "desc": "Fades highly manipulated late game-script volatility to track static floors.", "color": "var(--accent-orange)"}
-        ]
-    }
-    
-    # 🎯 UPGRADED RECON MATRIX: Complete Line Breaks (Spreads, Totals, Puck Lines)
-    engine_recommendation = {
-        "status": "READY TO STRIKE",
-        "action_color": "var(--accent-green)",
-        "lines": [
-            {"label": "🏈 GAME SPREAD EDGE", "pick": "Southern Miss +10.5", "note": "Public is forcing value into the underdog trench script."},
-            {"label": "🏈 TOTALS OVER/UNDER", "pick": "USM @ TROY UNDER 51.5", "note": "Clock-chewing ground game will trap the public Over."},
-            {"label": "🏒 NHL PUCK LINE COVERS", "pick": "Nashville +1.5 Puck Line", "note": "Insulated safety cushion; high sharp-money cash handle placement."},
-            {"label": "🏒 NHL FLAT MONEYLINE", "pick": "Ottawa Senators ML (+115)", "note": "Pure public fade on Red Wings transition fatigue layers."}
-        ]
-    }
-    
-    early_board = {
-        "slate_date": "Sunday Slate Open (Week 5)",
-        "games": [
-            {"sport": "NFL", "matchup": "Detroit Lions @ Arizona Cardinals", "open_line": "Lions -3.5", "current_line": "Lions -4.5", "drift_text": "▲ +1.0 Live Public Shift", "drift_color": "#ff9100"},
-            {"sport": "NFL", "matchup": "Chicago Bears @ Green Bay Packers", "open_line": "Bears -1.0", "current_line": "Bears -2.5", "drift_text": "▲ +1.5 Public Premium", "drift_color": "#ff9100"}
-        ]
-    }
-    
-    return render_template('dashboard.html', cfb=cfb_game, nhl_items=nhl_games, sharps=syndicate_picks, early=early_board, live_games=pull_live_unblocked_scores(), script=script_tracker, alert=engine_recommendation)
+    <div class="status-container">
+        Last Checked: <span id="sync-time">Just Now</span>
+    </div>
 
-@app.route('/api/feed')
-def live_feed():
-    return jsonify({
-        "status": "Pipeline Active",
-        "version": "7.1-Multi-Line",
-        "cache_buster": time.time(),
-        "sentiment_updates": {
-            "Alpha Syndicate": "94% Public Resistance",
-            "Wallet #4092 (High-Stakes)": "87% Public Resistance",
-            "Vegas Sharp Box": "69% Public Resistance"
-        },
-        "script_updates": {
-            "q1_bias": {"status": "SCANNING", "color": "var(--text-muted)"},
-            "q2_rubber": {"status": "ARMED", "color": "var(--accent-orange)"},
-            "q3_freeze": {"status": "ARMED", "color": "var(--accent-orange)"},
-            "q4_hook": {"status": "ARMED", "color": "var(--accent-orange)"}
-        },
-        "score_updates": LATEST_SCORES_CACHE
-    })
+    <!-- 🚨 MASTER ACTION SHEET: MULTI-LINE SELECTIONS -->
+    <div class="section-title">🟢 Engine Green-Light Action Target</div>
+    <div class="action-card">
+        <div style="display: flex; justify-content: space-between; font-weight: bold; border-bottom: 1px dashed var(--border-color); padding-bottom: 8px; margin-bottom: 8px;">
+            <span style="color: var(--accent-green); font-size: 1rem;">🎯 SHARP SELECTION SHEET</span>
+            <span style="color: {{ alert.action_color }}; text-transform: uppercase; font-size: 0.9rem;">{{ alert.status }}</span>
+        </div>
+        
+        {% for line in alert.lines %}
+        <div class="line-item">
+            <div style="display: flex; justify-content: space-between; font-weight: bold; font-size: 0.92rem;">
+                <span style="color: var(--text-muted);">{{ line.label }}</span>
+                <span style="color: var(--text-main);">👉 {{ line.pick }}</span>
+            </div>
+            <div style="font-size: 0.82rem; color: var(--accent-orange); padding-top: 3px;">
+                {{ line.note }}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
 
-if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    <!-- Tonight's Live Scores & Weather Feed -->
+    <div class="section-title">📺 Live Slate & Stadium Weather Monitor</div>
+    <div class="grid-box" style="margin-bottom: 20px;">
+        {% for match in live_games %}
+        <div class="grid-row" style="align-items: center;" id="game-card-{{ match.id }}">
+            <div style="max-width: 65%;">
+                <span class="badge" style="font-size:0.75rem; padding: 2px 5px; background:rgba(255,255,255,0.05); color:var(--text-muted);">{{ match.sport }}</span>
+                <span style="font-weight: bold; color: var(--text-main); margin-left: 5px;">{{ match.game }}</span><br>
+                <span style="font-size: 0.8rem; color: var(--accent-orange); font-weight: 500; padding-top: 4px; display: block;">{{ match.stadium }} • {{ match.weather }}</span>
+            </div>
+            <div style="text-align: right;">
+                <span style="font-weight: bold; color: var(--accent-green); font-size: 1.1rem;" id="score-{{ match.id }}">{{ match.score }}</span><br>
+                <span class="badge badge-orange" style="font-size: 0.75rem; padding: 2px 6px; margin-top: 4px; display: inline-block;" id="status-{{ match.id }}">{{ match.quarter }}</span>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Broadcast Script Phase Tracker -->
+    <div class="section-title">⏱️ Broadcast Script Phase Tracker</div>
+    <div class="grid-box" style="margin-bottom: 20px;">
+        {% for phase in script.phases %}
+        <div class="grid-row" style="flex-direction: column; padding: 12px 0;">
+            <div style="display: flex; justify-content: space-between; width: 100%; font-weight: bold; font-size: 0.95rem;">
+                <span style="color: var(--text-main);">{{ phase.qtr }} : <span style="color: var(--accent-green);">{{ phase.name }}</span></span>
+                <span id="script-status-{{ phase.id }}" style="color: {{ phase.color }}; text-transform: uppercase;">{{ phase.status }}</span>
+            </div>
+            <div style="font-size: 0.85rem; color: var(--text-muted); padding-top: 4px; line-height: 1.3;">
+                {{ phase.desc }}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Active Milestone Targets -->
+    <div class="section-title">🏈 CFB Game Script Parameters</div>
+    <table class="matrix-table">
+        <tbody>
+            {% for slider in cfb.sliders %}
+            <tr>
+                <td style="font-weight: bold;">{{ slider.player }}</td>
+                <td><span class="badge badge-orange">{{ slider.target }} {{ slider.metric }}</span></td>
+                <td style="color: var(--accent-green); font-weight: bold; text-align: right;">{{ slider.yield }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- Syndicate Tracking Column -->
+    <div class="section-title">🎯 Syndicate Consensus & Volatility</div>
+    <div class="grid-box" style="margin-bottom: 24px;">
+        {% for group in sharps.groups %}
+        <div class="grid-row">
+            <div>
+                <span style="font-weight: bold; color: var(--text-main);">{{ group.alias }}</span><br>
+                <span style="font-size: 0.85rem; color: var(--text-muted);">Size: {{ group.size }}</span>
+            </div>
+            <div style="text-align: right;">
+                <span style="font-weight: bold; color: var(--text-main);">{{ group.target }}</span><br>
+                <span id="vol-{{ group.alias }}" style="font-size: 0.85rem; font-weight: bold; color: {{ group.v_color }};">{{ group.volatility }}</span>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Early Board Map -->
+    <div class="section-title">🌅 Early Board Map: {{ early.slate_date }}</div>
+    <div class="grid-box">
+        {% for game in early.games %}
+        <div class="grid-row" style="align-items: center;">
+            <div style="max-width: 60%;">
+                <span class="badge" style="font-size:0.75rem; padding: 2px 5px; background:rgba(255,255,255,0.05); color:var(--text-muted);">{{ game.sport }}</span>
+                <span style="font-weight: bold; color: var(--text-main); margin-left: 5px; display: inline-block; vertical-align: middle;">{{ game.matchup }}</span><br>
+                <span style="font-size: 0.8rem; color: {{ game.drift_color }}; font-weight: 600; padding-top: 4px; display: block;">{{ game.drift_text }}</span>
+            </div>
+            <div style="text-align: right;">
+                <span style="font-size: 0.8rem; color: var(--text-muted);">Open: {{ game.open_line }}</span><br>
+                <span style="font-weight: bold; color: var(--accent-green); font-size: 1.05rem;">Live: {{ game.current_line }}</span>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <script>
+        function checkEnginePipeline() {
+            fetch('/api/feed')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === "Pipeline Active") {
+                        const now = new Date();
+                        document.getElementById('sync-time').innerText = now.toLocaleTimeString();
+                        
