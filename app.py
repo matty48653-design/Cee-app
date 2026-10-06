@@ -52,7 +52,6 @@ def dashboard():
         ]
     }
     
-    # 🎯 NEW DATA INTEGRATION: Morale Deficit and Structural House Inflows
     morale_matrix = {
         "indicators": [
             {"name": "Morale Deficit Stream", "id": "morale_stream", "value": "Stable Floors", "color": "var(--accent-green)"},
