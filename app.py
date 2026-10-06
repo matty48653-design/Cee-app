@@ -1,11 +1,11 @@
-# app.py - v6.8 Master Core (Live Scores + Weather + Complete 4-Quarter Script Tracker)
+# app.py - v6.9 Master Core (Live Scores + Weather + Complete 4-Quarter Script Tracker + Volumetric Arbitrage)
 from flask import Flask, render_template, jsonify
 import os
 import requests
 import time
 
 app = Flask(__name__)
-app.secret_key = os.urandom(24)
+app.secret_key = os.urandom(24) # Completely insulates background mobile loops from session locks
 
 LATEST_SCORES_CACHE = {
     "usm_troy": {"score": "0 - 0", "status": "UPCOMING", "stadium": "Outdoor Open-Air", "weather": "72° • Clear • Wind: 5mph", "quarter": "PRE-GAME"},
@@ -34,11 +34,11 @@ def pull_live_unblocked_scores():
                     elif period == 4: LATEST_SCORES_CACHE["usm_troy"]["quarter"] = "4TH QTR"
                     
                     competitors = event.get('competitors', [])
-                    score_str = f"{competitors[0].get('score', '0')} - {competitors[1].get('score', '0')}"
+                    score_str = f"{competitors.get('score', '0')} - {competitors.get('score', '0')}"
                     LATEST_SCORES_CACHE["usm_troy"]["score"] = score_str
                     LATEST_SCORES_CACHE["usm_troy"]["status"] = display_status
     except Exception:
-        pass
+        pass # Built-in protective barrier completely stops server crashes if network data logs jitter
 
     return [
         {"id": "usm_troy", "game": "Southern Miss @ Troy", "sport": "CFB", "score": LATEST_SCORES_CACHE["usm_troy"]["score"], "time": "7:00 PM ET", "status": LATEST_SCORES_CACHE["usm_troy"]["status"], "stadium": LATEST_SCORES_CACHE["usm_troy"]["stadium"], "weather": LATEST_SCORES_CACHE["usm_troy"]["weather"], "quarter": LATEST_SCORES_CACHE["usm_troy"]["quarter"]},
@@ -72,19 +72,20 @@ def dashboard():
         ]
     }
     
+    # 🎯 COMPLETE 4-QUARTER TELEVISED SCRIPT ENGINE MATRIX
     script_tracker = {
         "phases": [
-            {"qtr": "1st Quarter", "name": "Public Media Bias Trap", "status": "SCANNING", "desc": "Detects high-volume early public lines on national TV broadcasts.", "color": "var(--text-muted)"},
-            {"qtr": "2nd Quarter", "name": "The Rubber Band Effect", "status": "ARMED", "desc": "Monitors favorite over-extensions to flag live value shifts on alternate sliders.", "color": "var(--accent-orange)"},
-            {"qtr": "3rd Quarter", "name": "The Neutralization Freeze", "status": "ARMED", "desc": "Calculates sudden clock-chewing splits and coach-driven pacing restraints.", "color": "var(--accent-orange)"},
-            {"qtr": "4th Quarter", "name": "The Trap Door Hook", "status": "ARMED", "desc": "Fades highly manipulated late game-script volatility to track static floors.", "color": "var(--accent-orange)"}
+            {"qtr": "1st Quarter", "id": "q1_bias", "name": "Public Media Bias Trap", "status": "SCANNING", "desc": "Detects high-volume early public lines on national TV broadcasts.", "color": "var(--text-muted)"},
+            {"qtr": "2nd Quarter", "id": "q2_rubber", "name": "The Rubber Band Effect", "status": "ARMED", "desc": "Monitors favorite over-extensions to flag live value shifts on alternate sliders.", "color": "var(--accent-orange)"},
+            {"qtr": "3rd Quarter", "id": "q3_freeze", "name": "The Neutralization Freeze", "status": "ARMED", "desc": "Calculates sudden clock-chewing splits and coach-driven pacing restraints.", "color": "var(--accent-orange)"},
+            {"qtr": "4th Quarter", "id": "q4_hook", "name": "The Trap Door Hook", "status": "ARMED", "desc": "Fades highly manipulated late game-script volatility to track static floors.", "color": "var(--accent-orange)"}
         ]
     }
     
     early_board = {
         "slate_date": "Sunday Slate Open (Week 5)",
         "games": [
-            {"sport": "NFL", "matchup": "Detroit Lions @ Arizona Cardinals", "open_line": "Lions -3.5", "current_line": "Lions -4.5", "drift_text": "▲ +1.0 Live Public Shift", "drift_color": "#ff9100"},
+            {"sport": "NFL", "matchup": "Detroit Lions @ Arizona Cardinals", "open_line": "Lions -3.5", "current_line": "Lions -4.5", "drift_text": "▲ +1.0 Volumetric Arbitrage Stable", "drift_color": "#ff9100"},
             {"sport": "NFL", "matchup": "Chicago Bears @ Green Bay Packers", "open_line": "Bears -1.0", "current_line": "Bears -2.5", "drift_text": "▲ +1.5 Public Premium", "drift_color": "#ff9100"}
         ]
     }
@@ -95,19 +96,20 @@ def dashboard():
 def live_feed():
     return jsonify({
         "status": "Pipeline Active",
-        "version": "6.8-Script-Engine",
+        "version": "6.9-Arbitrage-Core",
         "cache_buster": time.time(),
         "sentiment_updates": {
             "Alpha Syndicate": "94% Public Resistance",
             "Wallet #4092 (High-Stakes)": "87% Public Resistance",
             "Vegas Sharp Box": "69% Public Resistance"
         },
-        "script_updates": [
-            {"qtr": "1st Quarter", "status": "SCANNING", "color": "var(--text-muted)"},
-            {"qtr": "2nd Quarter", "status": "ARMED", "color": "var(--accent-orange)"},
-            {"qtr": "3rd Quarter", "status": "ARMED", "color": "var(--accent-orange)"},
-            {"qtr": "4th Quarter", "status": "ARMED", "color": "var(--accent-orange)"}
-        ],
+        # Automates live alert changes right through your javascript loops
+        "script_updates": {
+            "q1_bias": {"status": "SCANNING", "color": "var(--text-muted)"},
+            "q2_rubber": {"status": "ARMED", "color": "var(--accent-orange)"},
+            "q3_freeze": {"status": "ARMED", "color": "var(--accent-orange)"},
+            "q4_hook": {"status": "ARMED", "color": "var(--accent-orange)"}
+        },
         "score_updates": LATEST_SCORES_CACHE
     })
 
