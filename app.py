@@ -1,43 +1,16 @@
-# app.py - Complete v5.3 Clean-Table-Matrix (No Ticker Memory Loops)
+# app.py - Complete v5.6 - Operational Tracking Engine (No Personal Slips)
 from flask import Flask, render_template, jsonify
-import requests
+import os
 
 app = Flask(__name__)
-
-def normalize_team_name(team_str):
-    """
-    Enforces clean string formatting for the dashboard grid layout.
-    Filters out public variance data and keeps the layout structural integrity.
-    """
-    if not team_str:
-        return "Unknown"
-        
-    clean_name = str(team_str).strip().title()
-    
-    # Map the franchise alignment names cleanly
-    if "Utah" in clean_name or "Mammoth" in clean_name:
-        return "Utah"
-    if "Detroit" in clean_name or "Red Wings" in clean_name:
-        return "Detroit Red Wings"
-    if "Southern" in clean_name or "Usm" in clean_name:
-        return "Southern Miss"
-    if "Troy" in clean_name:
-        return "Troy"
-        
-    return clean_name
-
-def filter_active_slate(games_list):
-    """Enforces the matrix layout safety floor for busy 9-game cards."""
-    return [game for game in games_list if game.get('status') != 'POSTPONED'][:12]
+app.secret_key = os.urandom(24)
 
 @app.route('/')
 def dashboard():
-    """Renders the clean-table-matrix front end HUD."""
-    # Hardcoded live-feed testing variables for tonight's active targets
     cfb_game = {
         "home": "Troy",
         "away": "Southern Miss",
-        "status": "LIVE",
+        "status": "UPCOMING",
         "sliders": [
             {"player": "Landry Lyddy (USM)", "metric": "200+ Pass Yards", "target": "OVER", "yield": "77%"},
             {"player": "Goose Crowder (TROY)", "metric": "190+ Pass Yards", "target": "OVER", "yield": "72%"},
@@ -51,15 +24,27 @@ def dashboard():
         {"home": "Seattle Kraken", "away": "Vegas Golden Knights", "angle": "Late Night Structure", "play": "Seattle ML (+142)", "handle": "Vegas Public Premium"}
     ]
     
-    return render_template('dashboard.html', cfb=cfb_game, nhl_items=nhl_games)
+    # House panic thresholds & structural tracking elements
+    house_matrix = {
+        "metrics": [
+            {"name": "Panic Threshold Trigger", "id": "panic_trigger", "value": "0.0%", "color": "var(--text-muted)"},
+            {"name": "Morale Deficit Stream", "id": "morale_deficit", "value": "Stable", "color": "var(--accent-green)"},
+            {"name": "Line-Decay Manipulation Traps", "id": "decay_traps", "value": "Scanning...", "color": "var(--accent-orange)"}
+        ]
+    }
+    
+    return render_template('dashboard.html', cfb=cfb_game, nhl_items=nhl_games, tracker=house_matrix)
 
 @app.route('/api/feed')
 def live_feed():
-    """Provides real-world background pipeline validation stats."""
     return jsonify({
         "status": "Pipeline Active",
-        "version": "5.3-Clean-Table",
-        "active_slate_count": 10
+        "version": "5.6-Operational",
+        "live_metrics": {
+            "panic_trigger": {"value": "Active Scan", "color": "var(--accent-green)"},
+            "morale_deficit": {"value": "Monitoring Kickoff", "color": "var(--text-muted)"},
+            "decay_traps": {"value": "0 Flagged", "color": "var(--accent-green)"}
+        }
     })
 
 if __name__ == '__main__':
