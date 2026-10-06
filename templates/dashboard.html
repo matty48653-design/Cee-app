@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cee App - Live Action Commands</title>
+    <title>Cee App - Live In-Game Action Commands</title>
     <style>
         body {
             background-color: #060913;
@@ -72,6 +72,7 @@
             margin-bottom: 14px;
         }
 
+        /* High-Contrast Version 9.0 Bet Row Boxes */
         .live-scoreboard-ticker {
             background: #0f162a;
             border-left: 3px solid #ff4d4d;
@@ -96,6 +97,16 @@
             background: #0f162a;
             border-left: 3px solid #38bdf8;
             color: #38bdf8;
+            font-size: 0.85rem;
+            font-weight: 700;
+            padding: 10px 12px;
+            margin-bottom: 8px;
+        }
+        
+        .weather-banner {
+            background: #0f162a;
+            border-left: 3px solid #a855f7;
+            color: #a855f7;
             font-size: 0.85rem;
             font-weight: 700;
             padding: 10px 12px;
@@ -172,25 +183,25 @@
 <div id="matrix-container">
 
     <div class="system-test-badge">
-        <span class="status-dot"></span> LIVE RECON DATA EXTRACTION LAYER ACTIVE
+        <span class="status-dot"></span> LIVE IN-GAME ACTION COMMANDS (V9.0 CORE ACTIVE)
     </div>
 
     {% for match in matchups %}
     <div class="slate-card">
         
         {% if match.sport == 'NFL' %}
-        <div class="sport-type">🏈 COLLEGE FOOTBALL DATA PIPELINE</div>
+        <div class="sport-type">🏈 COLLEGE FOOTBALL REAL-TIME FEED</div>
         <div class="game-title">{{ match.away_team }} @ {{ match.home_team }}</div>
         
         <div class="live-scoreboard-ticker">🏆 GAME TIME SCORE: {{ match.live_score }}</div>
-        <div class="live-ou-banner">📊 OVER / UNDER TOTALS: {{ match.live_ou_status }}</div>
-        <div class="market-tag">💰 SPREAD & MONEYLINE: {{ match.market_alert }}</div>
-        <div style="color: #64748b; font-size: 0.75rem; font-style: italic; margin-bottom: 12px;">{{ match.scan_status }}</div>
+        <div class="live-ou-banner">📊 {{ match.live_ou_status }}</div>
+        <div class="market-tag">💰 {{ match.market_alert }}</div>
+        <div class="weather-banner">🌤️ {{ match.scan_status }}</div>
 
         <div class="prop-section">
             <div class="table-header">
                 <div>🎯 PLAYER PROP MATRIX</div>
-                <div>SHARP SELECTION FLOOR</div>
+                <div>SHARP SELECTION FLOORS</div>
             </div>
             {% for player in match.players %}
             <div class="prop-row">
@@ -212,15 +223,15 @@
         {% endif %}
 
         {% elif match.sport == 'NHL' %}
-        <div class="sport-type">🏒 NHL LIVE HOCKEY MATRICES</div>
+        <div class="sport-type">🏒 NHL LIVE HOCKEY DIRECTIVE SLATE</div>
         <div class="game-title">{{ match.away_team }} @ {{ match.home_team }}</div>
         
-        <div class="live-scoreboard-ticker">🏒 LIVE SCORE TICKER: {{ match.live_score }}</div>
-        <div class="live-ou-banner">📊 OVER / UNDER TOTALS: {{ match.live_ou_status }}</div>
-        <div class="market-tag">💰 MONEYLINE / SPREADS: {{ match.market_alert }}</div>
+        <div class="live-scoreboard-ticker">🏒 {{ match.live_score }}</div>
+        <div class="live-ou-banner">📊 {{ match.live_ou_status }}</div>
+        <div class="market-tag">💰 {{ match.market_alert }}</div>
         
         <div class="nhl-status-tracker">
-            <strong>CEE Recon Profile:</strong> {{ match.scan_status }}
+            <strong>CEE Recon Environment:</strong> {{ match.scan_status }}
         </div>
         {% endif %}
         
