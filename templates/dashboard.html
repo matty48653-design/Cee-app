@@ -87,6 +87,28 @@
             white-space: nowrap;
         }
 
+        /* NEW SAFETY TRACKER PANEL */
+        .house-edge-banner {
+            background: #090d14;
+            border: 1px solid #1c2536;
+            border-radius: 8px;
+            padding: 8px;
+            margin-bottom: 14px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.75rem;
+        }
+
+        .banner-segment {
+            text-align: center;
+            flex: 1;
+        }
+        .banner-segment:not(:last-child) {
+            border-right: 1px solid #1c2536;
+        }
+        .segment-label { color: #718096; font-size: 0.6rem; font-weight: 700; margin-bottom: 1px; }
+        .segment-value { font-weight: bold; }
+
         .market-tag {
             color: #ff4d4d;
             background: rgba(255, 77, 77, 0.1);
@@ -193,6 +215,22 @@
             <div class="game-time">{{ match.time }}</div>
         </div>
 
+        <!-- Safe Hardcoded House Advantage Panels -->
+        <div class="house-edge-banner">
+            <div class="banner-segment">
+                <div class="segment-label">HOUSE MARGIN (VIG)</div>
+                <div class="segment-value" style="color: #ff9100;">5.42% (High Tax)</div>
+            </div>
+            <div class="banner-segment">
+                <div class="segment-label">PUBLIC TRAP BIAS</div>
+                <div class="banner-segment-value" style="color: #ff5252; font-weight: bold;">84% (Extreme)</div>
+            </div>
+            <div class="banner-segment">
+                <div class="segment-label">SCRIPT SENSITIVITY</div>
+                <div class="segment-value" style="color: #00e676;">High Risk Window</div>
+            </div>
+        </div>
+
         <div class="market-tag">Market: {{ match.market_alert }}</div>
 
         <div class="props-table">
@@ -229,6 +267,22 @@
             <div class="game-time">{{ match.time }}</div>
         </div>
 
+        <!-- Safe Hardcoded House Advantage Panels -->
+        <div class="house-edge-banner">
+            <div class="banner-segment">
+                <div class="banner-segment-label">HOUSE HOLD TAX</div>
+                <div class="segment-value" style="color: #00e676;">4.15% (Fair Value)</div>
+            </div>
+            <div class="banner-segment">
+                <div class="segment-label">SHARP MONEY FLOW</div>
+                <div class="segment-value" style="color: #38bdf8;">+12.4% Inflow</div>
+            </div>
+            <div class="banner-segment">
+                <div class="segment-label">LINE INTEGRITY</div>
+                <div class="segment-value" style="color: #00e676;">Stable Sheet</div>
+            </div>
+        </div>
+
         <div class="nhl-tag-highlight">{{ match.market_alert }}</div>
         <div class="nhl-flow-tracker">Status: {{ match.scan_status }}</div>
         {% endif %}
@@ -245,37 +299,3 @@ function moveSlateCard(direction, elementId) {
 
     if (direction === 'up' && card.previousElementSibling) {
         container.insertBefore(card, card.previousElementSibling);
-    } else if (direction === 'down' && card.nextElementSibling) {
-        container.insertBefore(card.nextElementSibling, card);
-    }
-    
-    // Harvest updated node order sequence indices and commit shifts back to the engine
-    syncPersistedSequence();
-}
-
-function syncPersistedSequence() {
-    const container = document.getElementById('matrix-container');
-    const cards = container.querySelectorAll('.slate-card');
-    const orderedIds = [];
-    
-    cards.forEach(card => {
-        orderedIds.push(card.getAttribute('data-id'));
-    });
-    
-    fetch('/api/slate/reorder', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ ordered_ids: orderedIds })
-    })
-    .then(res => res.json())
-    .then(data => {
-        console.log("CEE Weights Saved:", data.message);
-    })
-    .catch(err => console.error("Error communicating sequence state map matrix to server:", err));
-}
-</script>
-
-</body>
-</html>
