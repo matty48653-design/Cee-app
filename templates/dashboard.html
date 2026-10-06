@@ -46,7 +46,6 @@
             <span>Safety Floor Target</span>
         </div>
         
-        <!-- Dynamic containers for the JavaScript feed engine loops -->
         <div id="player-stream-container">
             {% for player in players %}
             <div class="data-row">
@@ -68,34 +67,52 @@
         </div>
     </div>
 
-    <!-- 🟢 NEW AUTOMATIC SYNCHRONIZATION ENGINE SCRIPT 🟢 -->
     <script>
         async function fetchLiveMatrixUpdates() {
             try {
-                // Hits the main route to pull down fresh background data arrays
-                const response = await fetch(window.location.origin + '/');
+                // Queries our custom api data route directly
+                const response = await fetch(window.location.origin + '/api/live-state');
                 if (!response.ok) return;
                 
-                // Parses HTML output cleanly on a separate virtual thread 
-                const text = await response.text();
-                const parser = new DOMParser();
-                const doc = parser.parseFromString(text, 'text/html');
+                const data = await response.json();
                 
-                // Instantly mutates changed numbers without flashing the viewport
-                document.getElementById('game-title').innerHTML = doc.getElementById('game-title').innerHTML;
-                document.getElementById('live-clock').innerHTML = doc.getElementById('live-clock').innerHTML;
-                document.getElementById('pacing-status').innerHTML = doc.getElementById('pacing-status').innerHTML;
-                document.getElementById('projected-final').innerHTML = doc.getElementById('projected-final').innerHTML;
-                document.getElementById('player-stream-container').innerHTML = doc.getElementById('player-stream-container').innerHTML;
-                document.getElementById('morale-stream-container').innerHTML = doc.getElementById('morale-stream-container').innerHTML;
+                // Directly rewrite DOM nodes without running unparsed full page evaluations
+                document.getElementById('game-title').innerText = data.slate.game;
+                document.getElementById('live-clock').innerText = `🏁 LIVE CLOCK: ${data.slate.live_clock} | ${data.slate.score_string}`;
+                document.getElementById('pacing-status').innerText = `📊 SIM ENGINE MODEL: ${data.slate.pacing_status} (Closing Line: ${data.slate.closing_line})`;
+                document.getElementById('projected-final').innerText = `Projected Final: ${data.slate.score_string} (Sim Total: ${data.slate.sim_total})`;
+                
+                // Re-draw Player Streams on background ticker
+                let playerHTML = '';
+                data.players.forEach(p => {
+                    let styleClass = p.is_floor ? 'target-floor' : 'target-ceiling';
+                    playerHTML += `
+                        <div class="data-row">
+                            <span class="player-name">${p.name} <span class="player-pos">(${p.position})</span></span>
+                            <span class="${styleClass}">${p.target}</span>
+                        </div>`;
+                });
+                document.getElementById('player-stream-container').innerHTML = playerHTML;
+
+                // Re-draw Morale Stream warnings
+                let moraleHTML = '';
+                data.morale.forEach(m => {
+                    moraleHTML += `
+                        <div style="display: flex; gap: 15px; align-items: flex-start; margin-top: 8px;">
+                            <span class="crossed-out">${m.unit}</span>
+                            <span class="warn-tag">${m.status}</span>
+                            <div class="alert-desc">${m.alert_text}</div>
+                        </div>`;
+                });
+                document.getElementById('morale-stream-container').innerHTML = moraleHTML;
                 
             } catch (err) {
                 console.log("Sync error:", err);
             }
         }
 
-        // Loop runs silently on background ticker every 5000ms (5 seconds)
-        setInterval(fetchLiveMatrixUpdates, 5000);
+        // Ticker loop checks for fresh data payloads every 3 seconds
+        setInterval(fetchLiveMatrixUpdates, 3000);
     </script>
 
 </body>
