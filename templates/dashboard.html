@@ -15,7 +15,6 @@
         .badge { background: #14532d; color: #4ade80; padding: 2px 6px; border-radius: 4px; font-size: 11px; font-weight: 600; display: inline-block; }
         .badge-alt { background: #7c2d12; color: #f97316; padding: 2px 6px; border-radius: 4px; font-size: 11px; font-weight: 600; display: inline-block; }
         .badge-nfl { background: #1e3a8a; color: #60a5fa; padding: 2px 6px; border-radius: 4px; font-size: 11px; font-weight: 600; display: inline-block; }
-        .badge-split { background: #311042; color: #d946ef; padding: 2px 6px; border-radius: 4px; font-size: 11px; font-weight: 600; display: inline-block; }
     </style>
 </head>
 <body>
@@ -34,13 +33,13 @@
             </tr>
         </thead>
         <tbody>
-            {% for split in cache.contrarian_splits_matrix.slates %}
+            {% for game in cache.low_volume_splits.games %}
             <tr>
-                <td><b>{{ split.matchup }}</b></td>
-                <td style="color: #f87171; font-weight: 600;">{{ split.line }}</td>
-                <td style="color: #94a3b8;">{{ split.public_tickets }}</td>
-                <td style="color: #34d399; font-weight: 600;">{{ split.sharp_cash }}</td>
-                <td><span class="badge-split">{{ split.volume }}</span></td>
+                <td><b>{{ game.matchup }}</b></td>
+                <td><span style="color: #f87171;">{{ game.target }}</span></td>
+                <td>{{ game.tickets }}</td>
+                <td style="color: #4ade80;">{{ game.cash }}</td>
+                <td><span class="badge-alt">{{ game.state }}</span></td>
             </tr>
             {% endfor %}
         </tbody>
