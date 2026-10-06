@@ -26,70 +26,45 @@ def save_slate_order(order_map):
     except Exception:
         return False
 
-def get_aws_nextgen_pressure_metrics(team_id):
-    """
-    Simulated AWS Next Gen Stats Endpoint Wrapper.
-    Evaluates defensive pass-rush pressure scores and pocket collapse rates.
-    """
-    aws_tracking_feed = {
-        "NO": {"defensive_pressure_score": 38.4, "avg_time_to_pressure": 2.42},
-        "ATL": {"defensive_pressure_score": 22.1, "avg_time_to_pressure": 2.85}
-    }
-    return aws_tracking_feed.get(team_id, {"defensive_pressure_score": 25.0, "avg_time_to_pressure": 2.60})
-
 def fetch_active_matrix_data():
     """
-    Automated Background Feed Engine.
-    Streams actual slates and processes live AWS advanced metrics data layers.
+    Standard live mapping fallback matching your active constraints.
     """
-    saints_defensive_pressure = get_aws_nextgen_pressure_metrics("NO")
-    falcons_defensive_pressure = get_aws_nextgen_pressure_metrics("ATL")
-
     return [
         {
-            "id": "nfl_falcons_saints_2026",
+            "id": "nfl_game_1",
             "sport": "NFL",
             "away_team": "Atlanta Falcons",
             "home_team": "New Orleans Saints",
             "time": "8:15 PM ET",
-            "market_alert": f"Saints -1.5 (ATL Pass Rush Pressure Score: {falcons_defensive_pressure['defensive_pressure_score']}% 🚨)",
+            "market_alert": "Saints -1.5 (Trap Flagged 🚨)",
             "players": [
                 {"name": "Bijan Robinson (RB)", "milestone": "Over 50.5 Rush Yds", "integrity": "PREMIUM FLOOR"},
-                {"name": "Drake London (WR)", "milestone": "Over 65.5 Rec Yds", "integrity": "SHARP MILESTONE"},
-                {"name": "Chris Olave (WR)", "milestone": "8+ Receptions (+122)", "integrity": "SHARP MILESTONE"},
-                {"name": "Juwan Johnson (TE)", "milestone": "Over 35.5 Yards", "integrity": "PREMIUM FLOOR"}
+                {"name": "Michael Penix Jr. (QB)", "milestone": "Over 200.5 Pass Yds", "integrity": "SHARP INTEGRITY"}
             ],
             "morale_deficits": [
-                {
-                    "name": "Saints O-Line depth", 
-                    "status": "WARN", 
-                    "impact": f"Morale Penalty Active: Fast collapse risk (ATL Time-to-Pressure: 2.85s)"
-                },
-                {
-                    "name": "Falcons Front Seven", 
-                    "status": "HEALTHY", 
-                    "impact": f"Panic Threshold Stable: NO Pass Rush Pressure: {saints_defensive_pressure['defensive_pressure_score']}%"
-                }
+                {"name": "Kaden Elliss (LB)", "status": "OUT", "impact": "Front-Seven Depth Core Collapse"},
+                {"name": "Carl Granderson (DE)", "status": "OUT", "impact": "Pass Rush Containment Void"}
             ]
         },
         {
-            "id": "nhl_flyers_lightning_2026",
+            "id": "nhl_game_1",
             "sport": "NHL",
             "away_team": "Philadelphia Flyers",
             "home_team": "Tampa Bay Lightning",
             "time": "7:00 PM ET",
             "market_alert": "Money Line / Totals Only (Puck Line Blocked)",
-            "scan_status": "Tracking Sharp Inflows"
+            "scan_status": "Scanning Money Flow..."
         }
     ]
 
 @app.route('/')
 def main_dashboard():
-    """Renders real data matrix items organized by custom ordering profiles."""
+    """Renders data matrix items organized by custom ordering profiles."""
     active_matchups = fetch_active_matrix_data()
     order_map = load_slate_order()
     
-    # Sort items sequentially based on your mobile dashboard arrangement actions
+    # Sort items sequentially. Elements missing weights append to fallback priority rows.
     active_matchups.sort(key=lambda x: order_map.get(str(x.get('id')), 999))
     
     return render_template('dashboard.html', matchups=active_matchups)
