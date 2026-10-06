@@ -84,10 +84,16 @@
             font-size: 0.95rem;
         }
         .grid-row:last-child { border-bottom: none; }
-        
         .action-card {
             background: linear-gradient(135deg, rgba(0,230,118,0.04) 0%, rgba(11,15,25,0.6) 100%);
             border: 1px dashed var(--accent-green);
+            border-radius: 8px;
+            padding: 16px;
+            margin-top: 10px;
+        }
+        .quantum-card {
+            background: linear-gradient(135deg, rgba(255,145,0,0.04) 0%, rgba(11,15,25,0.6) 100%);
+            border: 1px dashed var(--accent-orange);
             border-radius: 8px;
             padding: 16px;
             margin-top: 10px;
@@ -100,24 +106,19 @@
     </style>
 </head>
 <body>
-
     <div class="header">
         <h1 style="font-size: 1.4rem; margin: 0;">CEE ENGINE HUD</h1>
-        <div class="badge" id="pipeline-badge">Pipeline Active v8.0</div>
+        <div class="badge" id="pipeline-badge">Pipeline Active v9.5</div>
     </div>
-    
     <div class="status-container">
         Last Checked: <span id="sync-time">Just Now</span>
     </div>
-
-    <!-- MASTER ACTION SHEET -->
-    <div class="section-title">🟢 Cee Supreme Action Signals</div>
+    <div class="section-title"> 🟢 Cee Supreme Action Signals</div>
     <div class="action-card">
         <div style="display: flex; justify-content: space-between; font-weight: bold; border-bottom: 1px dashed var(--border-color); padding-bottom: 8px; margin-bottom: 8px;">
             <span style="color: var(--accent-green); font-size: 0.95rem;">🎯 LIVE DIRECTIVE SHEET</span>
             <span style="color: var(--accent-green); text-transform: uppercase; font-size: 0.85rem;" id="global-strike-status">SCANNING REAL TIME</span>
         </div>
-        
         {% for trigger in alert.triggers %}
         <div class="line-item">
             <div style="display: flex; justify-content: space-between; font-weight: bold; font-size: 0.92rem;">
@@ -130,8 +131,24 @@
         </div>
         {% endfor %}
     </div>
-
-    <!-- Tonight's Live Scores & Weather Feed -->
+    <div class="section-title">🔒 Quantum Live Profit-Lock Triggers</div>
+    <div class="quantum-card">
+        <div style="display: flex; justify-content: space-between; font-weight: bold; border-bottom: 1px dashed var(--border-color); padding-bottom: 8px; margin-bottom: 8px;">
+            <span style="color: var(--accent-orange); font-size: 0.95rem;">📊 AUTOMATED ARBITRAGE CALCULATOR</span>
+            <span style="color: var(--accent-orange); text-transform: uppercase; font-size: 0.85rem;">TRACKING MATCHUPS</span>
+        </div>
+        {% for hedge in quantum.hedges %}
+        <div class="line-item">
+            <div style="display: flex; justify-content: space-between; font-weight: bold; font-size: 0.92rem;">
+                <span style="color: var(--text-muted);">{{ hedge.market }}</span>
+                <span style="color: var(--accent-orange); text-align: right;" id="quantum-txt-{{ hedge.id }}">⏳ {{ hedge.instruction }}</span>
+            </div>
+            <div style="font-size: 0.82rem; color: var(--text-main); padding-top: 3px;" id="quantum-note-{{ hedge.id }}">
+                {{ hedge.note }}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
     <div class="section-title">📺 Live Slate & Stadium Weather Monitor</div>
     <div class="grid-box" style="margin-bottom: 20px;">
         {% for match in live_games %}
@@ -148,8 +165,6 @@
         </div>
         {% endfor %}
     </div>
-
-    <!-- Broadcast Script Phase Tracker -->
     <div class="section-title">⏱️ Broadcast Script Phase Tracker</div>
     <div class="grid-box" style="margin-bottom: 20px;">
         {% for phase in script.phases %}
@@ -164,8 +179,6 @@
         </div>
         {% endfor %}
     </div>
-
-    <!-- Active Milestone Targets -->
     <div class="section-title">🏈 CFB Game Script Parameters</div>
     <table class="matrix-table">
         <tbody>
@@ -178,8 +191,6 @@
             {% endfor %}
         </tbody>
     </table>
-
-    <!-- Syndicate Tracking Column -->
     <div class="section-title">🎯 Syndicate Consensus & Volatility</div>
     <div class="grid-box" style="margin-bottom: 24px;">
         {% for group in sharps.groups %}
@@ -195,29 +206,8 @@
         </div>
         {% endfor %}
     </div>
-
-    <!-- Early Board Map -->
     <div class="section-title">🌅 Early Board Map: {{ early.slate_date }}</div>
     <div class="grid-box">
         {% for game in early.games %}
         <div class="grid-row" style="align-items: center;">
             <div style="max-width: 60%;">
-                <span class="badge" style="font-size:0.75rem; padding: 2px 5px; background:rgba(255,255,255,0.05); color:var(--text-muted);">{{ game.sport }}</span>
-                <span style="font-weight: bold; color: var(--text-main); margin-left: 5px; display: inline-block; vertical-align: middle;">{{ game.matchup }}</span><br>
-                <span style="font-size: 0.8rem; color: {{ game.drift_color }}; font-weight: 600; padding-top: 4px; display: block;">{{ game.drift_text }}</span>
-            </div>
-            <div style="text-align: right;">
-                <span style="font-size: 0.8rem; color: var(--text-muted);">Open: {{ game.open_line }}</span><br>
-                <span style="font-weight: bold; color: var(--accent-green); font-size: 1.05rem;">Live: {{ game.current_line }}</span>
-            </div>
-        </div>
-        {% endfor %}
-    </div>
-
-    <script>
-        function checkEnginePipeline() {
-            fetch('/api/feed')
-                .then(response => response.json())
-                .then(data => {
-                    if (data.status === "Pipeline Active") {
-                        const now = new Date();
