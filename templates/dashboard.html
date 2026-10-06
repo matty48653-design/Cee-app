@@ -90,15 +90,33 @@
 
     <div class="header">
         <h1 style="font-size: 1.4rem; margin: 0;">CEE ENGINE HUD</h1>
-        <div class="badge" id="pipeline-badge">Pipeline Active v6.2</div>
+        <div class="badge" id="pipeline-badge">Pipeline Active v6.3</div>
     </div>
     
     <div class="status-container">
         Last Checked: <span id="sync-time">Just Now</span>
     </div>
 
-    <!-- Active Slate Targets -->
-    <div class="section-title">🏈 CFB Game Script</div>
+    <!-- 📺 NEW LIVE SLATE DISPLAY MODULE -->
+    <div class="section-title">📺 Tonight's Live Slate Monitor</div>
+    <div class="grid-box" style="margin-bottom: 20px;">
+        {% for match in live_games %}
+        <div class="grid-row" style="align-items: center;">
+            <div>
+                <span class="badge" style="font-size:0.75rem; padding: 2px 5px; background:rgba(255,255,255,0.05); color:var(--text-muted);">{{ match.sport }}</span>
+                <span style="font-weight: bold; color: var(--text-main); margin-left: 5px;">{{ match.game }}</span><br>
+                <span style="font-size: 0.8rem; color: var(--text-muted); padding-top: 4px; display: block;">Start Time: {{ match.time }}</span>
+            </div>
+            <div style="text-align: right;">
+                <span style="font-weight: bold; color: var(--accent-green); font-size: 1.1rem;">{{ match.score }}</span><br>
+                <span class="badge badge-orange" style="font-size: 0.75rem; padding: 2px 6px; margin-top: 4px; display: inline-block;">{{ match.status }}</span>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Active Milestone Targets -->
+    <div class="section-title">🏈 CFB Game Script Parameters</div>
     <table class="matrix-table">
         <tbody>
             {% for slider in cfb.sliders %}
@@ -113,7 +131,7 @@
 
     <!-- Syndicate Tracking Column -->
     <div class="section-title">🎯 Syndicate Consensus & Volatility</div>
-    <div class="grid-box">
+    <div class="grid-box" style="margin-bottom: 24px;">
         {% for group in sharps.groups %}
         <div class="grid-row">
             <div>
@@ -123,24 +141,6 @@
             <div style="text-align: right;">
                 <span style="font-weight: bold; color: var(--text-main);">{{ group.target }}</span><br>
                 <span id="vol-{{ group.alias }}" style="font-size: 0.85rem; font-weight: bold; color: {{ group.v_color }};">{{ group.volatility }}</span>
-            </div>
-        </div>
-        {% endfor %}
-    </div>
-
-    <!-- Early Board Map + Real-Time Market Drift Calculations -->
-    <div class="section-title">🌅 Early Board Map: {{ early.slate_date }}</div>
-    <div class="grid-box">
-        {% for game in early.games %}
-        <div class="grid-row" style="align-items: center;">
-            <div style="max-width: 60%;">
-                <span class="badge" style="font-size:0.75rem; padding: 2px 5px; background:rgba(255,255,255,0.05); color:var(--text-muted);">{{ game.sport }}</span>
-                <span style="font-weight: bold; color: var(--text-main); margin-left: 5px; display: inline-block; vertical-align: middle;">{{ game.matchup }}</span><br>
-                <span style="font-size: 0.8rem; color: {{ game.drift_color }}; font-weight: 600; padding-top: 4px; display: block;">{{ game.drift_text }}</span>
-            </div>
-            <div style="text-align: right;">
-                <span style="font-size: 0.8rem; color: var(--text-muted);">Open: {{ game.open_line }}</span><br>
-                <span style="font-weight: bold; color: var(--accent-green); font-size: 1.05rem;">Live: {{ game.current_line }}</span>
             </div>
         </div>
         {% endfor %}
