@@ -3,51 +3,239 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cee App</title>
+    <title>Cee App - Contrarian Edge Engine</title>
     <style>
-        body { background-color: #06090f; color: #f0f4f8; font-family: sans-serif; margin: 0; padding: 12px; }
-        .bankroll-box { background: #0e1322; border: 1px solid #1e293b; border-radius: 8px; padding: 12px; margin-bottom: 16px; }
-        .slate-card { background-color: #0b111e; border-radius: 8px; padding: 14px; margin-bottom: 12px; border: 1px solid #161f33; }
-        .game-title { font-size: 1.1rem; font-weight: bold; margin-bottom: 6px; }
-        .market-tag { color: #ff4d4d; font-size: 0.8rem; margin-bottom: 10px; font-weight: bold; }
-        .prop-row { padding: 6px 0; border-top: 1px solid #161f33; display: flex; justify-content: space-between; font-size: 0.9rem; }
+        body {
+            background-color: #060913;
+            color: #e2e8f0;
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif;
+            margin: 0;
+            padding: 12px;
+            -webkit-font-smoothing: antialiased;
+        }
+        
+        #matrix-container {
+            max-width: 480px;
+            margin: 0 auto;
+        }
+
+        /* Premium Cyber Command Header Box */
+        .bankroll-box {
+            background: linear-gradient(135deg, #0b1120 0%, #111a30 100%);
+            border: 1px solid #1e293b;
+            border-radius: 12px;
+            padding: 14px;
+            margin-bottom: 16px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+        }
+
+        .header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .fluid-title {
+            color: #64748b;
+            font-size: 0.65rem;
+            font-weight: 800;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+
+        .fluid-cash {
+            color: #00e676;
+            font-size: 1.5rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            text-shadow: 0 0 10px rgba(0, 230, 118, 0.2);
+        }
+
+        .token-vault {
+            text-align: right;
+        }
+
+        .token-badge {
+            color: #ffd600;
+            font-size: 0.8rem;
+            font-weight: 700;
+            background: rgba(255, 214, 0, 0.06);
+            padding: 4px 8px;
+            border-radius: 6px;
+            border: 1px solid rgba(255, 214, 0, 0.15);
+            display: inline-block;
+        }
+
+        .system-test-badge {
+            background: rgba(255, 145, 0, 0.05);
+            border: 1px solid rgba(255, 145, 0, 0.3);
+            color: #ff9100;
+            text-align: center;
+            font-size: 0.7rem;
+            font-weight: 900;
+            padding: 6px;
+            border-radius: 6px;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+        }
+
+        /* Neon Edge Slate Cards */
+        .slate-card {
+            background: #090f1d;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 14px;
+            border: 1px solid #152238;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .sport-type {
+            color: #ff4d4d;
+            font-size: 0.65rem;
+            font-weight: 900;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            margin-bottom: 6px;
+        }
+
+        .game-title {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: #ffffff;
+            letter-spacing: -0.01em;
+            margin-bottom: 2px;
+        }
+
+        .game-schedule {
+            color: #475569;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .market-tag {
+            color: #ff4d4d;
+            background: rgba(255, 77, 77, 0.05);
+            border: 1px solid rgba(255, 77, 77, 0.2);
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            margin-bottom: 14px;
+            display: inline-block;
+        }
+
+        /* Matrix Table Layouts */
+        .prop-section {
+            margin-top: 10px;
+        }
+
+        .table-header {
+            display: flex;
+            justify-content: space-between;
+            color: #475569;
+            font-size: 0.6rem;
+            font-weight: 800;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            padding-bottom: 6px;
+            border-bottom: 1px solid #152238;
+            margin-bottom: 4px;
+        }
+
+        .prop-row {
+            padding: 8px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .prop-row:not(:last-child) {
+            border-bottom: 1px solid #0d1627;
+        }
+
+        .player-name {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #ffffff;
+        }
+
+        .milestone-value {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #ffeb3b;
+            text-align: right;
+        }
+
+        .nhl-status-tracker {
+            color: #64748b;
+            font-style: italic;
+            font-size: 0.8rem;
+            background: #050811;
+            padding: 8px;
+            border-radius: 6px;
+            border: 1px solid #10192a;
+            margin-top: 4px;
+        }
     </style>
 </head>
 <body>
 
-<div class="bankroll-box">
-    <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
-        <div><strong>FLUID CAPITAL:</strong> <span style="color: #00e676;">$178.54</span></div>
-        <div>⭐ $20.00 · 4 Boosts</div>
-    </div>
-    <div style="color: #ff9100; font-size: 0.75rem; font-weight: bold; text-align: center;">
-        ⚠️ LIVE SYSTEM TEST RUN ACTIVE
-    </div>
-</div>
-
 <div id="matrix-container">
+
+    <!-- Fluid Bankroll Premium Header -->
+    <div class="bankroll-box">
+        <div class="header-row">
+            <div>
+                <div class="fluid-title">FLUID CAPITAL</div>
+                <div class="fluid-cash">$178.54</div>
+            </div>
+            <div class="token-vault">
+                <div class="fluid-title" style="margin-bottom: 2px;">VAULT ASSETS</div>
+                <span class="token-badge">⭐ $20.00 · 4 Boosts</span>
+            </div>
+        </div>
+        <div class="system-test-badge">
+            ⚠️ ENGINE STATUS: LIVE SYSTEM TEST RUN ACTIVE
+        </div>
+    </div>
+
+    <!-- Live Dynamic Matchups Loops -->
     {% for match in matchups %}
     <div class="slate-card">
+        
+        {% if match.sport == 'NFL' %}
+        <div class="sport-type">🏈 ACTIVE FOOTBALL SLATE</div>
+        {% elif match.sport == 'NHL' %}
+        <div class="sport-type">🏒 ACTIVE ICE CONTRARIAN TOTAL</div>
+        {% endif %}
+
         <div class="game-title">{{ match.away_team }} @ {{ match.home_team }}</div>
-        <div style="color: #64748b; font-size: 0.8rem; margin-bottom: 8px;">{{ match.time }}</div>
+        <div class="game-schedule">{{ match.time }}</div>
         <div class="market-tag">{{ match.market_alert }}</div>
 
         {% if match.sport == 'NFL' %}
-        <div style="margin-top: 8px;">
+        <div class="prop-section">
+            <div class="table-header">
+                <div>PLAYER DATA STREAM</div>
+                <div>SAFETY FLOOR TARGET</div>
+            </div>
             {% for player in match.players %}
             <div class="prop-row">
-                <div><strong>{{ player.name }}</strong></div>
-                <div style="color: #ffeb3b;">{{ player.milestone }}</div>
+                <div class="player-name">{{ player.name }}</div>
+                <div class="milestone-value">{{ player.milestone }}</div>
             </div>
             {% endfor %}
         </div>
         {% elif match.sport == 'NHL' %}
-        <div style="color: #64748b; font-style: italic; font-size: 0.85rem; margin-top: 6px;">
-            Status: {{ match.scan_status }}
+        <div class="nhl-status-tracker">
+            {{ match.scan_status }}
         </div>
         {% endif %}
+        
     </div>
     {% endfor %}
+    
 </div>
 
 </body>
