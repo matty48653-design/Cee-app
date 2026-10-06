@@ -8,7 +8,7 @@ app = Flask(__name__)
 # ==========================================
 engine_cache = {
     "framework_version": "5.3-Clean-Table-Matrix",
-    "last_sync_timestamp": "10-06-2026 10:35 AM",
+    "last_sync_timestamp": "10-06-2026 10:45 AM",
     "global_rules": {
         "block_volatile_micro_lines": True,
         "enforce_milestone_slider_floors": True,
@@ -40,9 +40,11 @@ engine_cache = {
     "low_volume_splits": {
         "status": "active",
         "games": [
-            {"matchup": "Islanders @ Rangers", "target": "Under 5.5", "tickets": "58%", "cash": "64%", "state": "CONTRARIAN_EDGE"},
-            {"matchup": "Predators @ Maple Leafs", "target": "Under 6.0", "tickets": "52%", "cash": "71%", "state": "OVERLOOKED"},
-            {"matchup": "Senators @ Red Wings", "target": "Under 6.5", "tickets": "48%", "cash": "59%", "state": "SHARP_MONEY"}
+            {"matchup": "Islanders @ Rangers", "target": "Under 5.5", "tickets": "58%", "cash": "64%", "state": "NHL TONIGHT"},
+            {"matchup": "Predators @ Maple Leafs", "target": "Under 6.0", "tickets": "52%", "cash": "71%", "state": "NHL TONIGHT"},
+            {"matchup": "Georgia @ Alabama", "target": "Georgia -3", "tickets": "74%", "cash": "51%", "state": "CFB WEEK 6"},
+            {"matchup": "UCLA @ Oregon", "target": "Under 60.5", "tickets": "68%", "cash": "44%", "state": "CFB WEEK 6"},
+            {"matchup": "Lakers @ Warriors", "target": "LAL ML (+115)", "tickets": "38%", "cash": "62%", "state": "NBA PRE"}
         ]
     }
 }
