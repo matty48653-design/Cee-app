@@ -90,14 +90,14 @@
 
     <div class="header">
         <h1 style="font-size: 1.4rem; margin: 0;">CEE ENGINE HUD</h1>
-        <div class="badge" id="pipeline-badge">Pipeline Active v6.3</div>
+        <div class="badge" id="pipeline-badge">Pipeline Active v6.4</div>
     </div>
     
     <div class="status-container">
         Last Checked: <span id="sync-time">Just Now</span>
     </div>
 
-    <!-- 📺 NEW LIVE SLATE DISPLAY MODULE -->
+    <!-- Tonight's Live Scores -->
     <div class="section-title">📺 Tonight's Live Slate Monitor</div>
     <div class="grid-box" style="margin-bottom: 20px;">
         {% for match in live_games %}
@@ -111,6 +111,17 @@
                 <span style="font-weight: bold; color: var(--accent-green); font-size: 1.1rem;">{{ match.score }}</span><br>
                 <span class="badge badge-orange" style="font-size: 0.75rem; padding: 2px 6px; margin-top: 4px; display: inline-block;">{{ match.status }}</span>
             </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- 📉 NEW INTEGRATED MONITOR MODULE -->
+    <div class="section-title">📉 Morale & Structural Threat Streams</div>
+    <div class="grid-box" style="margin-bottom: 20px;">
+        {% for indicator in morale.indicators %}
+        <div class="grid-row">
+            <span style="font-weight: bold; color: var(--text-main);">{{ indicator.name }}</span>
+            <span id="morale-{{ indicator.id }}" style="color: {{ indicator.color }}; font-weight: bold;">{{ indicator.value }}</span>
         </div>
         {% endfor %}
     </div>
@@ -155,9 +166,19 @@
                         const now = new Date();
                         document.getElementById('sync-time').innerText = now.toLocaleTimeString();
                         
+                        // Async loop update for public sentiment tracking
                         Object.keys(data.sentiment_updates).forEach(key => {
                             const elem = document.getElementById(`vol-${key}`);
                             if (elem) elem.innerText = data.sentiment_updates[key];
+                        });
+
+                        // Async loop update for structural tracking parameters
+                        Object.keys(data.morale_updates).forEach(key => {
+                            const elem = document.getElementById(`morale-${key}`);
+                            if (elem) {
+                                elem.innerText = data.morale_updates[key].value;
+                                elem.style.color = data.morale_updates[key].color;
+                            }
                         });
                     }
                 })
