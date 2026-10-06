@@ -28,16 +28,16 @@
 </head>
 <body>
 
-    <div class="engine-alert">⚠️ ENGINE STATUS: FULL MULTI-SPORT SLATE RESTORED</div>
+    <div class="engine-alert">⚠️ ENGINE STATUS: SECURE INBOUND GATE DISPATCHER ACTIVE</div>
 
-    <div class="scroll-container">
+    <div id="main-scroll" class="scroll-container">
         {% for board in slates %}
         <div class="card">
             <div style="color: #f87171; font-size: 12px; font-weight: bold; margin-bottom: 4px; letter-spacing: 0.5px;">{{ board.sport_tag }}</div>
             <div class="slate-title">{{ board.game }}</div>
             
             <div class="live-clock-bar">
-                🏁 TIMING: {{ board.live_clock }}
+                🏁 TIMING: {{ board.live_clock }} | {{ board.score_string }}
             </div>
             
             <div class="sim-box">
@@ -71,5 +71,58 @@
         {% endfor %}
     </div>
 
+    <!-- Background synchronization listener script -->
+    <script>
+        async function fetchLiveGateUpdates() {
+            try {
+                const response = await fetch(window.location.origin + '/api/state-json');
+                if (!response.ok) return;
+                const data = await response.json();
+                
+                let containerHTML = '';
+                data.slates.forEach(board => {
+                    let playerHTML = '';
+                    board.players.forEach(p => {
+                        let styleClass = p.is_floor ? 'target-floor' : 'target-ceiling';
+                        playerHTML += `
+                            <div class="data-row">
+                                <span class="player-name">${p.name} <span class="player-pos">(${p.position})</span></span>
+                                <span class="${styleClass}">${p.target}</span>
+                            </div>`;
+                    });
+
+                    let moraleHTML = '';
+                    board.morale.forEach(m => {
+                        moraleHTML += `
+                            <div class="morale-row">
+                                <div style="display: flex; flex-direction: column; gap: 4px; align-items: flex-start;">
+                                    <span class="crossed-out">${m.unit}</span>
+                                    <span class="warn-tag">${m.status}</span>
+                                </div>
+                                <div class="alert-desc">${m.alert_text}</div>
+                            </div>`;
+                    });
+
+                    containerHTML += `
+                        <div class="card">
+                            <div style="color: #f87171; font-size: 12px; font-weight: bold; margin-bottom: 4px; letter-spacing: 0.5px;">${board.sport_tag}</div>
+                            <div class="slate-title">${board.game}</div>
+                            <div class="live-clock-bar">🏁 TIMING: ${board.live_clock} | ${board.score_string}</div>
+                            <div class="sim-box">
+                                📊 SIM ENGINE MODEL: ${board.pacing_status} (DK Line: ${board.closing_line})
+                                <div class="sim-total-text">${board.sim_total}</div>
+                            </div>
+                            <div class="section-header"><span>Player Data Stream</span><span>Safety Target Matrix</span></div>
+                            ${playerHTML}
+                            <div class="morale-header">⚠️ MORALE DEFICIT STREAM</div>
+                            ${moraleHTML}
+                        </div>`;
+                });
+                
+                document.getElementById('main-scroll').innerHTML = containerHTML;
+            } catch (err) { console.log(err); }
+        }
+        setInterval(fetchLiveGateUpdates, 4000); // Polls every 4 seconds
+    </script>
 </body>
 </html>
