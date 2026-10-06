@@ -1,4 +1,4 @@
-# app.py - Complete v5.6 - Operational Tracking Engine (No Personal Slips)
+# app.py - Complete v5.7 - Syndicate & Sharp Wallet Tracking Core
 from flask import Flask, render_template, jsonify
 import os
 
@@ -24,27 +24,28 @@ def dashboard():
         {"home": "Seattle Kraken", "away": "Vegas Golden Knights", "angle": "Late Night Structure", "play": "Seattle ML (+142)", "handle": "Vegas Public Premium"}
     ]
     
-    # House panic thresholds & structural tracking elements
-    house_matrix = {
-        "metrics": [
-            {"name": "Panic Threshold Trigger", "id": "panic_trigger", "value": "0.0%", "color": "var(--text-muted)"},
-            {"name": "Morale Deficit Stream", "id": "morale_deficit", "value": "Stable", "color": "var(--accent-green)"},
-            {"name": "Line-Decay Manipulation Traps", "id": "decay_traps", "value": "Scanning...", "color": "var(--accent-orange)"}
+    # Sharp Money Group / Wallet Tracking Feed Data Structure
+    syndicate_picks = {
+        "groups": [
+            {"alias": "Alpha Syndicate (ROI: +6.4%)", "target": "Southern Miss +10.5", "size": "5x Normal", "status": "Locked In", "color": "var(--accent-green)"},
+            {"alias": "Wallet #4092 (High-Stakes NHL)", "target": "Nashville ML (+130)", "size": "3.5x Normal", "status": "Locked In", "color": "var(--accent-green)"},
+            {"alias": "Vegas Sharp Box (Transition Fade)", "target": "Ottawa ML (+115)", "size": "2x Normal", "status": "Locked In", "color": "var(--accent-green)"}
         ]
     }
     
-    return render_template('dashboard.html', cfb=cfb_game, nhl_items=nhl_games, tracker=house_matrix)
+    return render_template('dashboard.html', cfb=cfb_game, nhl_items=nhl_games, sharps=syndicate_picks)
 
 @app.route('/api/feed')
 def live_feed():
+    """Live sharp data feed endpoint for background tracking updates."""
     return jsonify({
         "status": "Pipeline Active",
-        "version": "5.6-Operational",
-        "live_metrics": {
-            "panic_trigger": {"value": "Active Scan", "color": "var(--accent-green)"},
-            "morale_deficit": {"value": "Monitoring Kickoff", "color": "var(--text-muted)"},
-            "decay_traps": {"value": "0 Flagged", "color": "var(--accent-green)"}
-        }
+        "version": "5.7-Sharp-Tracer",
+        "syndicate_updates": [
+            {"alias": "Alpha Syndicate (ROI: +6.4%)", "target": "Southern Miss +10.5", "size": "5x Normal", "status": "Locked In", "color": "var(--accent-green)"},
+            {"alias": "Wallet #4092 (High-Stakes NHL)", "target": "Nashville ML (+130)", "size": "3.5x Normal", "status": "Locked In", "color": "var(--accent-green)"},
+            {"alias": "Vegas Sharp Box (Transition Fade)", "target": "Ottawa ML (+115)", "size": "2x Normal", "status": "Locked In", "color": "var(--accent-green)"}
+        ]
     })
 
 if __name__ == '__main__':
