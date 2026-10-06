@@ -8,7 +8,7 @@
         body {
             background-color: #060913;
             color: #e2e8f0;
-            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             margin: 0;
             padding: 12px;
             -webkit-font-smoothing: antialiased;
@@ -19,7 +19,6 @@
             margin: 0 auto;
         }
 
-        /* Premium Cyber Command Header Box */
         .bankroll-box {
             background: linear-gradient(135deg, #0b1120 0%, #111a30 100%);
             border: 1px solid #1e293b;
@@ -80,7 +79,6 @@
             text-transform: uppercase;
         }
 
-        /* Neon Edge Slate Cards */
         .slate-card {
             background: #090f1d;
             border-radius: 12px;
@@ -126,7 +124,6 @@
             display: inline-block;
         }
 
-        /* Matrix Table Layouts */
         .prop-section {
             margin-top: 10px;
         }
@@ -167,6 +164,30 @@
             text-align: right;
         }
 
+        /* NEW SHARP VISUALS: Injury stream blocks */
+        .deficit-stream-title {
+            color: #ff9100;
+            font-size: 0.7rem;
+            font-weight: 800;
+            margin-top: 14px;
+            margin-bottom: 6px;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            border-top: 1px solid #152238;
+            padding-top: 10px;
+        }
+
+        .deficit-row {
+            display: flex;
+            align-items: center;
+            font-size: 0.75rem;
+            padding: 4px 0;
+        }
+
+        .deficit-player { color: #f87171; text-decoration: line-through; font-weight: 600; width: 110px; }
+        .deficit-status { color: #f87171; font-weight: 800; width: 45px; }
+        .deficit-desc { color: #94a3b8; flex: 1; padding-left: 4px; }
+
         .nhl-status-tracker {
             color: #64748b;
             font-style: italic;
@@ -183,7 +204,6 @@
 
 <div id="matrix-container">
 
-    <!-- Fluid Bankroll Premium Header -->
     <div class="bankroll-box">
         <div class="header-row">
             <div>
@@ -200,7 +220,6 @@
         </div>
     </div>
 
-    <!-- Live Dynamic Matchups Loops -->
     {% for match in matchups %}
     <div class="slate-card">
         
@@ -227,6 +246,19 @@
             </div>
             {% endfor %}
         </div>
+
+        <!-- NEW: Active Morale Deficit Component Protocol Loop Block -->
+        {% if match.morale_deficits %}
+        <div class="deficit-stream-title">⚠️ MORALE DEFICIT STREAM</div>
+        {% for def in match.morale_deficits %}
+        <div class="deficit-row">
+            <div class="deficit-player">{{ def.name }}</div>
+            <div class="deficit-status">{{ def.status }}</div>
+            <div class="deficit-desc">{{ def.impact }}</div>
+        </div>
+        {% endfor %}
+        {% endif %}
+
         {% elif match.sport == 'NHL' %}
         <div class="nhl-status-tracker">
             {{ match.scan_status }}
