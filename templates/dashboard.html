@@ -75,28 +75,28 @@
             margin-top: -10px;
             margin-bottom: 15px;
         }
-        .tracker-box {
+        .sharp-card {
             background: rgba(255, 255, 255, 0.01);
             border: 1px solid var(--border-color);
             border-radius: 8px;
             padding: 16px;
             margin-top: 10px;
         }
-        .tracker-row {
+        .sharp-row {
             display: flex;
             justify-content: space-between;
             padding: 10px 0;
             border-bottom: 1px solid rgba(255,255,255,0.02);
             font-size: 0.95rem;
         }
-        .tracker-row:last-child { border-bottom: none; }
+        .sharp-row:last-child { border-bottom: none; }
     </style>
 </head>
 <body>
 
     <div class="header">
         <h1 style="font-size: 1.5rem; margin: 0;">CEE ENGINE HUD</h1>
-        <div class="badge" id="pipeline-badge">Pipeline Active v5.6</div>
+        <div class="badge" id="pipeline-badge">Pipeline Active v5.7</div>
     </div>
     
     <div class="status-container">
@@ -145,13 +145,19 @@
         </tbody>
     </table>
 
-    <!-- House Structure Tracking Section -->
-    <div class="section-title">📉 Structural Engine Monitors</div>
-    <div class="tracker-box">
-        {% for metric in tracker.metrics %}
-        <div class="tracker-row">
-            <span style="font-weight: bold; color: var(--text-main);">{{ metric.name }}</span>
-            <span id="metric-{{ metric.id }}" style="color: {{ metric.color }}; font-weight: bold;">{{ metric.value }}</span>
+    <!-- Sharp Tracking Tracker Feed Module -->
+    <div class="section-title">🎯 Sharp Wallet & Syndicate Picks Tracker</div>
+    <div class="sharp-card" id="sharp-feed-container">
+        {% for group in sharps.groups %}
+        <div class="sharp-row">
+            <div>
+                <span style="font-weight: bold; color: var(--text-main);">{{ group.alias }}</span><br>
+                <span style="font-size: 0.85rem; color: var(--accent-orange);">Bet Size: {{ group.size }}</span>
+            </div>
+            <div style="text-align: right; padding-top: 5px;">
+                <span style="font-weight: bold; color: var(--text-main);">{{ group.target }}</span><br>
+                <span style="font-size: 0.85rem; font-weight: bold; color: {{ group.color }};">{{ group.status }}</span>
+            </div>
         </div>
         {% endfor %}
     </div>
@@ -164,23 +170,13 @@
                     if (data.status === "Pipeline Active") {
                         const now = new Date();
                         document.getElementById('sync-time').innerText = now.toLocaleTimeString();
-                        
-                        // Map structural changes cleanly
-                        Object.keys(data.live_metrics).forEach(key => {
-                            const met = data.live_metrics[key];
-                            const elem = document.getElementById(`metric-${key}`);
-                            if (elem) {
-                                elem.innerText = met.value;
-                                elem.style.color = met.color;
-                            }
-                        });
                     }
                 })
                 .catch(err => {
                     document.getElementById('pipeline-badge').innerText = "Syncing...";
                 });
         }
-        setInterval(checkEnginePipeline, 10000);
+        setInterval(checkEnginePipeline, 15000);
     </script>
 </body>
 </html>
