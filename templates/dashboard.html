@@ -65,7 +65,21 @@
             color: #475569;
             font-size: 0.75rem;
             font-weight: 600;
-            margin-bottom: 12px;
+            margin-bottom: 10px;
+        }
+
+        /* NEW HIGH-CONTRAST UNIFIED LIVE SCOREBOARD BAR */
+        .live-scoreboard-ticker {
+            background: linear-gradient(90deg, #1e1b4b 0%, #311042 100%);
+            border: 1px solid #4338ca;
+            color: #ffffff;
+            font-size: 0.85rem;
+            font-weight: 800;
+            padding: 8px 12px;
+            border-radius: 6px;
+            margin-bottom: 10px;
+            letter-spacing: 0.03em;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
         }
 
         .live-ou-banner {
@@ -174,7 +188,6 @@
 
 <div id="matrix-container">
 
-    <!-- Clean Strategy Guardrail Status Badge -->
     <div class="system-test-badge">
         ⚠️ ENGINE STATUS: LIVE SYSTEM TEST RUN ACTIVE
     </div>
@@ -190,6 +203,13 @@
 
         <div class="game-title">{{ match.away_team }} @ {{ match.home_team }}</div>
         <div class="game-schedule">{{ match.time }}</div>
+        
+        <!-- NEW Dynamic Unified Live Scoreboard Element Panel -->
+        {% if match.live_score %}
+        <div class="live-scoreboard-ticker">
+            🏁 {{ match.live_score }}
+        </div>
+        {% endif %}
         
         {% if match.live_ou_status %}
         <div class="live-ou-banner">
