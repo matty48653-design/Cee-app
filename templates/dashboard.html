@@ -70,19 +70,16 @@
     <script>
         async function fetchLiveMatrixUpdates() {
             try {
-                // Queries our custom api data route directly
                 const response = await fetch(window.location.origin + '/api/live-state');
                 if (!response.ok) return;
                 
                 const data = await response.json();
                 
-                // Directly rewrite DOM nodes without running unparsed full page evaluations
                 document.getElementById('game-title').innerText = data.slate.game;
                 document.getElementById('live-clock').innerText = `🏁 LIVE CLOCK: ${data.slate.live_clock} | ${data.slate.score_string}`;
                 document.getElementById('pacing-status').innerText = `📊 SIM ENGINE MODEL: ${data.slate.pacing_status} (Closing Line: ${data.slate.closing_line})`;
                 document.getElementById('projected-final').innerText = `Projected Final: ${data.slate.score_string} (Sim Total: ${data.slate.sim_total})`;
                 
-                // Re-draw Player Streams on background ticker
                 let playerHTML = '';
                 data.players.forEach(p => {
                     let styleClass = p.is_floor ? 'target-floor' : 'target-ceiling';
@@ -94,7 +91,6 @@
                 });
                 document.getElementById('player-stream-container').innerHTML = playerHTML;
 
-                // Re-draw Morale Stream warnings
                 let moraleHTML = '';
                 data.morale.forEach(m => {
                     moraleHTML += `
@@ -111,8 +107,8 @@
             }
         }
 
-        // Ticker loop checks for fresh data payloads every 3 seconds
-        setInterval(fetchLiveMatrixUpdates, 3000);
+        // Drop interval to 2 seconds for aggressive sync
+        setInterval(fetchLiveMatrixUpdates, 2000);
     </script>
 
 </body>
