@@ -7,16 +7,17 @@ def fetch_active_matrix_data():
     """
     Automated Multi-Game Streaming Feed Core.
     STRICT COMPLIANCE MODE: 1Q/2Q Volume Block + Milestone Slider Protection.
-    Integrates AWS Next Gen Defensive Pressure variables and Morale Deficit parameters.
+    Integrates Live Over/Under Pacing Matrix variables & Injury Protocols.
     """
     return [
         {
             "id": "cfb_southernmiss_troy_2026",
-            "sport": "NFL", # Uses NFL template to map custom player grid structures
+            "sport": "NFL", # Maps custom player grid element configurations
             "away_team": "Southern Miss",
             "home_team": "Troy",
             "time": "8:00 PM ET",
             "market_alert": "Troy -10.5 (Slider Protection Active 🛡️)",
+            "live_ou_status": "Pacing UNDER (Current: 0 | Closing Line: 47.5)",
             "players": [
                 {"name": "Troy Primary RB", "milestone": "Over 2.5 Receptions"},
                 {"name": "USM Target WR", "milestone": "Over 4.5 Receptions"}
@@ -33,6 +34,7 @@ def fetch_active_matrix_data():
             "home_team": "NY Rangers",
             "time": "7:30 PM ET",
             "market_alert": "Money Line / Totals Only (Puck Line Blocked)",
+            "live_ou_status": "Closing Total: 5.5 | Sharp Inflow Volume Under-backed",
             "scan_status": "Tracking Sharp Money... AWS Pressure: 4.15% Hold Tax"
         }
     ]
