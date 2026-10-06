@@ -8,7 +8,7 @@ app = Flask(__name__)
 # ==========================================
 engine_cache = {
     "framework_version": "5.3-Clean-Table-Matrix",
-    "last_sync_timestamp": "10-06-2026 10:19 AM",
+    "last_sync_timestamp": "10-06-2026 10:30 AM",
     "global_rules": {
         "block_volatile_micro_lines": True,
         "enforce_milestone_slider_floors": True,
@@ -22,10 +22,10 @@ engine_cache = {
     "nfl_player_props": {
         "status": "active_monitoring",
         "milestones": [
-            {"player": "Jared Goff", "team": "DET", "matchup": "@ ARI", "metric": "Passing Yards", "house_line": 258.5, "safety_floor": 225.0, "edge_status": "EXPOSED_ALGORITHM_TRAP"},
-            {"player": "Jahmyr Gibbs", "team": "DET", "matchup": "@ ARI", "metric": "Rushing Yards", "house_line": 64.5, "safety_floor": 55.0, "edge_status": "SHARP_VOLUME_ADVANTAGE"},
-            {"player": "Josh Allen", "team": "BUF", "matchup": "@ NYJ", "metric": "Passing Yards", "house_line": 242.5, "safety_floor": 215.0, "edge_status": "WEATHER_PROTECTED"},
-            {"player": "Patrick Mahomes", "team": "KC", "matchup": "@ SF", "metric": "Passing Yards", "house_line": 254.5, "safety_floor": 220.0, "edge_status": "ALGORITHM_TRAP"}
+            {"player": "LeBron James", "team": "LAL", "matchup": "@ GSW", "metric": "NBA Pre Min Floor", "house_line": 18.5, "safety_floor": 14.0, "edge_status": "REST_RESTRICTION_FLOOR"},
+            {"player": "Jared Goff", "team": "DET", "matchup": "@ DAL", "metric": "Passing Yards", "house_line": 264.5, "safety_floor": 225.0, "edge_status": "SHARP_VOLUME_EDGE"},
+            {"player": "Jahmyr Gibbs", "team": "DET", "matchup": "@ DAL", "metric": "Rushing Yards", "house_line": 62.5, "safety_floor": 55.0, "edge_status": "VOLUME_ADVANTAGE"},
+            {"player": "Jaxson Dart", "team": "OLE", "matchup": "CFB Slate", "metric": "Passing Yards", "house_line": 284.5, "safety_floor": 250.0, "edge_status": "CONTRARIAN_BLOWOUT"}
         ]
     },
     "nhl_slate": {
@@ -40,9 +40,9 @@ engine_cache = {
     "low_volume_splits": {
         "status": "active",
         "games": [
+            {"matchup": "NMSU @ FIU (CFB)", "target": "FIU Spread -5.5", "tickets": "34%", "cash": "76%", "state": "SHARP_LINE_PUSH"},
             {"matchup": "Islanders @ Rangers", "target": "Under 5.5", "tickets": "58%", "cash": "64%", "state": "CONTRARIAN_EDGE"},
-            {"matchup": "Predators @ Maple Leafs", "target": "Under 6.0", "tickets": "52%", "cash": "71%", "state": "OVERLOOKED"},
-            {"matchup": "Senators @ Red Wings", "target": "Under 6.5", "tickets": "48%", "cash": "59%", "state": "SHARP_MONEY"}
+            {"matchup": "Predators @ Maple Leafs", "target": "Under 6.0", "tickets": "52%", "cash": "71%", "state": "OVERLOOKED"}
         ]
     }
 }
