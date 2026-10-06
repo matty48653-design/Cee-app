@@ -1,67 +1,9 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CEE Dashboard v5.3</title>
-    <style>
-        body { background-color: #0b0f19; color: #ffffff; font-family: -apple-system, sans-serif; padding: 15px; }
-        .engine-alert { background: rgba(255, 171, 0, 0.1); border: 1px solid #ffab00; color: #ffab00; padding: 10px; text-align: center; font-weight: bold; font-size: 13px; margin-bottom: 15px; border-radius: 4px; }
-        .card { background: #131a2c; border-radius: 8px; padding: 15px; margin-bottom: 15px; }
-        .slate-title { font-size: 18px; font-weight: bold; margin-bottom: 10px; color: #fff; }
-        .live-clock-bar { background: #3b1f5c; color: #e9d5ff; padding: 10px; border-radius: 6px; font-weight: bold; text-align: center; margin-bottom: 12px; }
-        .sim-box { border: 1px solid #1e293b; padding: 10px; border-radius: 6px; margin-bottom: 12px; font-size: 14px; }
-        .sim-total-text { color: #f87171; font-weight: bold; margin-top: 5px; }
-        .section-header { font-size: 11px; font-weight: bold; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; display: flex; justify-content: space-between; margin-bottom: 10px; padding-bottom: 5px; border-bottom: 1px solid #1e293b; }
-        .data-row { display: flex; justify-content: space-between; padding: 8px 0; font-size: 15px; }
-        .player-name { font-weight: bold; }
-        .player-pos { color: #94a3b8; font-weight: normal; font-size: 13px; }
-        .target-floor { color: #fde047; font-weight: 500; }
-        .target-ceiling { color: #fde047; font-weight: 500; }
-        .morale-header { color: #ffab00; font-weight: bold; font-size: 12px; margin-top: 10px; margin-bottom: 8px; }
-        .crossed-out { text-decoration: line-through; color: #ef4444; font-weight: bold; }
-        .warn-tag { background: #ef4444; color: #fff; padding: 2px 6px; border-radius: 4px; font-size: 11px; font-weight: bold; }
-        .alert-desc { color: #94a3b8; font-size: 13px; margin-top: 4px; line-height: 1.4; }
-    </style>
-</head>
-<body>
-
-    <div class="engine-alert">⚠️ ENGINE STATUS: LIVE SYSTEM TEST RUN ACTIVE</div>
-
-    <div class="card">
-        <div style="color: #f87171; font-size: 12px; font-weight: bold; margin-bottom: 4px;">🏈 ACTIVE FOOTBALL SLATE</div>
-        <div class="slate-title">{{ slate.game }}</div>
-        
-        <div class="live-clock-bar">
-            🏁 LIVE CLOCK: {{ slate.live_clock }} | {{ slate.score_string }}
-        </div>
-        
-        <div class="sim-box">
-            📊 SIM ENGINE MODEL: {{ slate.pacing_status }} (Closing Line: {{ slate.closing_line }})
-            <div class="sim-total-text">Projected Final: ATL 22 - 38 NO (Sim Total: {{ slate.sim_total }})</div>
-        </div>
-
-        <div class="section-header">
-            <span>Player Data Stream</span>
-            <span>Safety Floor Target</span>
-        </div>
-        
-        {% for player in players %}
-        <div class="data-row">
-            <span class="player-name">{{ player.name }} <span class="player-pos">({{ player.position }})</span></span>
-            <span class="{% if player.is_floor %}target-floor{% else %}target-ceiling{% endif %}">{{ player.target }}</span>
-        </div>
-        {% endfor %}
-
-        <div class="morale-header">⚠️ MORALE DEFICIT STREAM</div>
-        {% for item in morale %}
-        <div style="display: flex; gap: 15px; align-items: flex-start; margin-top: 8px;">
-            <span class="crossed-out">{{ item.unit }}</span>
-            <span class="warn-tag">{{ item.status }}</span>
-            <div class="alert-desc">{{ item.alert_text }}</div>
-        </div>
-        {% endfor %}
-    </div>
-
-</body>
-</html>
+<!-- ==========================================
+     FIND THIS SIM-BOX CONTAINER IN YOUR HTML 
+     ========================================== -->
+<div class="sim-box">
+    📊 SIM ENGINE MODEL: {{ slate.pacing_status }} (Closing Line: {{ slate.closing_line }})
+    
+    <!-- 🟢 UPDATE THIS LINE BELOW TO MAKE THE PROJECTED FINAL DYNAMIC 🟢 -->
+    <div class="sim-total-text">Projected Final: {{ slate.score_string }} (Sim Total: {{ slate.sim_total }})</div>
+</div>
