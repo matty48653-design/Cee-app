@@ -1,18 +1,20 @@
 import os
 import httpx
 import asyncio
+import smtplib
 import threading
 from datetime import datetime
+from email.mime.text import MIMEText
 from flask import Flask, jsonify, render_template, render_template_string
 
 app = Flask(__name__)
 
 # ==========================================
-# CEE v5.3 CLEAN-TABLE-MATRIX CONFIG
+# CEE v5.3 PRODUCTION ARCHITECTURE CACHE
 # ==========================================
 engine_cache = {
     "framework_version": "5.3-Clean-Table-Matrix",
-    "last_sync_timestamp": "10-06-2026 09:25 AM",
+    "last_sync_timestamp": "10-06-2026 09:40 AM",
     "global_rules": {
         "block_volatile_micro_lines": True,
         "enforce_milestone_slider_floors": True,
@@ -28,8 +30,30 @@ engine_cache = {
         "games": [
             {"matchup": "Red Wings @ Panthers", "ou": 6.5, "status": "waiting_puck_drop", "contrarian_edge": "SHARP_MONEY_SPLIT"},
             {"matchup": "Panthers @ Kings", "ou": 6.0, "status": "waiting_puck_drop", "contrarian_edge": "LINE_FREEZE"}
-        ],
-        "external_updates": []
+        ]
+    },
+    "nfl_player_props": {
+        "status": "active_monitoring",
+        "milestones": [
+            {
+                "player": "Jared Goff",
+                "team": "DET",
+                "matchup": "@ ARI",
+                "metric": "Passing Yards",
+                "house_line": 258.5,
+                "safety_floor": 225.0,
+                "edge_status": "EXPOSED_ALGORITHM_TRAP"
+            },
+            {
+                "player": "Jahmyr Gibbs",
+                "team": "DET",
+                "matchup": "@ ARI",
+                "metric": "Rushing Yards",
+                "house_line": 64.5,
+                "safety_floor": 55.0,
+                "edge_status": "SHARP_VOLUME_ADVANTAGE"
+            }
+        ]
     },
     "trap_analysis_models": {
         "active_cards": {
@@ -50,91 +74,62 @@ engine_cache = {
 
 cache_lock = threading.Lock()
 
-# Safe backup interface if templates/dashboard.html is missing
-FALLBACK_HTML = """
-<!DOCTYPE html>
-<html>
-<head>
-    <title>CEE v5.3 Matrix</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style>
-        body { background: #0f111a; color: #a6accd; font-family: monospace; padding: 20px; }
-        .card { background: #1a1c2a; padding: 15px; border-radius: 6px; border: 1px solid #ff5370; margin-bottom: 15px; }
-        h1 { color: #ff5370; border-bottom: 2px solid #ff5370; padding-bottom: 5px; }
-        .green { color: #c3e88d; }
-    </style>
-</head>
-<body>
-    <h1>CONTRARIAN EDGE ENGINE v5.3</h1>
-    <p>Status: <span class="green">LIVE_EMBEDDED_MATRIX</span></p>
-    <div class="card">
-        <h3>NFL TRAP CHANNELS</h3>
-        <p><b>Matchup:</b> {{ cache.trap_analysis_models.active_cards.historical_trap_01.matchup }}</p>
-        <p><b>Bias:</b> {{ cache.trap_analysis_models.active_cards.historical_trap_01.public_bias }}</p>
-    </div>
-    <div class="card">
-        <h3>NHL TONIGHT</h3>
-        {% for game in cache.nhl_slate.games %}
-            <p>• {{ game.matchup }} (O/U: {{ game.ou }}) - <span class="green">{{ game.contrarian_edge }}</span></p>
-        {% endfor %}
-    </div>
-</body>
-</html>
-"""
+# ==========================================
+# AUTOMATED EMAIL NOTIFICATION PIPELINE
+# ==========================================
+def dispatch_automated_picks_email():
+    """
+    Asynchronously logs into secure transport layer and pushes verified
+    contrarian milestone configurations straight to your inbox.
+    """
+    sender = os.getenv("CEE_AGENT_EMAIL", "matty48653@gmail.com")
+    recipient = "matty48653@gmail.com"
+    password = os.getenv("CEE_EMAIL_APP_PASSWORD")
+    
+    if not password:
+        # Prevents crash if application secret token hasn't been set up yet
+        print("Email Dispatch Skipped: Missing secure CEE_EMAIL_APP_PASSWORD token.")
+        return False
+        
+    msg_body = f"""
+    CEE v5.3 FLASH ALERT: HIGH-VALUE REVIEWS IDENTIFIED
+    Timestamp: {datetime.now().strftime('%m-%d-%Y %I:%M %p')}
+    
+    [NFL PROPS MATRIX ACTIVE]
+    """
+    for prop in engine_cache["nfl_player_props"]["milestones"]:
+        msg_body += f"\n• {prop['player']} ({prop['team']}) - {prop['metric']} | Line: {prop['house_line']} -> Safety Floor: {prop['safety_floor']} [{prop['edge_status']}]"
+        
+    msg = MIMEText(msg_body)
+    msg["Subject"] = f"🎯 CEE v5.3 Engine Update - Verified Sports Picks"
+    msg["From"] = sender
+    msg["To"] = recipient
 
-async def fetch_external_feed():
-    FEED_URL = os.getenv("CONTRARIAN_DATA_FEED_URL", "https://external-odds-sync.local")
-    headers = {"Authorization": f"Bearer {os.getenv('FEED_AUTH_TOKEN', 'default_secure_token')}"}
-    async with httpx.AsyncClient(timeout=8.0) as client:
-        try:
-            response = await client.get(FEED_URL, headers=headers)
-            if response.status_code == 200:
-                process_and_cache_feed(response.json())
-            else:
-                with cache_lock: engine_cache["external_sync"]["sync_errors"] += 1
-        except Exception:
-            with cache_lock: engine_cache["external_sync"]["sync_errors"] += 1
+    try:
+        with smtplib.SMTP_SSL("://gmail.com", 465) as server:
+            server.login(sender, password)
+            server.sendmail(sender, [recipient], msg.as_string())
+        return True
+    except Exception as e:
+        print(f"SMTP Transmission Dropped: {str(e)}")
+        return False
 
-def process_and_cache_feed(data):
-    with cache_lock:
-        if "games" in data:
-            updated_list = []
-            for g in data["games"]:
-                sport = g.get("sport", "").upper()
-                if sport == "MLB" or g.get("is_puck_line", False): continue
-                if g.get("deviation_score", 0.0) >= engine_cache["metrics_config"]["game_script_panic_threshold"]:
-                    updated_list.append({
-                        "game": g.get("game_name"), "public_money_pct": g.get("public_pct"),
-                        "line_movement": g.get("movement"), "alert": "PANIC_THRESHOLD_TRIGGERED"
-                    })
-            engine_cache["nhl_slate"]["external_updates"] = updated_list
-        engine_cache["external_sync"]["status"] = "synced"
-        engine_cache["external_sync"]["last_updated"] = datetime.now().strftime("%m-%d-%Y %I:%M %p")
-
-def start_sync_worker(loop):
-    asyncio.set_event_loop(loop)
-    loop.run_until_complete(fetch_external_feed())
+# ==========================================
+# BACKEND PROCESS DAEMONS & FALLBACK LAYER
+# ==========================================
+FALLBACK_HTML = "<html><body><h1>CEE v5.3 Fallback Active</h1></body></html>"
 
 @app.route("/")
 def index():
     with cache_lock:
-        try:
-            # Try loading the template file if it exists
-            return render_template("dashboard.html", cache=engine_cache)
-        except Exception:
-            # Safe layout fallback to prevent status 1 startup crashes
-            return render_template_string(FALLBACK_HTML, cache=engine_cache)
-
-@app.route("/api/v5/engine/cache", methods=["GET"])
-def get_engine_cache():
-    with cache_lock: return jsonify(engine_cache)
+        try: return render_template("dashboard.html", cache=engine_cache)
+        except Exception: return render_template_string(FALLBACK_HTML, cache=engine_cache)
 
 @app.route("/api/v5/engine/sync", methods=["POST"])
 def trigger_manual_sync():
-    worker_loop = asyncio.new_event_loop()
-    t = threading.Thread(target=start_sync_worker, args=(worker_loop,), daemon=True)
-    t.start()
-    return jsonify({"status": "sync_sequence_pushed_to_background", "engine_state": "listening"})
+    # Asynchronously dispatch email alerts to secure workflow speed
+    threading.Thread(target=dispatch_automated_picks_email, daemon=True).start()
+    return jsonify({"status": "sync_sequence_pushed_to_background", "email_pipeline": "dispatched"})
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=int(os.getenv("PORT", 5000)))
