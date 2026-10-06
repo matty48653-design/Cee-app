@@ -1,11 +1,11 @@
 import time
 import requests
 
-# Set production link if testing live: "https://onrender.com"
-TARGET_URL = "http://127.0.0"
+# Production URL preset for direct deployment
+TARGET_URL = "https://onrender.com"
 
 yesterday_simulation_slate = [
-    # 🔴 STATE 1: EARLY SLATE BREAKOUT (Q1 OPENER)
+    # STATE 1: LIONS SLATE OPENER
     {
         "slate": {
             "game": "Detroit Lions @ Carolina Panthers",
@@ -23,8 +23,7 @@ yesterday_simulation_slate = [
             {"unit": "Panthers Run Def", "status": "WARN", "alert_text": "CEE Floor Gauge: Public heavily backing DET. Track line adjustments."}
         ]
     },
-    
-    # 🔴 STATE 2: LIONS IN DISTRESS / PANTHERS SCRIPT PANIC (MID-GAME OVERRIDE)
+    # STATE 2: LIONS VS PANTHERS LATE TRAP CLOSURE
     {
         "slate": {
             "game": "Detroit Lions @ Carolina Panthers",
@@ -42,8 +41,7 @@ yesterday_simulation_slate = [
             {"unit": "Lions Secondary", "status": "WARN", "alert_text": "Game-Script Panic Threshold breached. High public backing collapsed late."}
         ]
     },
-
-    # 🔴 STATE 3: COWBOYS @ TEXANS TEXAS SLUGFEST (LIVE TIME-DECAY RUN)
+    # STATE 3: COWBOYS @ TEXANS IN-GAME PRESSURE LIVE MODEL
     {
         "slate": {
             "game": "Dallas Cowboys @ Houston Texans",
@@ -61,8 +59,7 @@ yesterday_simulation_slate = [
             {"unit": "Texans O-Line", "status": "WARN", "alert_text": "AWS Pressure Metric: High pocket collapse trajectory active."}
         ]
     },
-
-    # 🔴 STATE 4: COWBOYS @ TEXANS TRAP REVELATION (FINAL OUTCOME)
+    # STATE 4: COWBOYS @ TEXANS TRAP OUTCOME REVELATION
     {
         "slate": {
             "game": "Dallas Cowboys @ Houston Texans",
@@ -80,8 +77,7 @@ yesterday_simulation_slate = [
             {"unit": "Texans Secondary", "status": "WARN", "alert_text": "Increment Gain Strategy: Money line shifted late to public trap exit."}
         ]
     },
-
-    # 🔴 STATE 5: CHIEFS @ RAIDERS DIVISION OVERUNDER CLASH
+    # STATE 5: CHIEFS @ RAIDERS TIED DIVISION SLUGFEST
     {
         "slate": {
             "game": "Kansas City Chiefs @ Las Vegas Raiders",
@@ -99,8 +95,7 @@ yesterday_simulation_slate = [
             {"unit": "Raiders Front 7", "status": "WARN", "alert_text": "Morale DeficitStream: Final drive fatigue penalty logged."}
         ]
     },
-
-    # 🔴 STATE 6: RAMS @ EAGLES CONTRARIAN REVELATION
+    # STATE 6: RAMS @ EAGLES PUBLIC MONEY FADE OUTCOME
     {
         "slate": {
             "game": "Los Angeles Rams @ Philadelphia Eagles",
@@ -121,25 +116,26 @@ yesterday_simulation_slate = [
 ]
 
 def run_historical_loop():
-    print("🚀 HEAVY SLATE SIMULATOR INITIALIZED...")
-    print("Press Ctrl+C to stop the playback sequence.\n")
+    print(f"📡 CONTRARIAN SLATE SIMULATOR RUNNING -> CONNECTED TO PRODUCTION AT: {TARGET_URL}")
+    print("Press Ctrl+C inside this console tab to terminate the simulation.\n")
     
     state_index = 0
     while True:
         payload = yesterday_simulation_slate[state_index]
-        print(f"📡 Sending matrix data state [{state_index + 1}/{len(yesterday_simulation_slate)}]: {payload['slate']['game']} ({payload['slate']['live_clock']})")
+        print(f"⚡ Streaming [State {state_index + 1}/6]: {payload['slate']['game']} ({payload['slate']['live_clock']})")
         
         try:
             response = requests.post(TARGET_URL, json=payload)
-            if response.status_code != 200:
-                print(f"❌ Server Error code: {response.status_code}")
+            if response.status_code == 200:
+                print("   👉 Payload injected successfully into live Render server Matrix.")
+            else:
+                print(f"   ❌ FAILED to update production. Status code: {response.status_code}")
         except requests.exceptions.ConnectionError:
-            print("❌ DISCONNECTED: Your app.py server is down!")
+            print("   ❌ PRODUCTION TIMEOUT: Link broken or Render web instance sleeping.")
             break
             
-        # Move to the next game matrix state block loop
         state_index = (state_index + 1) % len(yesterday_simulation_slate)
-        time.sleep(4) # Swaps matches every 4 seconds on screen
+        time.sleep(4) # Rotates the matchup profile on your screen every 4 seconds
 
 if __name__ == "__main__":
     run_historical_loop()
