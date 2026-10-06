@@ -110,7 +110,7 @@
         Last Checked: <span id="sync-time">Just Now</span>
     </div>
 
-    <!-- 🚨 MASTER ACTION SHEET: MULTI-LINE SELECTIONS -->
+    <!-- MASTER ACTION SHEET -->
     <div class="section-title">🟢 Engine Green-Light Action Target</div>
     <div class="action-card">
         <div style="display: flex; justify-content: space-between; font-weight: bold; border-bottom: 1px dashed var(--border-color); padding-bottom: 8px; margin-bottom: 8px;">
@@ -223,3 +223,4 @@
                         const now = new Date();
                         document.getElementById('sync-time').innerText = now.toLocaleTimeString();
                         
+                        Object.keys(data.score_updates).forEach(id => {
