@@ -81,7 +81,6 @@ def dashboard():
         ]
     }
     
-    # 🎯 UPGRADED RECON MATRIX: Complete Line Breaks (Spreads, Totals, Puck Lines)
     engine_recommendation = {
         "status": "READY TO STRIKE",
         "action_color": "var(--accent-green)",
