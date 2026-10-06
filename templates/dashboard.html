@@ -18,6 +18,50 @@
             margin: 0 auto;
         }
 
+        .bankroll-command-header {
+            background: linear-gradient(135deg, #111622 0%, #171e30 100%);
+            border: 1px solid #1e293b;
+            border-radius: 12px;
+            padding: 14px;
+            margin-bottom: 20px;
+        }
+
+        .bankroll-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .fluid-cash {
+            color: #00e676;
+            font-size: 1.4rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+        }
+
+        .token-count {
+            color: #ffeb3b;
+            font-size: 0.85rem;
+            font-weight: 700;
+            background: rgba(255, 235, 59, 0.1);
+            padding: 4px 8px;
+            border-radius: 6px;
+            border: 1px solid rgba(255, 235, 59, 0.2);
+        }
+
+        .system-test-badge {
+            background: rgba(255, 145, 0, 0.1);
+            border: 1px solid #ff9100;
+            color: #ff9100;
+            text-align: center;
+            font-size: 0.75rem;
+            font-weight: 800;
+            padding: 6px;
+            border-radius: 6px;
+            letter-spacing: 0.05em;
+        }
+
         .slate-card {
             background-color: #111622;
             border-radius: 12px;
@@ -83,6 +127,28 @@
             font-size: 0.8rem;
             white-space: nowrap;
         }
+
+        /* NEW: House Edge Analytics Bar Styling */
+        .house-analytics-panel {
+            background: #090d14;
+            border: 1px solid #1d2736;
+            border-radius: 8px;
+            padding: 10px;
+            margin-bottom: 14px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+        }
+
+        .metric-box {
+            text-align: center;
+            flex: 1;
+        }
+        .metric-box:not(:last-child) {
+            border-right: 1px solid #1d2736;
+        }
+        .metric-label { color: #718096; font-size: 0.65rem; font-weight: 700; margin-bottom: 2px; }
+        .metric-value { font-weight: bold; color: #ffffff; }
 
         .market-tag {
             color: #ff4d4d;
@@ -169,6 +235,22 @@
 </head>
 <body>
 
+<div class="bankroll-command-header">
+    <div class="bankroll-row">
+        <div>
+            <div style="color: #718096; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.02em;">FLUID CAPITAL</div>
+            <div class="fluid-cash">$178.54</div>
+        </div>
+        <div style="text-align: right;">
+            <div style="color: #718096; font-size: 0.75rem; font-weight: 700; margin-bottom: 2px;">CROWN / TOKENS</div>
+            <span class="token-count">⭐ $20.00 · 4 Boosts</span>
+        </div>
+    </div>
+    <div class="system-test-badge">
+        ⚠️ ENGINE STATUS: LIVE SYSTEM TEST RUN ACTIVE (MAX UNIT SIZE: $5.00)
+    </div>
+</div>
+
 <div id="matrix-container">
     {% for match in matchups %}
     <div class="slate-card" id="card-{{ match.id }}" data-id="{{ match.id }}">
@@ -186,6 +268,22 @@
             <div class="game-time">{{ match.time }}</div>
         </div>
 
+        <!-- NEW: Dynamic In-Game House Manipulation Indicators -->
+        <div class="house-analytics-panel">
+            <div class="metric-box">
+                <div class="metric-label">HOUSE MARGIN (VIG)</div>
+                <div class="metric-value" style="color: #ff9100;">5.42% (High Tax)</div>
+            </div>
+            <div class="metric-box">
+                <div class="metric-label">PUBLIC TRAP BIAS</div>
+                <div class="metric-value" style="color: #ff5252;">84% (Extreme Overreaction)</div>
+            </div>
+            <div class="metric-box">
+                <div class="metric-label">SCRIPT SENSITIVITY</div>
+                <div class="metric-value" style="color: #00e676;">High Risk Window</div>
+            </div>
+        </div>
+
         <div class="market-tag">Market: {{ match.market_alert }}</div>
 
         <div class="props-table">
@@ -195,13 +293,11 @@
                 <div style="flex: 1; text-align: right;">INTEGRITY</div>
             </div>
             
-            <!-- This clean loop automatically pulls all players dynamically without repeating anything -->
             {% for player in match.players %}
             <div class="props-row">
                 <div class="col-player">{{ player.name }}</div>
                 <div class="col-target">{{ player.milestone }}</div>
                 <div class="col-integrity">
-                    <!-- Dynamic coloring logic based on flags -->
                     {% if "SHARP" in player.integrity %}
                     <span class="badge-integrity" style="border-color: #ff4d4d; color: #ff4d4d; background: rgba(255,77,77,0.05);">{{ player.integrity }}</span>
                     {% else %}
@@ -215,66 +311,3 @@
         <div class="deficit-stream-title">⚠️ MORALE DEFICIT STREAM: CRITICAL DEFENSIVE DEFICIT</div>
         {% for def in match.morale_deficits %}
         <div class="deficit-row">
-            <div class="deficit-player">{{ def.name }}</div>
-            <div class="deficit-status">{{ def.status }}</div>
-            <div class="deficit-desc">{{ def.impact }}</div>
-        </div>
-        {% endfor %}
-
-        {% elif match.sport == 'NHL' %}
-        <div class="section-header">🏒 ACTIVE NHL CONTRARIAN TOTALS</div>
-        
-        <div class="game-title-row">
-            <div class="game-names">{{ match.away_team }} @ {{ match.home_team }}</div>
-            <div class="game-time">{{ match.time }}</div>
-        </div>
-
-        <div class="nhl-tag-highlight">{{ match.market_alert }}</div>
-        <div class="nhl-flow-tracker">Status: {{ match.scan_status }}</div>
-        {% endif %}
-
-    </div>
-    {% endfor %}
-</div>
-
-<script>
-function moveSlateCard(direction, elementId) {
-    const card = document.getElementById(elementId);
-    const container = document.getElementById('matrix-container');
-    if (!card || !container) return;
-
-    if (direction === 'up' && card.previousElementSibling) {
-        container.insertBefore(card, card.previousElementSibling);
-    } else if (direction === 'down' && card.nextElementSibling) {
-        container.insertBefore(card.nextElementSibling, card);
-    }
-    
-    syncPersistedSequence();
-}
-
-function syncPersistedSequence() {
-    const container = document.getElementById('matrix-container');
-    const cards = container.querySelectorAll('.slate-card');
-    const orderedIds = [];
-    
-    cards.forEach(card => {
-        orderedIds.push(card.getAttribute('data-id'));
-    });
-    
-    fetch('/api/slate/reorder', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ ordered_ids: orderedIds })
-    })
-    .then(res => res.json())
-    .then(data => {
-        console.log("CEE Weights Saved:", data.message);
-    })
-    .catch(err => console.error("Error communicating sequence state map matrix to server:", err));
-}
-</script>
-
-</body>
-</html>
