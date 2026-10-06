@@ -90,38 +90,43 @@
 
     <div class="header">
         <h1 style="font-size: 1.4rem; margin: 0;">CEE ENGINE HUD</h1>
-        <div class="badge" id="pipeline-badge">Pipeline Active v6.4</div>
+        <div class="badge" id="pipeline-badge">Pipeline Active v6.8</div>
     </div>
     
     <div class="status-container">
         Last Checked: <span id="sync-time">Just Now</span>
     </div>
 
-    <!-- Tonight's Live Scores -->
-    <div class="section-title">📺 Tonight's Live Slate Monitor</div>
+    <!-- Tonight's Live Scores & Weather Feed -->
+    <div class="section-title">📺 Live Slate & Stadium Weather Monitor</div>
     <div class="grid-box" style="margin-bottom: 20px;">
         {% for match in live_games %}
-        <div class="grid-row" style="align-items: center;">
-            <div>
+        <div class="grid-row" style="align-items: center;" id="game-card-{{ match.id }}">
+            <div style="max-width: 65%;">
                 <span class="badge" style="font-size:0.75rem; padding: 2px 5px; background:rgba(255,255,255,0.05); color:var(--text-muted);">{{ match.sport }}</span>
                 <span style="font-weight: bold; color: var(--text-main); margin-left: 5px;">{{ match.game }}</span><br>
-                <span style="font-size: 0.8rem; color: var(--text-muted); padding-top: 4px; display: block;">Start Time: {{ match.time }}</span>
+                <span style="font-size: 0.8rem; color: var(--accent-orange); font-weight: 500; padding-top: 4px; display: block;">{{ match.stadium }} • {{ match.weather }}</span>
             </div>
             <div style="text-align: right;">
-                <span style="font-weight: bold; color: var(--accent-green); font-size: 1.1rem;">{{ match.score }}</span><br>
-                <span class="badge badge-orange" style="font-size: 0.75rem; padding: 2px 6px; margin-top: 4px; display: inline-block;">{{ match.status }}</span>
+                <span style="font-weight: bold; color: var(--accent-green); font-size: 1.1rem;" id="score-{{ match.id }}">{{ match.score }}</span><br>
+                <span class="badge badge-orange" style="font-size: 0.75rem; padding: 2px 6px; margin-top: 4px; display: inline-block;" id="status-{{ match.id }}">{{ match.quarter }}</span>
             </div>
         </div>
         {% endfor %}
     </div>
 
-    <!-- 📉 NEW INTEGRATED MONITOR MODULE -->
-    <div class="section-title">📉 Morale & Structural Threat Streams</div>
+    <!-- ⏱️ Broadcast Script Phase Tracker -->
+    <div class="section-title">⏱️ Broadcast Script Phase Tracker</div>
     <div class="grid-box" style="margin-bottom: 20px;">
-        {% for indicator in morale.indicators %}
-        <div class="grid-row">
-            <span style="font-weight: bold; color: var(--text-main);">{{ indicator.name }}</span>
-            <span id="morale-{{ indicator.id }}" style="color: {{ indicator.color }}; font-weight: bold;">{{ indicator.value }}</span>
+        {% for phase in script.phases %}
+        <div class="grid-row" style="flex-direction: column; padding: 12px 0;">
+            <div style="display: flex; justify-content: space-between; width: 100%; font-weight: bold; font-size: 0.95rem;">
+                <span style="color: var(--text-main);">{{ phase.qtr }} : <span style="color: var(--accent-green);">{{ phase.name }}</span></span>
+                <span id="script-status-{{ phase.qtr }}" style="color: {{ phase.color }}; text-transform: uppercase;">{{ phase.status }}</span>
+            </div>
+            <div style="font-size: 0.85rem; color: var(--text-muted); padding-top: 4px; line-height: 1.3;">
+                {{ phase.desc }}
+            </div>
         </div>
         {% endfor %}
     </div>
@@ -157,6 +162,24 @@
         {% endfor %}
     </div>
 
+    <!-- Early Board Map -->
+    <div class="section-title">🌅 Early Board Map: {{ early.slate_date }}</div>
+    <div class="grid-box">
+        {% for game in early.games %}
+        <div class="grid-row" style="align-items: center;">
+            <div style="max-width: 60%;">
+                <span class="badge" style="font-size:0.75rem; padding: 2px 5px; background:rgba(255,255,255,0.05); color:var(--text-muted);">{{ game.sport }}</span>
+                <span style="font-weight: bold; color: var(--text-main); margin-left: 5px; display: inline-block; vertical-align: middle;">{{ game.matchup }}</span><br>
+                <span style="font-size: 0.8rem; color: {{ game.drift_color }}; font-weight: 600; padding-top: 4px; display: block;">{{ game.drift_text }}</span>
+            </div>
+            <div style="text-align: right;">
+                <span style="font-size: 0.8rem; color: var(--text-muted);">Open: {{ game.open_line }}</span><br>
+                <span style="font-weight: bold; color: var(--accent-green); font-size: 1.05rem;">Live: {{ game.current_line }}</span>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
     <script>
         function checkEnginePipeline() {
             fetch('/api/feed')
@@ -166,18 +189,23 @@
                         const now = new Date();
                         document.getElementById('sync-time').innerText = now.toLocaleTimeString();
                         
-                        // Async loop update for public sentiment tracking
+                        Object.keys(data.score_updates).forEach(id => {
+                            const scoreElem = document.getElementById(`score-${id}`);
+                            const statusElem = document.getElementById(`status-${id}`);
+                            if (scoreElem && data.score_updates[id]) scoreElem.innerText = data.score_updates[id].score;
+                            if (statusElem && data.score_updates[id]) statusElem.innerText = data.score_updates[id].quarter;
+                        });
+
                         Object.keys(data.sentiment_updates).forEach(key => {
                             const elem = document.getElementById(`vol-${key}`);
                             if (elem) elem.innerText = data.sentiment_updates[key];
                         });
 
-                        // Async loop update for structural tracking parameters
-                        Object.keys(data.morale_updates).forEach(key => {
-                            const elem = document.getElementById(`morale-${key}`);
+                        data.script_updates.forEach(update => {
+                            const elem = document.getElementById(`script-status-${update.qtr}`);
                             if (elem) {
-                                elem.innerText = data.morale_updates[key].value;
-                                elem.style.color = data.morale_updates[key].color;
+                                elem.innerText = update.status;
+                                elem.style.color = update.color;
                             }
                         });
                     }
