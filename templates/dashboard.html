@@ -1,114 +1,317 @@
-import os
-import json
-from flask import Flask, request, jsonify, render_template
-
-app = Flask(__name__)
-
-# JSON persistence storage configuration tracking map
-SETTINGS_FILE = os.path.join(os.path.dirname(__file__), 'slate_settings.json')
-
-def load_slate_order():
-    """Reads the stored matrix order parameters safely from disk."""
-    if not os.path.exists(SETTINGS_FILE):
-        return {}
-    try:
-        with open(SETTINGS_FILE, 'r') as f:
-            return json.load(f)
-    except Exception:
-        return {}
-
-def save_slate_order(order_map):
-    """Saves the layout priority dictionary configuration file securely."""
-    try:
-        with open(SETTINGS_FILE, 'w') as f:
-            json.dump(order_map, f, indent=4)
-        return True
-    except Exception:
-        return False
-
-def get_aws_nextgen_pressure_metrics(team_id):
-    """
-    Simulated AWS Next Gen Stats Endpoint Wrapper.
-    Evaluates defensive pass-rush pressure scores and pocket collapse rates.
-    """
-    aws_tracking_feed = {
-        "NO": {"defensive_pressure_score": 38.4, "avg_time_to_pressure": 2.42},
-        "ATL": {"defensive_pressure_score": 22.1, "avg_time_to_pressure": 2.85}
-    }
-    return aws_tracking_feed.get(team_id, {"defensive_pressure_score": 25.0, "avg_time_to_pressure": 2.60})
-
-def fetch_active_matrix_data():
-    """
-    Automated Background Feed Engine.
-    Streams actual slates and processes live AWS advanced metrics data layers.
-    """
-    saints_defensive_pressure = get_aws_nextgen_pressure_metrics("NO")
-    falcons_defensive_pressure = get_aws_nextgen_pressure_metrics("ATL")
-
-    return [
-        {
-            "id": "nfl_falcons_saints_2026",
-            "sport": "NFL",
-            "away_team": "Atlanta Falcons",
-            "home_team": "New Orleans Saints",
-            "time": "8:15 PM ET",
-            "market_alert": f"Saints -1.5 (ATL Pass Rush Pressure Score: {falcons_defensive_pressure['defensive_pressure_score']}% 🚨)",
-            "players": [
-                {"name": "Bijan Robinson (RB)", "milestone": "Over 50.5 Rush Yds", "integrity": "PREMIUM FLOOR"},
-                {"name": "Drake London (WR)", "milestone": "Over 65.5 Rec Yds", "integrity": "SHARP MILESTONE"},
-                {"name": "Chris Olave (WR)", "milestone": "8+ Receptions (+122)", "integrity": "SHARP MILESTONE"},
-                {"name": "Juwan Johnson (TE)", "milestone": "Over 35.5 Yards", "integrity": "PREMIUM FLOOR"}
-            ],
-            "morale_deficits": [
-                {
-                    "name": "Saints O-Line depth", 
-                    "status": "WARN", 
-                    "impact": f"Morale Penalty Active: Fast collapse risk (ATL Time-to-Pressure: 2.85s)"
-                },
-                {
-                    "name": "Falcons Front Seven", 
-                    "status": "HEALTHY", 
-                    "impact": f"Panic Threshold Stable: NO Pass Rush Pressure: {saints_defensive_pressure['defensive_pressure_score']}%"
-                }
-            ]
-        },
-        {
-            "id": "nhl_flyers_lightning_2026",
-            "sport": "NHL",
-            "away_team": "Philadelphia Flyers",
-            "home_team": "Tampa Bay Lightning",
-            "time": "7:00 PM ET",
-            "market_alert": "Money Line / Totals Only (Puck Line Blocked)",
-            "scan_status": "Tracking Sharp Inflows"
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cee App - Contrarian Edge Engine Matrix</title>
+    <style>
+        body {
+            background-color: #090d14;
+            color: #ffffff;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 12px;
         }
-    ]
-
-@app.route('/')
-def main_dashboard():
-    """Renders real data matrix items organized by custom ordering profiles."""
-    active_matchups = fetch_active_matrix_data()
-    order_map = load_slate_order()
-    
-    # Sort items sequentially based on your mobile dashboard arrangement actions
-    active_matchups.sort(key=lambda x: order_map.get(str(x.get('id')), 999))
-    
-    return render_template('dashboard.html', matchups=active_matchups)
-
-@app.route('/api/slate/reorder', methods=['POST'])
-def save_slate_sequence():
-    """Receives sequence array data from client views and dumps updates into storage files."""
-    data = request.get_json() or {}
-    ordered_ids = data.get('ordered_ids', [])
-    
-    if not ordered_ids:
-        return jsonify({"status": "error", "message": "Missing ID tracking array parameter"}), 400
         
-    # Map matching array items to an integer-keyed priority dictionary
-    order_map = {str(item_id): index for index, item_id in enumerate(ordered_ids)}
-    
-    if save_slate_order(order_map):
-        return jsonify({"status": "success", "message": "JSON Matrix persistence sync completed"})
-    return jsonify({"status": "error", "message": "Failed writing state settings map to workspace storage disk"}), 500
+        #matrix-container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
 
-if __name__ == '__main__':
-    app.run(debug=True)
+        .bankroll-command-header {
+            background: linear-gradient(135deg, #111622 0%, #171e30 100%);
+            border: 1px solid #1e293b;
+            border-radius: 12px;
+            padding: 14px;
+            margin-bottom: 20px;
+        }
+
+        .bankroll-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .fluid-cash {
+            color: #00e676;
+            font-size: 1.4rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+        }
+
+        .token-count {
+            color: #ffeb3b;
+            font-size: 0.85rem;
+            font-weight: 700;
+            background: rgba(255, 235, 59, 0.1);
+            padding: 4px 8px;
+            border-radius: 6px;
+            border: 1px solid rgba(255, 235, 59, 0.2);
+        }
+
+        .system-test-badge {
+            background: rgba(255, 145, 0, 0.1);
+            border: 1px solid #ff9100;
+            color: #ff9100;
+            text-align: center;
+            font-size: 0.75rem;
+            font-weight: 800;
+            padding: 6px;
+            border-radius: 6px;
+            letter-spacing: 0.05em;
+        }
+
+        .slate-card {
+            background-color: #111622;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 16px;
+            border: 1px solid #1a2233;
+            position: relative;
+        }
+
+        .card-controls {
+            display: flex;
+            gap: 4px;
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            z-index: 10;
+        }
+
+        .btn-sort {
+            background: #1c263b;
+            color: #a0aec0;
+            border: 1px solid #2d3d5a;
+            border-radius: 6px;
+            padding: 4px 8px;
+            cursor: pointer;
+            font-size: 0.7rem;
+            font-weight: bold;
+            transition: all 0.2s ease;
+        }
+
+        .btn-sort:hover {
+            background: #2d3d5a;
+            color: #ffffff;
+        }
+
+        .section-header {
+            color: #ff4d4d;
+            font-size: 0.85rem;
+            font-weight: 800;
+            letter-spacing: 0.05em;
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .game-title-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+            padding-right: 70px;
+        }
+
+        .game-names {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #ffffff;
+        }
+
+        .game-time {
+            color: #718096;
+            font-size: 0.8rem;
+            white-space: nowrap;
+        }
+
+        .house-analytics-panel {
+            background: #090d14;
+            border: 1px solid #1d2736;
+            border-radius: 8px;
+            padding: 10px;
+            margin-bottom: 14px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+        }
+
+        .metric-box {
+            text-align: center;
+            flex: 1;
+        }
+        .metric-box:not(:last-child) {
+            border-right: 1px solid #1d2736;
+        }
+        .metric-label { color: #718096; font-size: 0.65rem; font-weight: 700; margin-bottom: 2px; }
+        .metric-value { font-weight: bold; color: #ffffff; }
+
+        .market-tag {
+            color: #ff4d4d;
+            background: rgba(255, 77, 77, 0.1);
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 16px;
+            display: inline-block;
+        }
+
+        .props-table {
+            width: 100%;
+            margin-bottom: 16px;
+        }
+
+        .props-header-row {
+            display: flex;
+            color: #4a5568;
+            font-size: 0.7rem;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            margin-bottom: 8px;
+        }
+
+        .props-row {
+            display: flex;
+            align-items: center;
+            padding: 8px 0;
+            border-top: 1px solid #1a2233;
+        }
+
+        .col-player { flex: 1.2; font-size: 0.9rem; font-weight: 700; color: #ffffff; }
+        .col-target { flex: 1; font-size: 0.85rem; font-weight: 600; color: #ffeb3b; }
+        .col-integrity { flex: 1; text-align: right; }
+
+        .badge-integrity {
+            display: inline-block;
+            border: 1px solid #00e676;
+            color: #00e676;
+            background: rgba(0, 230, 118, 0.05);
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 4px 6px;
+            border-radius: 4px;
+            letter-spacing: 0.02em;
+        }
+
+        .deficit-stream-title {
+            color: #ff9100;
+            font-size: 0.75rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .deficit-row {
+            display: flex;
+            align-items: center;
+            font-size: 0.85rem;
+            margin-bottom: 6px;
+        }
+
+        .deficit-player { color: #ff5252; text-decoration: line-through; font-weight: 600; width: 110px; }
+        .deficit-status { color: #ff5252; font-weight: 800; width: 45px; }
+        .deficit-desc { color: #e2e8f0; flex: 1; }
+
+        .nhl-tag-highlight {
+            color: #00e676;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .nhl-flow-tracker {
+            color: #718096;
+            font-style: italic;
+            font-size: 0.85rem;
+        }
+    </style>
+</head>
+<body>
+
+<div class="bankroll-command-header">
+    <div class="bankroll-row">
+        <div>
+            <div style="color: #718096; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.02em;">FLUID CAPITAL</div>
+            <div class="fluid-cash">$178.54</div>
+        </div>
+        <div style="text-align: right;">
+            <div style="color: #718096; font-size: 0.75rem; font-weight: 700; margin-bottom: 2px;">CROWN / TOKENS</div>
+            <span class="token-count">⭐ $20.00 · 4 Boosts</span>
+        </div>
+    </div>
+    <div class="system-test-badge">
+        ⚠️ ENGINE STATUS: LIVE SYSTEM TEST RUN ACTIVE (MAX UNIT SIZE: $5.00)
+    </div>
+</div>
+
+<div id="matrix-container">
+    {% for match in matchups %}
+    <div class="slate-card" id="card-{{ match.id }}" data-id="{{ match.id }}">
+        
+        <div class="card-controls">
+            <button class="btn-sort" onclick="moveSlateCard('up', 'card-{{ match.id }}')">▲</button>
+            <button class="btn-sort" onclick="moveSlateCard('down', 'card-{{ match.id }}')">▼</button>
+        </div>
+
+        {% if match.sport == 'NFL' %}
+        <div class="section-header">🏈 ACTIVE NFL MILESTONE SLATE</div>
+        
+        <div class="game-title-row">
+            <div class="game-names">{{ match.away_team }} @ {{ match.home_team }}</div>
+            <div class="game-time">{{ match.time }}</div>
+        </div>
+
+        <div class="house-analytics-panel">
+            <div class="metric-box">
+                <div class="metric-label">HOUSE MARGIN (VIG)</div>
+                <div class="metric-value" style="color: #ff9100;">5.42% (High Tax)</div>
+            </div>
+            <div class="metric-box">
+                <div class="metric-label">PUBLIC TRAP BIAS</div>
+                <div class="metric-value" style="color: #ff5252;">84% (Extreme Overreaction)</div>
+            </div>
+            <div class="metric-box">
+                <div class="metric-label">SCRIPT SENSITIVITY</div>
+                <div class="metric-value" style="color: #00e676;">High Risk Window</div>
+            </div>
+        </div>
+
+        <div class="market-tag">Market: {{ match.market_alert }}</div>
+
+        <div class="props-table">
+            <div class="props-header-row">
+                <div style="flex: 1.2;">PLAYER</div>
+                <div style="flex: 1;">TARGET MILESTONE</div>
+                <div style="flex: 1; text-align: right;">INTEGRITY</div>
+            </div>
+            
+            {% for player in match.players %}
+            <div class="props-row">
+                <div class="col-player">{{ player.name }}</div>
+                <div class="col-target">{{ player.milestone }}</div>
+                <div class="col-integrity">
+                    {% if "SHARP" in player.integrity %}
+                    <span class="badge-integrity" style="border-color: #ff4d4d; color: #ff4d4d; background: rgba(255,77,77,0.05);">{{ player.integrity }}</span>
+                    {% else %}
+                    <span class="badge-integrity" style="border-color: #00e676; color: #00e676; background: rgba(0,230,118,0.05);">{{ player.integrity }}</span>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="deficit-stream-title">⚠️ MORALE DEFICIT STREAM: CRITICAL DEFENSIVE DEFICIT</div>
+        {% for def in match.morale_deficits %}
+        <div class="deficit-row">
+            <div class="deficit-player">{{ def.name }}</div>
+            <div class="deficit-status">{{ def.status }}</div>
+            <div class="deficit-desc">{{ def.impact }}</div>
+        </div>
+        {% endfor %}
+
