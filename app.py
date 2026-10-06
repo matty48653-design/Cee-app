@@ -8,7 +8,7 @@ app = Flask(__name__)
 # ==========================================
 engine_cache = {
     "framework_version": "5.3-Clean-Table-Matrix",
-    "last_sync_timestamp": "10-06-2026 10:00 AM",
+    "last_sync_timestamp": "10-06-2026 10:10 AM",
     "global_rules": {
         "block_volatile_micro_lines": True,
         "enforce_milestone_slider_floors": True,
@@ -22,36 +22,10 @@ engine_cache = {
     "nfl_player_props": {
         "status": "active_monitoring",
         "milestones": [
-            {
-                "player": "Jared Goff", "team": "DET", "matchup": "@ ARI",
-                "metric": "Passing Yards", "house_line": 258.5, "safety_floor": 225.0,
-                "edge_status": "EXPOSED_ALGORITHM_TRAP"
-            },
-            {
-                "player": "Jahmyr Gibbs", "team": "DET", "matchup": "@ ARI",
-                "metric": "Rushing Yards", "house_line": 64.5, "safety_floor": 55.0,
-                "edge_status": "SHARP_VOLUME_ADVANTAGE"
-            }
-        ]
-    },
-    "contrarian_splits_matrix": {
-        "status": "active_monitoring",
-        "slates": [
-            {
-                "matchup": "Islanders @ Rangers", "line": "Under 5.5",
-                "public_tickets": "78%", "sharp_cash": "64%", "volume": "LOW",
-                "signal": "PUBLIC_BAIT_FADE"
-            },
-            {
-                "matchup": "Predators @ Maple Leafs", "line": "Under 6.0",
-                "public_tickets": "82%", "sharp_cash": "71%", "volume": "OVERLOOKED",
-                "signal": "SHARP_CASH_SPLIT"
-            },
-            {
-                "matchup": "Senators @ Red Wings", "line": "Under 6.5",
-                "public_tickets": "71%", "sharp_cash": "59%", "volume": "LOW",
-                "signal": "CONTRARIAN_VOLUME"
-            }
+            {"player": "Jared Goff", "team": "DET", "matchup": "@ DAL", "metric": "Passing Yards", "house_line": 264.5, "safety_floor": 225.0, "edge_status": "SHARP_VOLUME_EDGE"},
+            {"player": "Jahmyr Gibbs", "team": "DET", "matchup": "@ DAL", "metric": "Rushing Yards", "house_line": 62.5, "safety_floor": 55.0, "edge_status": "VOLUME_ADVANTAGE"},
+            {"player": "Josh Allen", "team": "BUF", "matchup": "@ NYJ", "metric": "Passing Yards", "house_line": 242.5, "safety_floor": 215.0, "edge_status": "WEATHER_PROTECTED"},
+            {"player": "Patrick Mahomes", "team": "KC", "matchup": "@ SF", "metric": "Passing Yards", "house_line": 254.5, "safety_floor": 220.0, "edge_status": "ALGORITHM_TRAP"}
         ]
     },
     "nhl_slate": {
@@ -63,38 +37,24 @@ engine_cache = {
             {"matchup": "Panthers @ Kings", "ou": 6.0, "status": "waiting_puck_drop", "contrarian_edge": "LINE_FREEZE"}
         ]
     },
-    "trap_analysis_models": {
-        "active_cards": {
-            "historical_trap_01": {
-                "matchup": "Falcons @ Saints", "type": "Historical Baseline Trap",
-                "rules_applied": "v5.3_compact_isolation", "public_bias": "Heavy Public Under Bait Volume"
-            }
-        }
+    "low_volume_splits": {
+        "status": "active",
+        "games": [
+            {"matchup": "Islanders @ Rangers", "target": "Under 5.5", "tickets": "78%", "cash": "64%", "state": "LOW"},
+            {"matchup": "Predators @ Maple Leafs", "target": "Under 6.0", "tickets": "82%", "cash": "71%", "state": "OVERLOOKED"},
+            {"matchup": "Senators @ Red Wings", "target": "Under 6.5", "tickets": "71%", "cash": "59%", "state": "LOW"}
+        ]
     }
 }
 
-FALLBACK_HTML = """
-<!DOCTYPE html>
-<html>
-<head>
-    <title>CEE v5.3 Matrix</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style>
-        body { background: #0f111a; color: #a6accd; font-family: monospace; padding: 20px; }
-        h1 { color: #ff5370; border-bottom: 2px solid #ff5370; }
-    </style>
-</head>
-<body>
-    <h1>CONTRARIAN EDGE ENGINE v5.3</h1>
-    <p>Status: LIVE_EMBEDDED_MATRIX</p>
-</body>
-</html>
-"""
+FALLBACK_HTML = "<html><body><h1>CEE Matrix Fallback Active</h1></body></html>"
 
 @app.route("/")
 def index():
-    try: return render_template("dashboard.html", cache=engine_cache)
-    except Exception: return render_template_string(FALLBACK_HTML, cache=engine_cache)
+    try:
+        return render_template("dashboard.html", cache=engine_cache)
+    except Exception:
+        return render_template_string(FALLBACK_HTML, cache=engine_cache)
 
 @app.route("/api/v5/engine/cache", methods=["GET"])
 def get_engine_cache():
