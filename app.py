@@ -8,7 +8,7 @@ app = Flask(__name__)
 # ==========================================
 engine_cache = {
     "framework_version": "5.3-Clean-Table-Matrix",
-    "last_sync_timestamp": "10-06-2026 10:45 AM",
+    "last_sync_timestamp": "10-06-2026 10:55 AM",
     "global_rules": {
         "block_volatile_micro_lines": True,
         "enforce_milestone_slider_floors": True,
@@ -22,10 +22,10 @@ engine_cache = {
     "nfl_player_props": {
         "status": "active_monitoring",
         "milestones": [
-            {"player": "LeBron James", "team": "LAL", "matchup": "@ GSW", "metric": "NBA Pre Min Floor", "house_line": 18.5, "safety_floor": 14.0, "edge_status": "REST_RESTRICTION_EDGE"},
+            {"player": "De'Aaron Fox", "team": "SAC", "matchup": "@ GSW", "metric": "NBA Pre Points", "house_line": 21.5, "safety_floor": 17.0, "edge_status": "VOLUME_SAFETY_EDGE"},
             {"player": "Jared Goff", "team": "DET", "matchup": "@ DAL", "metric": "Passing Yards", "house_line": 264.5, "safety_floor": 225.0, "edge_status": "SHARP_VOLUME_EDGE"},
             {"player": "Jahmyr Gibbs", "team": "DET", "matchup": "@ DAL", "metric": "Rushing Yards", "house_line": 62.5, "safety_floor": 55.0, "edge_status": "VOLUME_ADVANTAGE"},
-            {"player": "Fernando Mendoza", "team": "CAL", "matchup": "CFB Slate", "metric": "Passing Yards", "house_line": 248.5, "safety_floor": 210.0, "edge_status": "CONTRARIAN_VOLUME_EDGE"}
+            {"player": "Nico Iamaleava", "team": "TENN", "matchup": "CFB Slate", "metric": "Passing Yards", "house_line": 238.5, "safety_floor": 195.0, "edge_status": "CONTRARIAN_VOLUME_EDGE"}
         ]
     },
     "nhl_slate": {
@@ -43,8 +43,8 @@ engine_cache = {
             {"matchup": "Islanders @ Rangers", "target": "Under 5.5", "tickets": "58%", "cash": "64%", "state": "NHL TONIGHT"},
             {"matchup": "Predators @ Maple Leafs", "target": "Under 6.0", "tickets": "52%", "cash": "71%", "state": "NHL TONIGHT"},
             {"matchup": "Georgia @ Alabama", "target": "Georgia -3", "tickets": "74%", "cash": "51%", "state": "CFB WEEK 6"},
-            {"matchup": "UCLA @ Oregon", "target": "Under 60.5", "tickets": "68%", "cash": "44%", "state": "CFB WEEK 6"},
-            {"matchup": "Lakers @ Warriors", "target": "LAL ML (+115)", "tickets": "38%", "cash": "62%", "state": "NBA PRE"}
+            {"matchup": "UCLA @ Oregon", "target": "Under 59.5", "tickets": "68%", "cash": "44%", "state": "CFB WEEK 6"},
+            {"matchup": "Kings @ Warriors", "target": "Under 222.5", "tickets": "51%", "cash": "43%", "state": "NBA TONIGHT"}
         ]
     }
 }
