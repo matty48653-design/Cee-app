@@ -3,9 +3,9 @@ from flask import Flask, render_template
 
 app = Flask(__name__)
 
-# THE CEE MULTI-SPORT MATRIX: Mapping Active NHL Opening & Weekly NFL Boards
-ACTIVE_BOARD_SLATES = [
-    # 🏒 TONIGHT'S NHL MARQUEE TRACKING SLATES
+# THE UNIFIED MULTI-SPORT STRATEGY ENGINE POOL (ALL CURRENT WEEK MATRICES)
+COMPLETE_DASHBOARD_SLATES = [
+    # 🏒 TONIGHT'S NHL MARQUEE TRACKING SLATES (OCTOBER 6)
     {
         "sport_tag": "🏒 ACTIVE HOCKEY SLATE",
         "game": "New York Islanders @ New York Rangers",
@@ -54,7 +54,55 @@ ACTIVE_BOARD_SLATES = [
             {"unit": "Kings Netminder Group", "status": "WARN", "alert_text": "Public Favorite Trap: High volume public backing exposure. High risk variance alert."}
         ]
     },
-    # 🏈 WEEK 5 FOOTBALL STRATEGY BLOCKS
+    # 🏈 WEEK 5 NFL STRATEGY PORTFOLIO BOARDS (OCTOBER 8 - 12)
+    {
+        "sport_tag": "🏈 CONTRARIAN FOOTBALL SLATE",
+        "game": "Tampa Bay Buccaneers @ Dallas Cowboys",
+        "live_clock": "THU - 8:15 PM ET",
+        "score_string": "PRE-GAME",
+        "closing_line": "O/U 47.5",
+        "sim_total": "CEE Projected: 49",
+        "pacing_status": "Pacing 🔥 STABLE",
+        "players": [
+            {"name": "Dak Prescott", "position": "QB", "target": "Over 258.5 Passing Yards Floor", "is_floor": True},
+            {"name": "CeeDee Lamb", "position": "WR", "target": "Under 7.5 Receptions Ceiling", "is_floor": False}
+        ],
+        "morale": [
+            {"unit": "Buccaneers Front 7", "status": "WARN", "alert_text": "AWS Pass-Rush Score: Deficit tracked. Dak passing yard floor highly insulated."}
+        ]
+    },
+    {
+        "sport_tag": "🏈 CONTRARIAN FOOTBALL SLATE",
+        "game": "Chicago Bears @ Green Bay Packers",
+        "live_clock": "SUN - 1:00 PM ET",
+        "score_string": "PRE-GAME",
+        "closing_line": "O/U 44.5",
+        "sim_total": "CEE Projected: 41",
+        "pacing_status": "Pacing 📉 UNDER",
+        "players": [
+            {"name": "D'Andre Swift", "position": "RB", "target": "Over 62.5 Rushing Yards Floor", "is_floor": True},
+            {"name": "DJ Moore", "position": "WR", "target": "Under 5.5 Receptions Ceiling", "is_floor": False}
+        ],
+        "morale": [
+            {"unit": "Packers Run Def", "status": "WARN", "alert_text": "Morale Deficit Flag engaged. Explosive public favorite trap bias active."}
+        ]
+    },
+    {
+        "sport_tag": "🏈 CONTRARIAN FOOTBALL SLATE",
+        "game": "Minnesota Vikings @ New Orleans Saints",
+        "live_clock": "SUN - 1:00 PM ET",
+        "score_string": "PRE-GAME",
+        "closing_line": "O/U 41.5",
+        "sim_total": "CEE Projected: 46",
+        "pacing_status": "Pacing 🔥 OVER",
+        "players": [
+            {"name": "Alvin Kamara", "position": "RB", "target": "Over 4.5 Live Receptions Floor", "is_floor": True},
+            {"name": "Chris Olave", "position": "WR", "target": "Under 6.5 Live Receptions Ceiling", "is_floor": False}
+        ],
+        "morale": [
+            {"unit": "Saints O-Line", "status": "WARN", "alert_text": "Game-Script Panic Threshold: High pocket pressure collapse trajectory expected."}
+        ]
+    },
     {
         "sport_tag": "🏈 CONTRARIAN FOOTBALL SLATE",
         "game": "Detroit Lions @ Arizona Cardinals",
@@ -68,14 +116,14 @@ ACTIVE_BOARD_SLATES = [
             {"name": "Amon-Ra St. Brown", "position": "WR", "target": "Under 7.5 Receptions Ceiling", "is_floor": False}
         ],
         "morale": [
-            {"unit": "Cardinals Secondary", "status": "WARN", "alert_text": "Game-Script Panic Threshold: Public heavily backing favorite. Line fade premium active."}
+            {"unit": "Cardinals Secondary", "status": "WARN", "alert_text": "Contrarian Edge Engine: Heavy public money fade opportunity. Volume is high."}
         ]
     }
 ]
 
 @app.route('/')
 def dashboard():
-    return render_template("dashboard.html", slates=ACTIVE_BOARD_SLATES)
+    return render_template("dashboard.html", slates=COMPLETE_DASHBOARD_SLATES)
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
