@@ -68,13 +68,24 @@
             background: rgba(255, 145, 0, 0.15);
             color: var(--accent-orange);
         }
+        .status-container {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            text-align: right;
+            margin-top: -10px;
+            margin-bottom: 15px;
+        }
     </style>
 </head>
 <body>
 
     <div class="header">
         <h1 style="font-size: 1.5rem; margin: 0;">CEE ENGINE HUD</h1>
-        <div class="badge">Pipeline Active v5.3</div>
+        <div class="badge" id="pipeline-badge">Pipeline Active v5.3</div>
+    </div>
+    
+    <div class="status-container">
+        Last Checked: <span id="sync-time">Just Now</span>
     </div>
 
     <!-- College Football Targets -->
@@ -121,5 +132,26 @@
         </tbody>
     </table>
 
+    <script>
+        // Automatic background layout synchronization script
+        function checkEnginePipeline() {
+            fetch('/api/feed')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === "Pipeline Active") {
+                        const now = new Date();
+                        document.getElementById('sync-time').innerText = now.toLocaleTimeString();
+                        document.getElementById('pipeline-badge').style.borderColor = "#00e676";
+                    }
+                })
+                .catch(err => {
+                    console.log("Sync loop waiting for server recovery...");
+                    document.getElementById('pipeline-badge').innerText = "Syncing...";
+                });
+        }
+        
+        // Poll backend arrays every 30 seconds for direct layout updates
+        setInterval(checkEnginePipeline, 30000);
+    </script>
 </body>
 </html>
