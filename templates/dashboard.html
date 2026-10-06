@@ -30,15 +30,15 @@
 
     <div class="card">
         <div style="color: #f87171; font-size: 12px; font-weight: bold; margin-bottom: 4px;">🏈 ACTIVE FOOTBALL SLATE</div>
-        <div class="slate-title">{{ slate.game }}</div>
+        <div id="game-title" class="slate-title">{{ slate.game }}</div>
         
-        <div class="live-clock-bar">
+        <div id="live-clock" class="live-clock-bar">
             🏁 LIVE CLOCK: {{ slate.live_clock }} | {{ slate.score_string }}
         </div>
         
         <div class="sim-box">
-            📊 SIM ENGINE MODEL: {{ slate.pacing_status }} (Closing Line: {{ slate.closing_line }})
-            <div class="sim-total-text">Projected Final: {{ slate.score_string }} (Sim Total: {{ slate.sim_total }})</div>
+            <span id="pacing-status">📊 SIM ENGINE MODEL: {{ slate.pacing_status }} (Closing Line: {{ slate.closing_line }})</span>
+            <div id="projected-final" class="sim-total-text">Projected Final: {{ slate.score_string }} (Sim Total: {{ slate.sim_total }})</div>
         </div>
 
         <div class="section-header">
@@ -46,22 +46,57 @@
             <span>Safety Floor Target</span>
         </div>
         
-        {% for player in players %}
-        <div class="data-row">
-            <span class="player-name">{{ player.name }} <span class="player-pos">({{ player.position }})</span></span>
-            <span class="{% if player.is_floor %}target-floor{% else %}target-ceiling{% endif %}">{{ player.target }}</span>
+        <!-- Dynamic containers for the JavaScript feed engine loops -->
+        <div id="player-stream-container">
+            {% for player in players %}
+            <div class="data-row">
+                <span class="player-name">{{ player.name }} <span class="player-pos">({{ player.position }})</span></span>
+                <span class="{% if player.is_floor %}target-floor{% else %}target-ceiling{% endif %}">{{ player.target }}</span>
+            </div>
+            {% endfor %}
         </div>
-        {% endfor %}
 
         <div class="morale-header">⚠️ MORALE DEFICIT STREAM</div>
-        {% for item in morale %}
-        <div style="display: flex; gap: 15px; align-items: flex-start; margin-top: 8px;">
-            <span class="crossed-out">{{ item.unit }}</span>
-            <span class="warn-tag">{{ item.status }}</span>
-            <div class="alert-desc">{{ item.alert_text }}</div>
+        <div id="morale-stream-container">
+            {% for item in morale %}
+            <div style="display: flex; gap: 15px; align-items: flex-start; margin-top: 8px;">
+                <span class="crossed-out">{{ item.unit }}</span>
+                <span class="warn-tag">{{ item.status }}</span>
+                <div class="alert-desc">{{ item.alert_text }}</div>
+            </div>
+            {% endfor %}
         </div>
-        {% endfor %}
     </div>
+
+    <!-- 🟢 NEW AUTOMATIC SYNCHRONIZATION ENGINE SCRIPT 🟢 -->
+    <script>
+        async function fetchLiveMatrixUpdates() {
+            try {
+                // Hits the main route to pull down fresh background data arrays
+                const response = await fetch(window.location.origin + '/');
+                if (!response.ok) return;
+                
+                // Parses HTML output cleanly on a separate virtual thread 
+                const text = await response.text();
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(text, 'text/html');
+                
+                // Instantly mutates changed numbers without flashing the viewport
+                document.getElementById('game-title').innerHTML = doc.getElementById('game-title').innerHTML;
+                document.getElementById('live-clock').innerHTML = doc.getElementById('live-clock').innerHTML;
+                document.getElementById('pacing-status').innerHTML = doc.getElementById('pacing-status').innerHTML;
+                document.getElementById('projected-final').innerHTML = doc.getElementById('projected-final').innerHTML;
+                document.getElementById('player-stream-container').innerHTML = doc.getElementById('player-stream-container').innerHTML;
+                document.getElementById('morale-stream-container').innerHTML = doc.getElementById('morale-stream-container').innerHTML;
+                
+            } catch (err) {
+                console.log("Sync error:", err);
+            }
+        }
+
+        // Loop runs silently on background ticker every 5000ms (5 seconds)
+        setInterval(fetchLiveMatrixUpdates, 5000);
+    </script>
 
 </body>
 </html>
