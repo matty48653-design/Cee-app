@@ -50,12 +50,6 @@
             text-align: left;
             border-bottom: 1px solid var(--border-color);
         }
-        .matrix-table th {
-            background: rgba(255, 255, 255, 0.02);
-            font-weight: 600;
-            color: var(--text-muted);
-            font-size: 0.85rem;
-        }
         .badge {
             background: rgba(0, 230, 118, 0.15);
             color: var(--accent-green);
@@ -96,7 +90,7 @@
 
     <div class="header">
         <h1 style="font-size: 1.4rem; margin: 0;">CEE ENGINE HUD</h1>
-        <div class="badge" id="pipeline-badge">Pipeline Active v5.8</div>
+        <div class="badge" id="pipeline-badge">Pipeline Active v6.1</div>
     </div>
     
     <div class="status-container">
@@ -117,8 +111,8 @@
         </tbody>
     </table>
 
-    <!-- FEATURE 1 VIEW: Syndicate Tracking + Sentiment Volatility Score -->
-    <div class="section-title">🎯 Syndicate Consensus & Sentiment Volatility</div>
+    <!-- Syndicate Tracking Column -->
+    <div class="section-title">🎯 Syndicate Consensus & Volatility</div>
     <div class="grid-box">
         {% for group in sharps.groups %}
         <div class="grid-row">
@@ -134,18 +128,19 @@
         {% endfor %}
     </div>
 
-    <!-- FEATURE 2 VIEW: Early Board Map -->
+    <!-- UPGRADED VIEW: Early Board Map + Real-Time Market Drift Calculations -->
     <div class="section-title">🌅 Early Board Map: {{ early.slate_date }}</div>
     <div class="grid-box">
         {% for game in early.games %}
-        <div class="grid-row">
-            <div>
+        <div class="grid-row" style="align-items: center;">
+            <div style="max-width: 60%;">
                 <span class="badge" style="font-size:0.75rem; padding: 2px 5px; background:rgba(255,255,255,0.05); color:var(--text-muted);">{{ game.sport }}</span>
-                <span style="font-weight: bold; color: var(--text-main); margin-left: 5px;">{{ game.matchup }}</span>
+                <span style="font-weight: bold; color: var(--text-main); margin-left: 5px; display: inline-block; vertical-align: middle;">{{ game.matchup }}</span><br>
+                <span style="font-size: 0.8rem; color: {{ game.drift_color }}; font-weight: 600; padding-top: 4px; display: block;">{{ game.drift_text }}</span>
             </div>
             <div style="text-align: right;">
-                <span style="font-weight: bold; color: var(--accent-green);">{{ game.open_line }}</span><br>
-                <span style="font-size: 0.8rem; color: var(--text-muted);">{{ game.movement }}</span>
+                <span style="font-size: 0.8rem; color: var(--text-muted);">Open: {{ game.open_line }}</span><br>
+                <span style="font-weight: bold; color: var(--accent-green); font-size: 1.05rem;">Live: {{ game.current_line }}</span>
             </div>
         </div>
         {% endfor %}
@@ -160,7 +155,6 @@
                         const now = new Date();
                         document.getElementById('sync-time').innerText = now.toLocaleTimeString();
                         
-                        // Dynamically scale the live public resistance metrics
                         Object.keys(data.sentiment_updates).forEach(key => {
                             const elem = document.getElementById(`vol-${key}`);
                             if (elem) elem.innerText = data.sentiment_updates[key];
