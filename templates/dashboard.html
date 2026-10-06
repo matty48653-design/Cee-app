@@ -30,11 +30,11 @@
             padding-bottom: 12px;
         }
         .section-title {
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             text-transform: uppercase;
             letter-spacing: 1px;
             color: var(--text-muted);
-            margin: 20px 0 12px 0;
+            margin: 24px 0 12px 0;
         }
         .matrix-table {
             width: 100%;
@@ -43,7 +43,7 @@
             border: 1px solid var(--border-color);
             border-radius: 8px;
             overflow: hidden;
-            margin-bottom: 24px;
+            margin-bottom: 20px;
         }
         .matrix-table th, .matrix-table td {
             padding: 12px;
@@ -75,13 +75,28 @@
             margin-top: -10px;
             margin-bottom: 15px;
         }
+        .tracker-box {
+            background: rgba(255, 255, 255, 0.01);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 16px;
+            margin-top: 10px;
+        }
+        .tracker-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.02);
+            font-size: 0.95rem;
+        }
+        .tracker-row:last-child { border-bottom: none; }
     </style>
 </head>
 <body>
 
     <div class="header">
         <h1 style="font-size: 1.5rem; margin: 0;">CEE ENGINE HUD</h1>
-        <div class="badge" id="pipeline-badge">Pipeline Active v5.3</div>
+        <div class="badge" id="pipeline-badge">Pipeline Active v5.6</div>
     </div>
     
     <div class="status-container">
@@ -89,13 +104,13 @@
     </div>
 
     <!-- College Football Targets -->
-    <div class="section-title">🏈 CFB Game Script: {{ cfb.away }} @ {{ cfb.home }}</div>
+    <div class="section-title">🏈 CFB Game Script</div>
     <table class="matrix-table">
         <thead>
             <tr>
                 <th>Target Player</th>
                 <th>Custom Slider Target</th>
-                <th>Yield / Multiplier Edge</th>
+                <th>Edge</th>
             </tr>
         </thead>
         <tbody>
@@ -103,7 +118,7 @@
             <tr>
                 <td style="font-weight: bold;">{{ slider.player }}</td>
                 <td><span class="badge badge-orange">{{ slider.target }} {{ slider.metric }}</span></td>
-                <td style="color: var(--accent-green); font-weight: bold;">{{ slider.yield }} Edge</td>
+                <td style="color: var(--accent-green); font-weight: bold;">{{ slider.yield }}</td>
             </tr>
             {% endfor %}
         </tbody>
@@ -115,25 +130,33 @@
         <thead>
             <tr>
                 <th>Matchup</th>
-                <th>Engine Play Target</th>
-                <th>Handle / Split Focus</th>
-                <th>Angle</th>
+                <th>Engine Play</th>
+                <th>Handle Split</th>
             </tr>
         </thead>
         <tbody>
             {% for item in nhl_items %}
             <tr>
-                <td>{{ item.away }} @ {{ item.home }}</td>
+                <td>{{ item.away }} <br><span style="font-size:0.8rem; color:var(--text-muted);">@ {{ item.home }}</span></td>
                 <td style="font-weight: bold; color: var(--accent-green);">{{ item.play }}</td>
-                <td style="color: var(--accent-orange);">{{ item.handle }}</td>
-                <td style="color: var(--text-muted); font-size: 0.9rem;">{{ item.angle }}</td>
+                <td style="color: var(--accent-orange); font-size:0.9rem;">{{ item.handle }}</td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
 
+    <!-- House Structure Tracking Section -->
+    <div class="section-title">📉 Structural Engine Monitors</div>
+    <div class="tracker-box">
+        {% for metric in tracker.metrics %}
+        <div class="tracker-row">
+            <span style="font-weight: bold; color: var(--text-main);">{{ metric.name }}</span>
+            <span id="metric-{{ metric.id }}" style="color: {{ metric.color }}; font-weight: bold;">{{ metric.value }}</span>
+        </div>
+        {% endfor %}
+    </div>
+
     <script>
-        // Automatic background layout synchronization script
         function checkEnginePipeline() {
             fetch('/api/feed')
                 .then(response => response.json())
@@ -141,17 +164,23 @@
                     if (data.status === "Pipeline Active") {
                         const now = new Date();
                         document.getElementById('sync-time').innerText = now.toLocaleTimeString();
-                        document.getElementById('pipeline-badge').style.borderColor = "#00e676";
+                        
+                        // Map structural changes cleanly
+                        Object.keys(data.live_metrics).forEach(key => {
+                            const met = data.live_metrics[key];
+                            const elem = document.getElementById(`metric-${key}`);
+                            if (elem) {
+                                elem.innerText = met.value;
+                                elem.style.color = met.color;
+                            }
+                        });
                     }
                 })
                 .catch(err => {
-                    console.log("Sync loop waiting for server recovery...");
                     document.getElementById('pipeline-badge').innerText = "Syncing...";
                 });
         }
-        
-        // Poll backend arrays every 30 seconds for direct layout updates
-        setInterval(checkEnginePipeline, 30000);
+        setInterval(checkEnginePipeline, 10000);
     </script>
 </body>
 </html>
