@@ -103,29 +103,29 @@
 
     <div class="header">
         <h1 style="font-size: 1.4rem; margin: 0;">CEE ENGINE HUD</h1>
-        <div class="badge" id="pipeline-badge">Pipeline Active v7.1</div>
+        <div class="badge" id="pipeline-badge">Pipeline Active v7.2</div>
     </div>
     
     <div class="status-container">
         Last Checked: <span id="sync-time">Just Now</span>
     </div>
 
-    <!-- MASTER ACTION SHEET -->
-    <div class="section-title">🟢 Engine Green-Light Action Target</div>
+    <!-- 🚨 MASTER LIVE ACTION STRIKE SHEET -->
+    <div class="section-title">🟢 Live In-Game Action Commands</div>
     <div class="action-card">
         <div style="display: flex; justify-content: space-between; font-weight: bold; border-bottom: 1px dashed var(--border-color); padding-bottom: 8px; margin-bottom: 8px;">
-            <span style="color: var(--accent-green); font-size: 1rem;">🎯 SHARP SELECTION SHEET</span>
-            <span style="color: {{ alert.action_color }}; text-transform: uppercase; font-size: 0.9rem;">{{ alert.status }}</span>
+            <span style="color: var(--accent-green); font-size: 0.95rem;">🎯 LIVE AUTOMATED COMM SHEET</span>
+            <span style="color: var(--accent-green); text-transform: uppercase; font-size: 0.85rem;" id="global-strike-status">SCANNING FEEDS</span>
         </div>
         
-        {% for line in alert.lines %}
+        {% for trigger in alert.triggers %}
         <div class="line-item">
             <div style="display: flex; justify-content: space-between; font-weight: bold; font-size: 0.92rem;">
-                <span style="color: var(--text-muted);">{{ line.label }}</span>
-                <span style="color: var(--text-main);">👉 {{ line.pick }}</span>
+                <span style="color: var(--text-muted);">{{ trigger.market }}</span>
+                <span style="color: var(--accent-green);" id="cmd-text-{{ trigger.id }}">👉 {{ trigger.command }}</span>
             </div>
-            <div style="font-size: 0.82rem; color: var(--accent-orange); padding-top: 3px;">
-                {{ line.note }}
+            <div style="font-size: 0.82rem; color: var(--text-main); padding-top: 3px;" id="cmd-note-{{ trigger.id }}">
+                {{ trigger.alert_note }}
             </div>
         </div>
         {% endfor %}
@@ -221,6 +221,3 @@
                 .then(data => {
                     if (data.status === "Pipeline Active") {
                         const now = new Date();
-                        document.getElementById('sync-time').innerText = now.toLocaleTimeString();
-                        
-                        Object.keys(data.score_updates).forEach(id => {
