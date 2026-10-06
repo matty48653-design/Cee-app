@@ -84,17 +84,38 @@
             font-size: 0.95rem;
         }
         .grid-row:last-child { border-bottom: none; }
+        
+        /* 🚨 Dead-Simple Recommendation Box Styling */
+        .action-card {
+            background: linear-gradient(135deg, rgba(0,230,118,0.05) 0%, rgba(11,15,25,0.5) 100%);
+            border: 1px dashed var(--accent-green);
+            border-radius: 8px;
+            padding: 16px;
+            margin-top: 10px;
+        }
     </style>
 </head>
 <body>
 
     <div class="header">
         <h1 style="font-size: 1.4rem; margin: 0;">CEE ENGINE HUD</h1>
-        <div class="badge" id="pipeline-badge">Pipeline Active v6.9</div>
+        <div class="badge" id="pipeline-badge">Pipeline Active v7.0</div>
     </div>
     
     <div class="status-container">
         Last Checked: <span id="sync-time">Just Now</span>
+    </div>
+
+    <!-- 🚨 THE DEAD-SIMPLE GREEN LIGHT TARGET BLOCK -->
+    <div class="section-title">🟢 Engine Green-Light Action Target</div>
+    <div class="action-card">
+        <div style="display: flex; justify-content: space-between; font-weight: bold; margin-bottom: 8px;">
+            <span style="color: var(--text-main); font-size: 1.05rem;">👉 TARGET: {{ alert.best_play }}</span>
+            <span style="color: {{ alert.action_color }}; text-transform: uppercase; font-size: 0.9rem;">{{ alert.status }}</span>
+        </div>
+        <div style="font-size: 0.88rem; color: var(--text-muted); line-height: 1.4;">
+            <strong>Instructions:</strong> {{ alert.instruction }}
+        </div>
     </div>
 
     <!-- Tonight's Live Scores & Weather Feed -->
@@ -197,24 +218,3 @@
                         });
 
                         Object.keys(data.sentiment_updates).forEach(key => {
-                            const elem = document.getElementById(`vol-${key}`);
-                            if (elem) elem.innerText = data.sentiment_updates[key];
-                        });
-
-                        Object.keys(data.script_updates).forEach(id => {
-                            const elem = document.getElementById(`script-status-${id}`);
-                            if (elem) {
-                                elem.innerText = data.script_updates[id].status;
-                                elem.style.color = data.script_updates[id].color;
-                            }
-                        });
-                    }
-                })
-                .catch(err => {
-                    document.getElementById('pipeline-badge').innerText = "Syncing...";
-                });
-        }
-        setInterval(checkEnginePipeline, 15000);
-    </script>
-</body>
-</html>
