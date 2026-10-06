@@ -3,9 +3,7 @@ from flask import Flask, render_template, jsonify
 
 app = Flask(__name__)
 
-# THE UNIFIED MULTI-SPORT STRATEGY ENGINE POOL (ALL CURRENT WEEK MATRICES)
 COMPLETE_DASHBOARD_SLATES = [
-    # 🏒 TONIGHT'S NHL MARQUEE TRACKING SLATES (OCTOBER 6)
     {
         "sport_tag": "🏒 ACTIVE HOCKEY SLATE",
         "game": "New York Islanders @ New York Rangers",
@@ -54,7 +52,23 @@ COMPLETE_DASHBOARD_SLATES = [
             {"unit": "Kings Netminder Group", "status": "WARN", "alert_text": "Public Favorite Trap: High volume public backing exposure. High risk variance alert."}
         ]
     },
-    # 🏈 WEEK 5 NFL STRATEGY PORTFOLIO BOARDS
+    {
+        "sport_tag": "🏈 CONTRARIAN FOOTBALL SLATE",
+        "game": "Atlanta Falcons @ New Orleans Saints",
+        "live_clock": "HISTORICAL MATRIX",
+        "score_string": "ATL 45 - 24 NO",
+        "closing_line": "O/U 47.5",
+        "sim_total": "Final Total: 69",
+        "pacing_status": "Pacing 🚨 TRAP BREACHED",
+        "players": [
+            {"name": "Kyle Pitts Sr.", "position": "TE", "target": "Under 30.5 Receiving Yards Ceiling", "is_floor": False, "is_bait": True},
+            {"name": "Chris Olave", "position": "WR", "target": "Under 85.5 Receiving Yards Ceiling", "is_floor": False, "is_bait": True},
+            {"name": "Alvin Kamara", "position": "RB", "target": "Over 2.5 Receptions Floor", "is_floor": True, "is_bait": False}
+        ],
+        "morale": [
+            {"unit": "Saints O-Line Deficit", "status": "WARN", "alert_text": "Sportsbook Bait Metric: Low baselines on key skill units successfully forced heavy public under trap volume."}
+        ]
+    },
     {
         "sport_tag": "🏈 CONTRARIAN FOOTBALL SLATE",
         "game": "Detroit Lions @ Arizona Cardinals",
@@ -65,7 +79,7 @@ COMPLETE_DASHBOARD_SLATES = [
         "pacing_status": "Pacing 💥 OVER",
         "players": [
             {"name": "Jared Goff", "position": "QB", "target": "Over 248.5 Passing Yards Floor", "is_floor": True},
-            {"name": "Amon-Ra St. Brown", "position": "WR", "target": "Under 7.5 Receptions Ceiling", "is_floor": False}
+            {"name": "Amon-Ra St. Brown", "position": "WR", "target": "Under 7.7 Receptions Ceiling", "is_floor": False}
         ],
         "morale": [
             {"unit": "Cardinals Secondary", "status": "WARN", "alert_text": "Contrarian Edge Engine: Heavy public money fade opportunity. Volume is high."}
