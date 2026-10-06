@@ -28,21 +28,21 @@
 </head>
 <body>
 
-    <div class="engine-alert">⚠️ ENGINE STATUS: VERTICAL BOARD SLATE MATRIX LOCK</div>
+    <div class="engine-alert">⚠️ ENGINE STATUS: MULTI-SPORT MATRIX INTEGRATION LIVE</div>
 
     <div class="scroll-container">
         {% for board in slates %}
         <div class="card">
-            <div style="color: #f87171; font-size: 12px; font-weight: bold; margin-bottom: 4px; letter-spacing: 0.5px;">🏈 CONTRARIAN EDGE ENGINE MATRIX</div>
+            <div style="color: #f87171; font-size: 12px; font-weight: bold; margin-bottom: 4px; letter-spacing: 0.5px;">{{ board.sport_tag }}</div>
             <div class="slate-title">{{ board.game }}</div>
             
             <div class="live-clock-bar">
-                🏁 SCHEDULED: {{ board.live_clock }}
+                🏁 STATUS: {{ board.live_clock }}
             </div>
             
             <div class="sim-box">
-                📊 SIM ENGINE MODEL: {{ board.pacing_status }} (DK Opening Line: {{ board.closing_line }})
-                <div class="sim-total-text">CEE Projected Total: {{ board.sim_total }}</div>
+                📊 SIM ENGINE MODEL: {{ board.pacing_status }} (DK Lines: {{ board.closing_line }})
+                <div class="sim-total-text">{{ board.sim_total }}</div>
             </div>
 
             <div class="section-header">
