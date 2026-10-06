@@ -3,87 +3,119 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CEE v5.3 HUD</title>
+    <title>Cee Engine HUD</title>
     <style>
-        body { background-color: #0d0f14; color: #cbd5e1; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 0; padding: 16px; }
-        .banner { background: #1e1b4b; border: 1px solid #3b82f6; color: #38bdf8; text-align: center; padding: 10px; font-weight: bold; border-radius: 6px; font-size: 12px; letter-spacing: 0.05em; margin-bottom: 20px; }
-        .section-title { font-size: 14px; font-weight: 700; text-transform: uppercase; color: #94a3b8; letter-spacing: 0.1em; margin: 24px 0 12px 0; border-left: 3px solid #ef4444; padding-left: 8px; }
-        .matrix-table { width: 100%; border-collapse: collapse; background: #111827; border-radius: 8px; overflow: hidden; border: 1px solid #1f2937; margin-bottom: 20px; }
-        .matrix-table th { background: #1f2937; color: #94a3b8; font-size: 11px; text-transform: uppercase; text-align: left; padding: 12px; font-weight: 600; }
-        .matrix-table td { padding: 14px 12px; font-size: 13px; border-bottom: 1px solid #1f2937; }
-        .matrix-table tr:last-child td { border-bottom: none; }
-        .badge { background: #14532d; color: #4ade80; padding: 2px 6px; border-radius: 4px; font-size: 11px; font-weight: 600; display: inline-block; }
-        .badge-alt { background: #7c2d12; color: #f97316; padding: 2px 6px; border-radius: 4px; font-size: 11px; font-weight: 600; display: inline-block; }
-        .badge-nfl { background: #1e3a8a; color: #60a5fa; padding: 2px 6px; border-radius: 4px; font-size: 11px; font-weight: 600; display: inline-block; }
+        :root {
+            --bg-color: #0b0f19;
+            --card-bg: rgba(255, 255, 255, 0.03);
+            --border-color: rgba(255, 255, 255, 0.08);
+            --accent-green: #00e676;
+            --accent-orange: #ff9100;
+            --text-main: #f5f6f9;
+            --text-muted: #8a99ad;
+        }
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 16px;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 12px;
+        }
+        .section-title {
+            font-size: 1.2rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            margin: 20px 0 12px 0;
+        }
+        .matrix-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            overflow: hidden;
+            margin-bottom: 24px;
+        }
+        .matrix-table th, .matrix-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .matrix-table th {
+            background: rgba(255, 255, 255, 0.02);
+            font-weight: 600;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+        .badge {
+            background: rgba(0, 230, 118, 0.15);
+            color: var(--accent-green);
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            font-weight: bold;
+        }
+        .badge-orange {
+            background: rgba(255, 145, 0, 0.15);
+            color: var(--accent-orange);
+        }
     </style>
 </head>
 <body>
 
-    <div class="banner">⚡ ENGINE STATUS: VERTICAL COMPACT MATRIX LIVE</div>
+    <div class="header">
+        <h1 style="font-size: 1.5rem; margin: 0;">CEE ENGINE HUD</h1>
+        <div class="badge">Pipeline Active v5.3</div>
+    </div>
 
-    <div class="section-title">Low-Volume Contrarian Splits</div>
+    <!-- College Football Targets -->
+    <div class="section-title">🏈 CFB Game Script: {{ cfb.away }} @ {{ cfb.home }}</div>
     <table class="matrix-table">
         <thead>
             <tr>
-                <th>Matchup</th>
-                <th>Target</th>
-                <th>Pub Tkts</th>
-                <th>Sharp $</th>
-                <th>Vol State</th>
+                <th>Target Player</th>
+                <th>Custom Slider Target</th>
+                <th>Yield / Multiplier Edge</th>
             </tr>
         </thead>
         <tbody>
-            {% for game in cache.low_volume_splits.games %}
+            {% for slider in cfb.sliders %}
             <tr>
-                <td><b>{{ game.matchup }}</b></td>
-                <td><span style="color: #f87171;">{{ game.target }}</span></td>
-                <td>{{ game.tickets }}</td>
-                <td style="color: #4ade80;">{{ game.cash }}</td>
-                <td><span class="badge-alt">{{ game.state }}</span></td>
+                <td style="font-weight: bold;">{{ slider.player }}</td>
+                <td><span class="badge badge-orange">{{ slider.target }} {{ slider.metric }}</span></td>
+                <td style="color: var(--accent-green); font-weight: bold;">{{ slider.yield }} Edge</td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
 
-    <div class="section-title">NFL Passing & Rushing Milestones</div>
-    <table class="matrix-table">
-        <thead>
-            <tr>
-                <th>Player</th>
-                <th>Metric</th>
-                <th>Line</th>
-                <th>Safety Floor</th>
-                <th>Edge Matrix</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for prop in cache.nfl_player_props.milestones %}
-            <tr>
-                <td><b>{{ prop.player }}</b> <small style="color: #64748b;">{{ prop.team }} {{ prop.matchup }}</small></td>
-                <td>{{ prop.metric }}</td>
-                <td><span style="color: #f87171;">{{ prop.house_line }}</span></td>
-                <td><span style="color: #4ade80; font-weight: bold;">{{ prop.safety_floor }}</span></td>
-                <td><span class="badge-nfl">{{ prop.edge_status }}</span></td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-
-    <div class="section-title">NHL Slate Matrix</div>
+    <!-- NHL Moneyline Splits -->
+    <div class="section-title">🏒 NHL Sharp Matrix</div>
     <table class="matrix-table">
         <thead>
             <tr>
                 <th>Matchup</th>
-                <th>O/U</th>
-                <th>Edge Detection</th>
+                <th>Engine Play Target</th>
+                <th>Handle / Split Focus</th>
+                <th>Angle</th>
             </tr>
         </thead>
         <tbody>
-            {% for game in cache.nhl_slate.games %}
+            {% for item in nhl_items %}
             <tr>
-                <td><b>{{ game.matchup }}</b></td>
-                <td>{{ game.ou }}</td>
-                <td><span class="badge">{{ game.contrarian_edge }}</span></td>
+                <td>{{ item.away }} @ {{ item.home }}</td>
+                <td style="font-weight: bold; color: var(--accent-green);">{{ item.play }}</td>
+                <td style="color: var(--accent-orange);">{{ item.handle }}</td>
+                <td style="color: var(--text-muted); font-size: 0.9rem;">{{ item.angle }}</td>
             </tr>
             {% endfor %}
         </tbody>
