@@ -10,19 +10,20 @@ NHL_FEED = "https://espn.com"
 def fetch_live_game_data():
     games_list = []
     
+    # 1. Fetch live CFB tracking slots
     try:
         with httpx.Client(timeout=10.0) as client:
-            # 1. Fetch live CFB tracking slots
             cfb_res = client.get(CFB_FEED).json()
             for event in cfb_res.get('events', []):
                 if "Southern Miss" in event['name'] or "Troy" in event['name']:
-                    competitions = event['competitions'][0]
-                    teams = competitions['competitors']
-                    # Map home/away fields safely
-                    away_team = teams[1]['team']['displayName']
-                    home_team = teams[0]['team']['displayName']
-                    away_score = teams[1]['score']
-                    home_score = teams[0]['score']
+                    competitions = event.get('competitions', [{}])[0]
+                    competitors = competitions.get('competitors', [])
+                    
+                    # Safely map away and home structures from the list array
+                    away_team = competitors[1]['team']['displayName'] if len(competitors) > 1 else "Away Team"
+                    home_team = competitors[0]['team']['displayName'] if len(competitors) > 0 else "Home Team"
+                    away_score = competitors[1]['score'] if len(competitors) > 1 else "0"
+                    home_score = competitors[0]['score'] if len(competitors) > 0 else "0"
                     
                     games_list.append({
                         "league": "CFB",
@@ -34,18 +35,19 @@ def fetch_live_game_data():
     except Exception:
         pass
 
+    # 2. Fetch live NHL tracking slots
     try:
         with httpx.Client(timeout=10.0) as client:
-            # 2. Fetch live NHL tracking slots
             nhl_res = client.get(NHL_FEED).json()
             for event in nhl_res.get('events', []):
                 if "Senators" in event['name'] or "Red Wings" in event['name']:
-                    competitions = event['competitions'][0]
-                    teams = competitions['competitors']
-                    away_team = teams[1]['team']['displayName']
-                    home_team = teams[0]['team']['displayName']
-                    away_score = teams[1]['score']
-                    home_score = teams[0]['score']
+                    competitions = event.get('competitions', [{}])[0]
+                    competitors = competitions.get('competitors', [])
+                    
+                    away_team = competitors[1]['team']['displayName'] if len(competitors) > 1 else "Away Team"
+                    home_team = competitors[0]['team']['displayName'] if len(competitors) > 0 else "Home Team"
+                    away_score = competitors[1]['score'] if len(competitors) > 1 else "0"
+                    home_score = competitors[0]['score'] if len(competitors) > 0 else "0"
                     
                     games_list.append({
                         "league": "NHL",
