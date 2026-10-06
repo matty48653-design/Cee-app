@@ -7,15 +7,16 @@ def fetch_active_matrix_data():
     """
     Automated Multi-Game Streaming Feed Core.
     STRICT COMPLIANCE MODE: 1Q/2Q Volume Block + Milestone Slider Protection.
-    Integrates Live Over/Under Pacing Matrix variables & Injury Protocols.
+    Integrates Live Scores, Over/Under Pacing Matrix variables & Injury Protocols.
     """
     return [
         {
             "id": "cfb_southernmiss_troy_2026",
-            "sport": "NFL", # Maps custom player grid element configurations
+            "sport": "NFL",
             "away_team": "Southern Miss",
             "home_team": "Troy",
             "time": "8:00 PM ET",
+            "live_score": "LIVE: USM 0 - 0 TROY (1Q 15:00)", # Integrated score string
             "market_alert": "Troy -10.5 (Slider Protection Active 🛡️)",
             "live_ou_status": "Pacing UNDER (Current: 0 | Closing Line: 47.5)",
             "players": [
@@ -33,6 +34,7 @@ def fetch_active_matrix_data():
             "away_team": "NY Islanders",
             "home_team": "NY Rangers",
             "time": "7:30 PM ET",
+            "live_score": "LIVE: NYI 0 - 0 NYR (1st 20:00)", # Integrated score string
             "market_alert": "Money Line / Totals Only (Puck Line Blocked)",
             "live_ou_status": "Closing Total: 5.5 | Sharp Inflow Volume Under-backed",
             "scan_status": "Tracking Sharp Money... AWS Pressure: 4.15% Hold Tax"
