@@ -1,57 +1,51 @@
 import time
 import requests
 
-# 1. SET YOUR TARGET URL
-# Use 'http://127.0.0' for local testing
-# Or use your live production link: 'https://onrender.com'
+# Set production link: "https://onrender.com"
 TARGET_URL = "http://127.0.0"
 
-# 2. CONSTRUCT THE REAL-TIME 45-17 LIVE GAME DATA PAYLOAD
-live_payload = {
+lions_game_payload = {
     "slate": {
-        "game": "Atlanta Falcons @ New Orleans Saints",
-        "live_clock": "4TH QTR - LIVE",
-        "score_string": "ATL 45 - 17 NO",
-        "closing_line": 47.5,
-        "sim_total": 62,
+        "game": "Detroit Lions @ Green Bay Packers",
+        "live_clock": "2ND QTR - 04:12",
+        "score_string": "DET 24 - 10 GB",
+        "closing_line": 49.5,
+        "sim_total": 58,
         "pacing_status": "Pacing 💥 OVER"
     },
     "players": [
         {
-            "name": "Alvin Kamara",
-            "position": "RB",
-            "target": "Over 4.5 Live Receptions Floor (5 REC - CLEARED)",
+            "name": "Jared Goff",
+            "position": "QB",
+            "target": "Over 242.5 Passing Yards Floor (165 YDS - ACTIVE)",
             "is_floor": True
         },
         {
-            "name": "Chris Olave",
+            "name": "Amon-Ra St. Brown",
             "position": "WR",
-            "target": "Under 6.5 Live Receptions Ceiling (5 REC - ACTIVE)",
+            "target": "Under 6.5 Live Receptions Ceiling (2 REC - ACTIVE)",
             "is_floor": False
         }
     ],
     "morale": [
         {
-            "unit": "Saints O-Line",
+            "unit": "Packers Secondary",
             "status": "WARN",
-            "alert_text": "AWS Next Gen: Game-Script Panic Threshold breached. Heavy protection collapse."
+            "alert_text": "Morale Deficit Penalty engaged. Game-Script Panic Threshold breached."
         }
     ]
 }
 
-def fire_live_update():
-    print(f"📡 Connecting to data feed matrix at: {TARGET_URL}...")
+def inject_lions_slate():
+    print(f"📡 Forwarding Lions Contrarian Matrix Payload to {TARGET_URL}...")
     try:
-        response = requests.post(TARGET_URL, json=live_payload)
+        response = requests.post(TARGET_URL, json=lions_game_payload)
         if response.status_code == 200:
-            print("✅ SUCCESS: Live game data payload injected successfully!")
-            print(f"Response: {response.json()}")
+            print("✅ SUCCESS: Lions Game State updated live on the UI!")
         else:
-            print(f"❌ FAILED: Server returned status code {response.status_code}")
-            print(response.text)
+            print(f"❌ FAILED: Code {response.status_code} - {response.text}")
     except requests.exceptions.ConnectionError:
-        print("❌ CONNECTION ERROR: Make sure your Flask application is running and accessible!")
+        print("❌ SERVER DOWN: Fire up app.py before executing the feed data injection.")
 
 if __name__ == "__main__":
-    fire_live_update()
-
+    inject_lions_slate()
