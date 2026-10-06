@@ -50,7 +50,7 @@
             font-weight: 900;
             letter-spacing: 0.08em;
             text-transform: uppercase;
-            margin-bottom: 6px;
+            margin-bottom: 8px;
         }
 
         .game-title {
@@ -58,17 +58,10 @@
             font-weight: 700;
             color: #ffffff;
             letter-spacing: -0.01em;
-            margin-bottom: 2px;
+            margin-bottom: 12px; /* Smoothed spacing gap */
         }
 
-        .game-schedule {
-            color: #475569;
-            font-size: 0.75rem;
-            font-weight: 600;
-            margin-bottom: 10px;
-        }
-
-        /* NEW HIGH-CONTRAST UNIFIED LIVE SCOREBOARD BAR */
+        /* HIGH-CONTRAST UNIFIED LIVE SCOREBOARD BAR */
         .live-scoreboard-ticker {
             background: linear-gradient(90deg, #1e1b4b 0%, #311042 100%);
             border: 1px solid #4338ca;
@@ -202,9 +195,9 @@
         {% endif %}
 
         <div class="game-title">{{ match.away_team }} @ {{ match.home_team }}</div>
-        <div class="game-schedule">{{ match.time }}</div>
         
-        <!-- NEW Dynamic Unified Live Scoreboard Element Panel -->
+        <!-- REDUNDANT PRE-GAME SCHEDULE TIME LINE REMOVED FOR AN ULTRA-CLEAN VIEW -->
+        
         {% if match.live_score %}
         <div class="live-scoreboard-ticker">
             🏁 {{ match.live_score }}
