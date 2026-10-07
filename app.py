@@ -3,7 +3,7 @@ from flask import Flask, render_template_string, jsonify
 
 app = Flask(__name__)
 
-# Hardcoded pure v7.0 HTML design block to bypass file path linking crashes completely
+# Restored: Your premium v7.0 design with the built-in auto-refresh heartbeat pulse timer
 V7_HUD_TEMPLATE = """
 <!DOCTYPE html>
 <html lang="en">
@@ -47,7 +47,7 @@ V7_HUD_TEMPLATE = """
         <div class="hud-title">CEE ENGINE HUD</div>
         <div class="pipeline-badge">Pipeline Active v7.0</div>
     </div>
-    <div class="last-checked">Last Checked: Just Now</div>
+    <div class="last-checked" id="time-counter">Last Checked: Just Now</div>
 
     <div class="action-card">
         <div class="action-header-row">
@@ -76,7 +76,7 @@ V7_HUD_TEMPLATE = """
     </div>
 
     <div class="section-label">📺 LIVE SLATE & STADIUM WEATHER MONITOR</div>
-    <div style="margin-bottom: 20px;">
+    <div style="margin-bottom: 20px;" id="live-matchups-grid">
         <div class="slate-card">
             <div class="game-row">
                 <div><span style="color:#64748b; font-size:0.65rem; font-weight:900; letter-spacing:0.04em; margin-right:4px;">CFB</span><span class="game-name-text">Southern Miss @ Troy</span></div>
@@ -121,17 +121,26 @@ V7_HUD_TEMPLATE = """
         </div>
     </div>
 </div>
-</body>
-</html>
-"""
 
-@app.route('/')
-def main_dashboard():
-    return render_template_string(V7_HUD_TEMPLATE)
-
-@app.route('/api/slate/reorder', methods=['POST'])
-def save_slate_sequence():
-    return jsonify({"status": "success"})
-
-if __name__ == '__main__':
-    app.run(debug=True)
+<!-- RESTORED: THE 4:00 PM AUTOMATIC REFRESH HEARTBEAT TWEAK -->
+<script>
+    function runAutoRefreshLoop() {
+        fetch(window.location.href)
+            .then(response => response.text())
+            .then(html => {
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+                
+                // Native updates the scoreboard grid container automatically
+                const newGrid = doc.getElementById('live-matchups-grid');
+                const oldGrid = document.getElementById('live-matchups-grid');
+                if (newGrid && oldGrid) {
+                    oldGrid.innerHTML = newGrid.innerHTML;
+                }
+                
+                // Updates the timestamp signature block
+                const now = new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', second: '2-digit' });
+                document.getElementById('time-counter').innerText = 'Last Checked: ' + now;
+            })
+            .catch(err => console.log("Feed buffering..."));
+    }
