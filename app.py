@@ -1,10 +1,9 @@
 import os
-import requests
 from flask import Flask, render_template_string, jsonify
 
 app = Flask(__name__)
 
-# BULLETPROOF SYNTAX SHELL: HOUSES YOUR ENTIRE V7.0 DARK HUD THEME NATIVELY
+# SINGLE COMBINED HUD PIPELINE: RUNS ALL DESIGN AND ALL AUTO-REFRESH LIVE DATA IN ONE FILE
 V7_HUD_TEMPLATE = """
 <!DOCTYPE html>
 <html lang="en">
