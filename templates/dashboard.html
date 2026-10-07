@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cee App - CEE ENGINE HUD</title>
+    <title>Cee App - CEE MASTER ENGINE CENTER</title>
     <style>
         body {
             background-color: #050811;
@@ -105,51 +105,6 @@
             gap: 6px;
         }
 
-        .slate-card {
-            background: #0c1222;
-            border-radius: 10px;
-            padding: 14px;
-            margin-bottom: 10px;
-            border: 1px solid #16203b;
-        }
-
-        .game-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 6px;
-        }
-
-        .game-name-text {
-            font-size: 1.05rem;
-            font-weight: 700;
-            color: #ffffff;
-        }
-
-        .score-box {
-            text-align: right;
-        }
-
-        .score-text {
-            font-size: 1.1rem;
-            font-weight: 800;
-            color: #00e676;
-        }
-
-        .status-text {
-            font-size: 0.7rem;
-            font-weight: 800;
-            color: #ff9100;
-            letter-spacing: 0.02em;
-            margin-top: 2px;
-        }
-
-        .env-text {
-            color: #64748b;
-            font-size: 0.75rem;
-            font-weight: 500;
-        }
-
         .panel-box {
             background: #090f1d;
             border: 1px solid #16203b;
@@ -169,15 +124,99 @@
         .split-label { font-weight: 700; color: #ffffff; }
         .split-value { font-weight: 700; color: #ff9100; }
 
-        .param-row {
+        /* ADVANCED COLUMN BOARD DESIGN LAYOUT BLOCK */
+        .slate-card {
+            background: #0c1222;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 14px;
+            border: 1px solid #1a2640;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+        }
+
+        .edge-rating-tag {
+            font-size: 0.7rem;
+            font-weight: 900;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+            display: inline-block;
+            padding: 2px 6px;
+            border-radius: 4px;
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .game-title-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .game-title {
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: #ffffff;
+            letter-spacing: -0.01em;
+        }
+
+        .live-clock-badge {
+            background: #ff4d4d;
+            color: #ffffff;
+            font-size: 0.65rem;
+            font-weight: 800;
+            padding: 2px 6px;
+            border-radius: 4px;
+            text-transform: uppercase;
+        }
+
+        .line-module-row {
+            display: grid;
+            grid-template-columns: 80px 1fr;
+            background: #060914;
+            border: 1px solid #141d30;
+            border-radius: 6px;
+            margin-bottom: 6px;
+            overflow: hidden;
+            font-size: 0.8rem;
+        }
+
+        .module-label {
+            background: #101726;
+            color: #64748b;
+            font-weight: 800;
+            font-size: 0.65rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-transform: uppercase;
+            border-right: 1px solid #141d30;
+        }
+
+        .module-value { padding: 10px 12px; font-weight: 700; color: #ffffff; }
+
+        .table-header {
+            display: flex;
+            justify-content: space-between;
+            color: #475569;
+            font-size: 0.65rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            padding-bottom: 6px;
+            border-bottom: 1px solid #1a2640;
+            margin-bottom: 6px;
+        }
+
+        .prop-row {
             display: flex;
             justify-content: space-between;
             align-items: center;
             padding: 10px 0;
+            border-bottom: 1px solid #0f182b;
         }
-        .param-player { font-size: 0.95rem; font-weight: 700; color: #ffffff; }
-        .param-milestone { background: rgba(255, 145, 0, 0.1); color: #ff9100; font-size: 0.75rem; font-weight: 800; padding: 4px 8px; border-radius: 4px; }
-        .param-pct { color: #00e676; font-weight: 800; font-size: 1rem; }
+        .prop-player { font-size: 0.9rem; font-weight: 700; color: #ffffff; }
+        .prop-line { font-size: 0.85rem; font-weight: 700; color: #ffeb3b; }
+        .prop-pct { color: #00e676; font-weight: 800; font-size: 0.95rem; text-align: right; }
     </style>
 </head>
 <body>
@@ -186,9 +225,9 @@
 
     <div class="hud-header">
         <div class="hud-title">CEE ENGINE HUD</div>
-        <div class="pipeline-badge">Pipeline Active {{ data.pipeline_version }}</div>
+        <div class="pipeline-badge">{{ data.pipeline_version }}</div>
     </div>
-    <div class="last-checked">Last Checked: Just Now</div>
+    <div class="last-checked" id="time-counter">Last Checked: Connecting Data Feed...</div>
 
     <div class="action-card">
         <div class="action-header-row">
@@ -216,37 +255,44 @@
         {% endfor %}
     </div>
 
-    <div class="section-label">📺 LIVE SLATE & STADIUM WEATHER MONITOR</div>
-    <div style="margin-bottom: 20px;">
+    <!-- FULL BOARD SCANNER GRID EXTRACTION LAYER -->
+    <div class="section-label">📺 LIVE SLATE RECON MONITOR & WHALE TRACKER</div>
+    <div style="margin-bottom: 20px;" id="live-recon-grid">
         {% for match in data.matchups %}
         <div class="slate-card">
-            <div class="game-row">
-                <div>
-                    <span style="color:#64748b; font-size:0.65rem; font-weight:900; letter-spacing:0.04em; margin-right:4px;">{{ match.sport }}</span>
-                    <span class="game-name-text">{{ match.away }} @ {{ match.home }}</span>
-                </div>
-                <div class="score-box">
-                    <div class="score-text">{{ match.clock_label }}</div>
-                    <div class="status-text">{{ match.score_status }}</div>
-                </div>
+            
+            <div class="edge-rating-tag" style="border: 1px solid {{ match.edge_color }}; color: {{ match.edge_color }};">
+                {{ match.edge_rating }}
             </div>
-            <div class="env-text">{{ match.env_info }}</div>
-        </div>
-        {% endfor %}
-    </div>
 
-    <div class="section-label">🏈 CFB GAME SCRIPT PARAMETERS</div>
-    <div class="panel-box">
-        {% for param in data.cfb_params %}
-        <div class="param-row">
-            <div class="param-player">{{ param.player }}</div>
-            <div class="param-milestone">{{ param.milestone }}</div>
-            <div class="param-pct">{{ param.probability }}</div>
-        </div>
-        {% endfor %}
-    </div>
-    
-</div>
+            <div class="game-title-row">
+                <div class="game-title">{{ match.away }} @ {{ match.home }}</div>
+                <div class="live-clock-badge" {% if match.sport == 'NHL' %}style="background: #38bdf8;"{% endif %}>{{ match.score_status }}</div>
+            </div>
+            
+            <div class="line-module-row">
+                <div class="module-label" style="color: #ff4d4d;">SCORE</div>
+                <div class="module-value" style="font-size: 0.95rem; color: #00e676;">{{ match.clock_label }}</div>
+            </div>
+            <div class="line-module-row">
+                <div class="module-label" style="color: #ffeb3b;">TOTALS</div>
+                <div class="module-value" style="color: #ffeb3b;">{{ match.live_ou_status }}</div>
+            </div>
+            <div class="line-module-row">
+                <div class="module-label" style="color: #38bdf8;">LINES</div>
+                <div class="module-value" style="color: #38bdf8;">{{ match.market_alert }}</div>
+            </div>
+            <div class="line-module-row">
+                <div class="module-label" style="color: #e2e8f0;">WHALES</div>
+                <div class="module-value" style="color: #e2e8f0; font-size: 0.75rem;">{{ match.splits_data }}</div>
+            </div>
+            <div class="line-module-row">
+                <div class="module-label" style="color: #a855f7;">ENV</div>
+                <div class="module-value" style="color: #64748b; font-size: 0.75rem;">{{ match.env_info }}</div>
+            </div>
 
-</body>
-</html>
+            <!-- DRAFTKINGS DYNAMIC ALT PROP EXTRACTION CONTAINER -->
+            {% if match.props %}
+            <div class="prop-section" style="margin-top: 14px;">
+                <div class="table-header">
+                    <div>🎯 DRAFTKINGS ALTERNATE PROP LINE</div>
