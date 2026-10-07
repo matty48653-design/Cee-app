@@ -3,7 +3,7 @@ from flask import Flask, render_template_string, jsonify
 
 app = Flask(__name__)
 
-# SINGLE COMBINED HUD PIPELINE: RUNS ALL DESIGN AND ALL AUTO-REFRESH LIVE DATA IN ONE FILE
+# BULLETPROOF SYNTAX MASTER SHELL: HOUSES YOUR ENTIRE DARK CYBERPUNK HUD THEME NATIVELY
 V7_HUD_TEMPLATE = """
 <!DOCTYPE html>
 <html lang="en">
@@ -229,29 +229,29 @@ V7_HUD_TEMPLATE = """
 
 <div id="matrix-container">
 
-    <!-- CEE MAIN HUD PANEL -->
+    <!-- CEE MAIN HUD HEADER PANEL -->
     <div class="hud-header">
         <div class="hud-title">CEE ENGINE HUD</div>
-        <div class="pipeline-badge">v7.0 PERSONAL SYNC ACTIVE 🌐</div>
+        <div class="pipeline-badge">v12.0 MAXIMUM COMPLIANCE ACTIVE 🌐</div>
     </div>
     <div class="last-checked" id="time-counter">Last Checked: Connecting Data Feed...</div>
 
-    <!-- STRATEGIC ACTION TARGET DIRECTIVES PANEL -->
+    <!-- STRATEGIC DIRECTIVES COMPONENT -->
     <div class="action-card">
         <div class="action-header-row">
             <div class="action-directive">👉 TARGET LOCK: Southern Miss +10.5 (CFB) & Nashville ML +130 (NHL)</div>
             <div class="strike-badge" style="border: 1px solid #00e676; background: rgba(0, 230, 118, 0.05);">STRIKE</div>
         </div>
         <div class="action-instructions">
-            <strong>Instructions:</strong> Erase standard house totals. Pull custom sliders to focus entirely on alternate passing volume cushions or flat contrarian moneylines.
+            <strong>Personal Account Filters:</strong> Alternate milestone sliders optimized. Core properties matched exactly to your personal configurations (No onions, pickles, or standard retail juice). Coordinates tracking live water and energy vectors out of Arcadia, FL.
         </div>
     </div>
 
-    <!-- PERSONALIZED SYNDICATE AND WATCHLIST PANEL -->
+    <!-- PERSONALIZED CONSENSUS & TRACKING SECTION -->
     <div class="section-label">🎯 PERSONALIZED WHALE CONSENSUS & WATCHLIST</div>
     <div class="panel-box" style="margin-bottom: 20px;">
         <div class="split-row">
-            <div><div class="split-label">🦁 Detroit Lions Tracking Array</div><div style="color:#475569; font-size:0.75rem; font-weight:bold; margin-top:2px;">Status: Priority Team</div></div>
+            <div><div class="split-label">🦁 Detroit Lions Tracking Array</div><div style="color:#475569; font-size:0.75rem; font-weight:bold; margin-top:2px;">Status: Priority Team Profile</div></div>
             <div style="text-align:right;"><div style="font-weight:700; color:#38bdf8;">Alternate Sliders Active</div><div style="font-weight:700; color:#ff9100; font-size:0.75rem; margin-top:2px;">Fading Public Line Bias</div></div>
         </div>
         <div class="split-row">
@@ -264,11 +264,11 @@ V7_HUD_TEMPLATE = """
         </div>
     </div>
 
-    <!-- FULL BOARD SCANNER AND DIRECT WEBPACK LOOPS GRID -->
+    <!-- FULL BOARD SCRAPER DOCKING CONTAINER -->
     <div class="section-label">📺 LIVE BOARD SCANNER MONITOR & RECON DATA GRID</div>
     <div style="margin-bottom: 20px;" id="live-matchups-container">
         
-        <!-- COLLEGE FOOTBALL ACTIVE CONTAINER DOCK -->
+        <!-- COLLEGE FOOTBALL TARGET CORE MODULE -->
         <div class="slate-card">
             <div class="edge-rating-tag" style="border: 1px solid #ffeb3b; color: #ffeb3b;">SHARP VALUE WINDOW 🥈</div>
             <div class="game-title-row">
