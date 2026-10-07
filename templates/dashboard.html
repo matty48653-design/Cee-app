@@ -124,7 +124,6 @@
         .split-label { font-weight: 700; color: #ffffff; }
         .split-value { font-weight: 700; color: #ff9100; }
 
-        /* ADVANCED COLUMN BOARD DESIGN LAYOUT BLOCK */
         .slate-card {
             background: #0c1222;
             border-radius: 12px;
@@ -255,7 +254,6 @@
         {% endfor %}
     </div>
 
-    <!-- FULL BOARD SCANNER GRID EXTRACTION LAYER -->
     <div class="section-label">📺 LIVE SLATE RECON MONITOR & WHALE TRACKER</div>
     <div style="margin-bottom: 20px;" id="live-recon-grid">
         {% for match in data.matchups %}
@@ -291,8 +289,12 @@
                 <div class="module-value" style="color: #64748b; font-size: 0.75rem;">{{ match.env_info }}</div>
             </div>
 
-            <!-- DRAFTKINGS DYNAMIC ALT PROP EXTRACTION CONTAINER -->
             {% if match.props %}
             <div class="prop-section" style="margin-top: 14px;">
                 <div class="table-header">
                     <div>🎯 DRAFTKINGS ALTERNATE PROP LINE</div>
+                    <div style="text-align: right;">CEE EXPECTED PROBABILITY</div>
+                </div>
+                {% for prop in match.props %}
+                <div class="prop-row">
+                    <div>
