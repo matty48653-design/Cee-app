@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cee App - Live Action Commands</title>
+    <title>Cee App - Live In-Game Action Commands</title>
     <style>
         body {
             background-color: #060913;
@@ -194,7 +194,7 @@
 <div id="matrix-container">
 
     <div class="system-test-badge">
-        <span class="status-dot"></span> LIVE IN-GAME ACTION COMMANDS (V9.0 RESTORED)
+        <span class="status-dot"></span> RECON ENGINE ACTIVE · WEB FEEDS LIVE STREAMING
     </div>
 
     {% for match in matchups %}
@@ -204,8 +204,7 @@
             {{ match.edge_rating }}
         </div>
 
-        {% if match.sport == 'NFL' %}
-        <div class="sport-type">🏈 COLLEGE FOOTBALL REAL-TIME FEED</div>
+        <div class="sport-type">🎯 LIVE AUTOMATED DIRECTIVE SLATE</div>
         <div class="game-title">{{ match.away_team }} @ {{ match.home_team }}</div>
         
         <div class="line-module-row" style="border-left-color: #ff4d4d;">
@@ -220,13 +219,15 @@
             <div class="module-label">LINES</div>
             <div class="module-value" style="color: #38bdf8;">{{ match.market_alert }}</div>
         </div>
-        <div class="line-module-row" style="border-left-color: #a855f7;">
-            <div class="module-label">WEATHER</div>
-            <div class="module-value" style="color: #a855f7; font-size: 0.75rem;">{{ match.scan_status }}</div>
-        </div>
         <div class="line-module-row" style="border-left-color: #e2e8f0;">
             <div class="module-label">SPLITS</div>
             <div class="module-value" style="color: #e2e8f0; font-size: 0.75rem;">{{ match.splits_data }}</div>
+        </div>
+
+        {% if match.sport == 'NFL' %}
+        <div class="line-module-row" style="border-left-color: #a855f7;">
+            <div class="module-label">WEATHER</div>
+            <div class="module-value" style="color: #a855f7; font-size: 0.75rem;">{{ match.scan_status }}</div>
         </div>
 
         <div class="prop-section">
@@ -254,26 +255,6 @@
         {% endif %}
 
         {% elif match.sport == 'NHL' %}
-        <div class="sport-type">🏒 NHL LIVE HOCKEY DIRECTIVE SLATE</div>
-        <div class="game-title">{{ match.away_team }} @ {{ match.home_team }}</div>
-        
-        <div class="line-module-row" style="border-left-color: #ff4d4d;">
-            <div class="module-label">SCORE</div>
-            <div class="module-value"><span>{{ match.live_score }}</span> <span class="live-clock-text" style="background: #38bdf8;">{{ match.live_clock }}</span></div>
-        </div>
-        <div class="line-module-row" style="border-left-color: #ffeb3b;">
-            <div class="module-label">TOTALS</div>
-            <div class="module-value" style="color: #ffeb3b;">{{ match.live_ou_status }}</div>
-        </div>
-        <div class="line-module-row" style="border-left-color: #38bdf8;">
-            <div class="module-label">LINES</div>
-            <div class="module-value" style="color: #38bdf8;">{{ match.market_alert }}</div>
-        </div>
-        <div class="line-module-row" style="border-left-color: #e2e8f0;">
-            <div class="module-label">SPLITS</div>
-            <div class="module-value" style="color: #e2e8f0; font-size: 0.75rem;">{{ match.splits_data }}</div>
-        </div>
-        
         <div class="nhl-status-tracker" style="background: #0f162a; padding: 10px; margin-top: 8px;">
             <strong>CEE Recon Environment:</strong> {{ match.scan_status }}
         </div>
