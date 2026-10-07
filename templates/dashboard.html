@@ -47,7 +47,20 @@
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
         }
 
-        .sport-type { color: #ff4d4d; font-size: 0.65rem; font-weight: 900; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 4px; }
+        /* NEW GLOWING EDGE RATING TRACKER STYLE */
+        .edge-rating-tag {
+            font-size: 0.7rem;
+            font-weight: 900;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            margin-bottom: 6px;
+            display: inline-block;
+            padding: 2px 6px;
+            border-radius: 4px;
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .sport-type { color: #ff4d4d; font-size: 0.65rem; font-weight: 900; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 2px; }
         .game-title-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
         .game-title { font-size: 1.2rem; font-weight: 800; color: #ffffff; letter-spacing: -0.01em; }
         .live-clock-badge { background: #ff4d4d; color: #ffffff; font-size: 0.65rem; font-weight: 800; padding: 2px 6px; border-radius: 4px; text-transform: uppercase; }
@@ -77,41 +90,11 @@
 
         .module-value { padding: 8px 12px; font-weight: 700; color: #ffffff; }
 
-        /* Interactive Milestone Layout Slider Elements */
-        .slider-controls {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .btn-adjust {
-            background: #1e293b;
-            color: #ffffff;
-            border: 1px solid #334155;
-            border-radius: 4px;
-            width: 24px;
-            height: 24px;
-            font-size: 0.8rem;
-            font-weight: bold;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
+        .slider-controls { display: flex; align-items: center; gap: 6px; }
+        .btn-adjust { background: #1e293b; color: #ffffff; border: 1px solid #334155; border-radius: 4px; width: 24px; height: 24px; font-size: 0.8rem; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; }
         .btn-adjust:active { background: #38bdf8; color: #000000; }
 
-        .table-header {
-            display: flex;
-            justify-content: space-between;
-            color: #475569;
-            font-size: 0.6rem;
-            font-weight: 800;
-            text-transform: uppercase;
-            padding-bottom: 4px;
-            border-bottom: 1px solid #1a2640;
-            margin-bottom: 4px;
-        }
-
+        .table-header { display: flex; justify-content: space-between; color: #475569; font-size: 0.6rem; font-weight: 800; text-transform: uppercase; padding-bottom: 4px; border-bottom: 1px solid #1a2640; margin-bottom: 4px; }
         .prop-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #0f182b; }
         .player-name { font-size: 0.85rem; font-weight: 700; color: #ffffff; }
         .milestone-display-container { display: flex; align-items: center; gap: 10px; }
@@ -122,7 +105,6 @@
         .deficit-player { color: #f87171; text-decoration: line-through; font-weight: 600; width: 110px; }
         .deficit-status { color: #f87171; font-weight: 800; width: 45px; }
         .deficit-desc { color: #94a3b8; flex: 1; padding-left: 4px; }
-        .nhl-status-tracker { color: #94a3b8; font-size: 0.8rem; line-height: 1.4; padding-top: 4px; }
     </style>
 </head>
 <body>
@@ -130,12 +112,17 @@
 <div id="matrix-container">
 
     <div class="system-test-badge">
-        <span class="status-dot"></span> V10.0 ENGINE ADVANCED ANALYTICAL RUN ACTIVE
+        <span class="status-dot"></span> RECON MASTER ENGINE LIVE · SELECTION ANALYTICS
     </div>
 
     {% for match in matchups %}
     <div class="slate-card">
         
+        <!-- Live Edge Ranking Display Layer -->
+        <div class="edge-rating-tag" style="border: 1px solid {{ match.edge_color }}; color: {{ match.edge_color }};">
+            {{ match.edge_rating }}
+        </div>
+
         {% if match.sport == 'NFL' %}
         <div class="sport-type">🏈 FOOTBALL ADAPTIVE ADVANTAGE SHEET</div>
         <div class="game-title-row">
@@ -156,7 +143,7 @@
             <div class="module-value" style="color: #38bdf8;">{{ match.market_alert }}</div>
         </div>
         <div class="line-module-row">
-            <div class="module-label" style="color: #a855f7;">SPLITS</div>
+            <div class="module-label" style="color: #e2e8f0;">SPLITS</div>
             <div class="module-value" style="color: #e2e8f0; font-size: 0.75rem;">{{ match.splits_data }}</div>
         </div>
         <div class="line-module-row">
@@ -215,7 +202,7 @@
             <div class="module-value" style="color: #38bdf8;">{{ match.market_alert }}</div>
         </div>
         <div class="line-module-row">
-            <div class="module-label" style="color: #a855f7;">SPLITS</div>
+            <div class="module-label" style="color: #e2e8f0;">SPLITS</div>
             <div class="module-value" style="color: #e2e8f0; font-size: 0.75rem;">{{ match.splits_data }}</div>
         </div>
         <div class="line-module-row">
@@ -233,7 +220,4 @@
 function adjustSlider(playerName, direction) {
     const textElement = document.getElementById('val-' + playerName);
     if (!textElement) return;
-    
-    let currentVal = parseFloat(textElement.innerText.replace('Over ', ''));
-    let step = playerName.includes('(QB)') ? 1.0 : 5.0; // Completions move by 1, yards move by 5
     
