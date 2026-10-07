@@ -19,75 +19,75 @@
 </head>
 <body>
 
-    <div class="banner">⚡ ENGINE STATUS: VERTICAL COMPACT MATRIX LIVE</div>
+    <div class="banner">⚡ CEE ENGINE: 10s AUTO-POLLING STREAM ACTIVE</div>
 
-    <div class="section-title">Low-Volume Contrarian Splits</div>
-    <table class="matrix-table">
-        <thead>
-            <tr>
-                <th>Matchup</th>
-                <th>Target</th>
-                <th>Pub Tkts</th>
-                <th>Sharp $</th>
-                <th>Vol State</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for game in cache.low_volume_splits.games %}
-            <tr>
-                <td><b>{{ game.matchup }}</b></td>
-                <td><span style="color: #f87171;">{{ game.target }}</span></td>
-                <td>{{ game.tickets }}</td>
-                <td style="color: #4ade80;">{{ game.cash }}</td>
-                <td><span class="badge-alt">{{ game.state }}</span></td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    <div class="section-title">Live Dynamic Tracker Slates</div>
+    <div id="live-matrix-container">
+        <table class="matrix-table">
+            <thead>
+                <tr>
+                    <th>League</th>
+                    <th>Matchup</th>
+                    <th>Live Score</th>
+                    <th>Status</th>
+                    <th>Target Metric</th>
+                </tr>
+            </thead>
+            <tbody id="matrix-rows">
+                {% if cache.slates %}
+                    {% for game in cache.slates %}
+                    <tr>
+                        <td><span class="badge">{{ game.league }}</span></td>
+                        <td><b>{{ game.matchup }}</b></td>
+                        <td style="color: #4ade80; font-weight: bold; font-family: monospace;">{{ game.score }}</td>
+                        <td><small style="color: #94a3b8;">{{ game.line_value }}</small></td>
+                        <td><span class="badge-alt">{{ game.target_value }}</span></td>
+                    </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="5" style="text-align: center; color: #94a3b8; padding: 20px;">
+                            Waking up live data connections... Loop firing in 10s.
+                        </td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
 
-    <div class="section-title">NFL Passing & Rushing Milestones</div>
-    <table class="matrix-table">
-        <thead>
-            <tr>
-                <th>Player</th>
-                <th>Metric</th>
-                <th>Line</th>
-                <th>Safety Floor</th>
-                <th>Edge Matrix</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for prop in cache.nfl_player_props.milestones %}
-            <tr>
-                <td><b>{{ prop.player }}</b> <small style="color: #64748b;">{{ prop.team }} {{ prop.matchup }}</small></td>
-                <td>{{ prop.metric }}</td>
-                <td><span style="color: #f87171;">{{ prop.house_line }}</span></td>
-                <td><span style="color: #4ade80; font-weight: bold;">{{ prop.safety_floor }}</span></td>
-                <td><span class="badge-nfl">{{ prop.edge_status }}</span></td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-
-    <div class="section-title">NHL Slate Matrix</div>
-    <table class="matrix-table">
-        <thead>
-            <tr>
-                <th>Matchup</th>
-                <th>O/U</th>
-                <th>Edge Detection</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for game in cache.nhl_slate.games %}
-            <tr>
-                <td><b>{{ game.matchup }}</b></td>
-                <td>{{ game.ou }}</td>
-                <td><span class="badge">{{ game.contrarian_edge }}</span></td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    <script>
+        // Automatic 10-second polling mechanism to ensure live data refreshes instantly
+        async function fetchLiveUpdates() {
+            try {
+                const response = await fetch('/api/v5/engine/cache');
+                if (response.ok) {
+                    const data = await response.json();
+                    const tbody = document.getElementById('matrix-rows');
+                    
+                    if (data.slates && data.slates.length > 0) {
+                        let htmlRows = '';
+                        data.slates.forEach(game => {
+                            htmlRows += `
+                                <tr>
+                                    <td><span class="badge">${game.league}</span></td>
+                                    <td><b>${game.matchup}</b></td>
+                                    <td style="color: #4ade80; font-weight: bold; font-family: monospace;">${game.score}</td>
+                                    <td><small style="color: #94a3b8;">${game.line_value}</small></td>
+                                    <td><span class="badge-alt">${game.target_value}</span></td>
+                                </tr>
+                            `;
+                        });
+                        tbody.innerHTML = htmlRows;
+                    }
+                }
+            } catch (error) {
+                console.log("Stream synchronization pending...");
+            }
+        }
+        
+        // Fire polling routine every 10 seconds endlessly
+        setInterval(fetchLiveUpdates, 10000);
+    </script>
 
 </body>
 </html>
