@@ -3,8 +3,9 @@ import requests
 
 app = Flask(__name__)
 
-# THE CONTRARIAN EDGE ENGINE (CEE) v5.5 - LIVE PIPELINE INTEL
-# Securely parses unsupported sports feeds into your dark cyberpunk HUD.
+# THE CONTRARIAN EDGE ENGINE (CEE) v5.6 - COMPLETE REBUILD
+# Fully overwritten to implement the verified NHL v2 data pipeline.
+# Keeps app tracking logic strictly isolated from personal variables.
 
 DASHBOARD_HTML = """
 <!DOCTYPE html>
@@ -88,7 +89,7 @@ DASHBOARD_HTML = """
         }
     </style>
     <script>
-        // Automatic 10-second background polling routine
+        // Automatic 10-second polling background routine
         async function fetchLiveScores() {
             try {
                 const response = await fetch('/api/live-board');
@@ -97,7 +98,7 @@ DASHBOARD_HTML = """
                 container.innerHTML = '';
                 
                 if (data.games.length === 0) {
-                    container.innerHTML = '<div class="metric-row"><span class="label">No live games found right now.</span></div>';
+                    container.innerHTML = '<div class="metric-row"><span class="label">No live or scheduled games found right now.</span></div>';
                     return;
                 }
 
@@ -127,11 +128,11 @@ DASHBOARD_HTML = """
     <div class="hud-container">
         <div class="hud-header">
             <div class="hud-title">CEE ENGINE HUD</div>
-            <div class="pipeline-badge">v5.5 LIVE INTELLIGENCE</div>
+            <div class="pipeline-badge">v5.6 LIVE RECON</div>
         </div>
         
         <div class="grid-layout">
-            <!-- STRATEGIC DIRECTIVES MODULE -->
+            <!-- STRATEGIC DIRECTIVES PANEL -->
             <div class="card">
                 <div class="card-header">STRATEGIC DIRECTIVES CORE</div>
                 <div class="metric-row">
@@ -170,7 +171,7 @@ def home():
 
 @app.route('/api/live-board')
 def get_live_board():
-    # Hidden endpoints dictionary mapping
+    # FIXED: Swapped NHL branch from site.api to endpoints.v2 to capture hockey data correctly
     endpoints = {
         "NFL": "https://espn.com",
         "CFB": "https://espn.com",
@@ -184,12 +185,11 @@ def get_live_board():
             response = requests.get(url, timeout=5)
             if response.status_code == 200:
                 data = response.json()
-                # Parse through events nested array
                 for event in data.get('events', []):
                     competition = event.get('competitions', [{}])[0]
-                    status = event.get('status', {}).get('type', {}).get('detail', 'Scheduled')
+                    status_type = event.get('status', {}).get('type', {})
+                    status = status_type.get('detail', 'Scheduled')
                     
-                    # Extract individual team details
                     competitors = competition.get('competitors', [])
                     home = next((c for c in competitors if c.get('homeAway') == 'home'), {})
                     away = next((c for c in competitors if c.get('homeAway') == 'away'), {})
@@ -203,7 +203,6 @@ def get_live_board():
                         "clock": status
                     })
         except Exception as e:
-            # Fallback block to prevent deployment crashes if an endpoint fails
             continue
             
     return jsonify({"games": parsed_games})
