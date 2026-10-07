@@ -11,7 +11,6 @@ def fetch_cce_master_edge_stream():
     Calculates Public vs. Sharp Handle discrepancies, dynamically parses 
     DraftKings alternate player props, and ranks games based on strict margin edges.
     """
-    # Base configuration attributes
     cce_payload = {
         "pipeline_version": "v12.0 MAXIMUM COMPLIANCE",
         "action_target": {
@@ -24,7 +23,7 @@ def fetch_cce_master_edge_stream():
             {"name": "Wallet #4092 (Institutional Whales)", "size": "3.5x", "target": "Nashville ML (+130)", "resistance": "87% Retail Trap Handle"},
             {"name": "Vegas Sharp Box (High-Volume)", "size": "2x", "target": "Ottawa ML (+115)", "resistance": "69% Lopsided Vig"}
         ],
-        "matchups": [] # Built dynamically below from the raw web streams
+        "matchups": [] 
     }
 
     network_headers = {
@@ -54,7 +53,6 @@ def fetch_cce_master_edge_stream():
                         home_name = t_display
                         home_score = t_score
 
-                # FIXED: Correct quote matching on master_payload["matchups"] entries
                 if "Tampa" in home_name or "Toronto" in home_name:
                     edge_tag, edge_color = "PRIME WHALE TARGET 🥇", "#00e676"
                     splits = "Sharp Handle: 88% on Predators Puck Line 🐋 · Retail Bets: 12%"
@@ -68,7 +66,7 @@ def fetch_cce_master_edge_stream():
                     splits = "Sharp Handle: 58% on Away Moneyline · Retail Pool Balanced"
                     market_alert = "Insulated Cover Cushion Active · Standard Hold Tax: 4.15%"
 
-                master_payload["matchups"].append({
+                cce_payload["matchups"].append({
                     "sport": "NHL", "edge_rating": edge_tag, "edge_color": edge_color,
                     "away": away_name, "home": home_name,
                     "score_status": clock_str.upper(), "clock_label": f"{away_score} - {home_score}",
@@ -97,24 +95,25 @@ def fetch_cce_master_edge_stream():
                         if comp.get('homeAway') == 'away': away_score = t_score
                         else: home_score = t_score
                             
-                    master_payload["matchups"].insert(0, {
+                    cce_payload["matchups"].insert(0, {
                         "sport": "CFB", "edge_rating": "SHARP VALUE WINDOW 🥈", "edge_color": "#ffeb3b",
                         "away": "Southern Miss", "home": "Troy",
                         "score_status": clock_str.upper(), "clock_label": f"{away_score} - {home_score}",
                         "market_alert": "Troy -10.5 ▲ · ML: Southern Miss +310 · Line Move Vector Tracker Active",
                         "splits_data": "Sharp Handle: 78% on UNDER · Public Bets: 82% on OVER (Extreme Exposure Trap) ⚠️",
                         "env_info": "Outdoor Open-Air · 72° · Clear · Wind: 5mph · Live API Feed 🌐",
+                        # FIXED: Ensured both entries use the exact property label 'player' to match the dashboard loops
                         "props": [
                             {"player": "Landry Lyddy (QB)", "prop_line": "Over 13.5 Completions (DK Alternate Floor)", "probability": "77%"},
-                            {"name": "Jaheim Merriweather (RB)", "prop_line": "Over 39.5 Rushing Yards (Ground Architecture Cushion)", "probability": "81%"}
+                            {"player": "Jaheim Merriweather (RB)", "prop_line": "Over 39.5 Rushing Yards (Ground Architecture Cushion)", "probability": "81%"}
                         ]
                     })
     except Exception:
         pass
 
     # Safe backup array layout loop layer if external platform servers completely time out
-    if not master_payload["matchups"]:
-        master_payload["matchups"] = [
+    if not cce_payload["matchups"]:
+        cce_payload["matchups"] = [
             {
                 "sport": "CFB", "edge_rating": "LOCAL BUFFER ACTIVE 🌐", "edge_color": "#38bdf8", "away": "Southern Miss", "home": "Troy",
                 "score_status": "4TH QUARTER · FINAL", "clock_label": "17 - 24", "market_alert": "Troy -10.5 · Line Move Vectors Capped",
@@ -123,7 +122,7 @@ def fetch_cce_master_edge_stream():
             }
         ]
 
-    return master_payload
+    return cce_payload
 
 @app.route('/')
 def main_dashboard():
