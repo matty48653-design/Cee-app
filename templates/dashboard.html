@@ -3,51 +3,58 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cee App - Advanced Command Center</title>
+    <title>Cee App - Live Action Commands</title>
     <style>
         body {
-            background-color: #050811;
+            background-color: #060913;
             color: #e2e8f0;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             margin: 0;
-            padding: 10px;
+            padding: 12px;
             -webkit-font-smoothing: antialiased;
         }
         
         #matrix-container {
             max-width: 480px;
             margin: 0 auto;
+            padding-top: 10px;
         }
 
         .system-test-badge {
-            background: linear-gradient(90deg, rgba(0, 230, 118, 0.08) 0%, rgba(0, 184, 212, 0.02) 100%);
+            background: rgba(0, 230, 118, 0.05);
             border: 1px solid #00e676;
             color: #00e676;
             text-align: left;
-            font-size: 0.8rem;
+            font-size: 0.85rem;
             font-weight: 800;
             padding: 10px 14px;
             border-radius: 8px;
-            letter-spacing: 0.05em;
+            letter-spacing: 0.03em;
             text-transform: uppercase;
-            margin-bottom: 16px;
+            margin-bottom: 20px;
             display: flex;
             align-items: center;
             gap: 8px;
         }
 
-        .status-dot { width: 8px; height: 8px; background-color: #00e676; border-radius: 50%; display: inline-block; box-shadow: 0 0 10px #00e676; }
-
-        .slate-card {
-            background: #0c1222;
-            border-radius: 12px;
-            padding: 14px;
-            margin-bottom: 12px;
-            border: 1px solid #1a2640;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            background-color: #00e676;
+            border-radius: 50%;
+            display: inline-block;
+            box-shadow: 0 0 10px #00e676;
         }
 
-        /* NEW GLOWING EDGE RATING TRACKER STYLE */
+        .slate-card {
+            background: #090f1d;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 14px;
+            border: 1px solid #152238;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+
         .edge-rating-tag {
             font-size: 0.7rem;
             font-weight: 900;
@@ -60,51 +67,126 @@
             background: rgba(255, 255, 255, 0.03);
         }
 
-        .sport-type { color: #ff4d4d; font-size: 0.65rem; font-weight: 900; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 2px; }
-        .game-title-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
-        .game-title { font-size: 1.2rem; font-weight: 800; color: #ffffff; letter-spacing: -0.01em; }
-        .live-clock-badge { background: #ff4d4d; color: #ffffff; font-size: 0.65rem; font-weight: 800; padding: 2px 6px; border-radius: 4px; text-transform: uppercase; }
+        .sport-type {
+            color: #ff4d4d;
+            font-size: 0.7rem;
+            font-weight: 900;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        .game-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #ffffff;
+            letter-spacing: -0.01em;
+            margin-bottom: 14px;
+        }
 
         .line-module-row {
             display: grid;
             grid-template-columns: 80px 1fr;
-            background: #060914;
-            border: 1px solid #141d30;
-            border-radius: 6px;
+            background: #0f162a;
+            border-left: 3px solid #1e293b;
             margin-bottom: 6px;
             overflow: hidden;
-            font-size: 0.8rem;
+            font-size: 0.85rem;
         }
 
         .module-label {
-            background: #101726;
             color: #64748b;
             font-weight: 800;
             font-size: 0.65rem;
             display: flex;
             align-items: center;
-            justify-content: center;
+            padding: 10px 12px;
             text-transform: uppercase;
-            border-right: 1px solid #141d30;
+            letter-spacing: 0.02em;
         }
 
-        .module-value { padding: 8px 12px; font-weight: 700; color: #ffffff; }
+        .module-value {
+            padding: 10px 12px;
+            font-weight: 700;
+            color: #ffffff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
 
-        .slider-controls { display: flex; align-items: center; gap: 6px; }
-        .btn-adjust { background: #1e293b; color: #ffffff; border: 1px solid #334155; border-radius: 4px; width: 24px; height: 24px; font-size: 0.8rem; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-        .btn-adjust:active { background: #38bdf8; color: #000000; }
+        .live-clock-text {
+            background: #ff4d4d;
+            color: #ffffff;
+            font-size: 0.65rem;
+            font-weight: 800;
+            padding: 2px 6px;
+            border-radius: 4px;
+            text-transform: uppercase;
+        }
 
-        .table-header { display: flex; justify-content: space-between; color: #475569; font-size: 0.6rem; font-weight: 800; text-transform: uppercase; padding-bottom: 4px; border-bottom: 1px solid #1a2640; margin-bottom: 4px; }
-        .prop-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #0f182b; }
-        .player-name { font-size: 0.85rem; font-weight: 700; color: #ffffff; }
-        .milestone-display-container { display: flex; align-items: center; gap: 10px; }
-        .milestone-text { font-size: 0.85rem; font-weight: 700; color: #00e676; min-width: 65px; text-align: right; }
+        .table-header {
+            display: flex;
+            justify-content: space-between;
+            color: #475569;
+            font-size: 0.65rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            padding-bottom: 6px;
+            border-bottom: 1px solid #152238;
+            margin-bottom: 6px;
+        }
 
-        .deficit-stream-title { color: #ff9100; font-size: 0.7rem; font-weight: 800; margin-top: 14px; margin-bottom: 6px; text-transform: uppercase; border-top: 1px solid #1a2640; padding-top: 10px; }
-        .deficit-row { display: flex; align-items: center; font-size: 0.75rem; padding: 4px 0; }
+        .prop-row {
+            padding: 10px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .prop-row:not(:last-child) {
+            border-bottom: 1px solid #0d1627;
+        }
+
+        .player-name {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: #ffffff;
+        }
+
+        .milestone-value {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: #00e676;
+            text-align: right;
+        }
+
+        .deficit-stream-title {
+            color: #ff9100;
+            font-size: 0.75rem;
+            font-weight: 800;
+            margin-top: 18px;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            border-top: 1px solid #152238;
+            padding-top: 12px;
+        }
+
+        .deficit-row {
+            display: flex;
+            align-items: center;
+            font-size: 0.75rem;
+            padding: 4px 0;
+        }
+
         .deficit-player { color: #f87171; text-decoration: line-through; font-weight: 600; width: 110px; }
         .deficit-status { color: #f87171; font-weight: 800; width: 45px; }
         .deficit-desc { color: #94a3b8; flex: 1; padding-left: 4px; }
+
+        .nhl-status-tracker {
+            color: #94a3b8;
+            font-size: 0.8rem;
+            line-height: 1.4;
+            padding-top: 4px;
+        }
     </style>
 </head>
 <body>
@@ -112,61 +194,50 @@
 <div id="matrix-container">
 
     <div class="system-test-badge">
-        <span class="status-dot"></span> RECON MASTER ENGINE LIVE · SELECTION ANALYTICS
+        <span class="status-dot"></span> LIVE IN-GAME ACTION COMMANDS (V9.0 RESTORED)
     </div>
 
     {% for match in matchups %}
     <div class="slate-card">
         
-        <!-- Live Edge Ranking Display Layer -->
         <div class="edge-rating-tag" style="border: 1px solid {{ match.edge_color }}; color: {{ match.edge_color }};">
             {{ match.edge_rating }}
         </div>
 
         {% if match.sport == 'NFL' %}
-        <div class="sport-type">🏈 FOOTBALL ADAPTIVE ADVANTAGE SHEET</div>
-        <div class="game-title-row">
-            <div class="game-title">{{ match.away_team }} @ {{ match.home_team }}</div>
-            <div class="live-clock-badge">{{ match.live_clock }}</div>
-        </div>
+        <div class="sport-type">🏈 COLLEGE FOOTBALL REAL-TIME FEED</div>
+        <div class="game-title">{{ match.away_team }} @ {{ match.home_team }}</div>
         
-        <div class="line-module-row">
-            <div class="module-label" style="color: #ff4d4d;">SCORE</div>
-            <div class="module-value" style="font-size: 0.9rem;">{{ match.live_score }}</div>
+        <div class="line-module-row" style="border-left-color: #ff4d4d;">
+            <div class="module-label">SCORE</div>
+            <div class="module-value"><span>{{ match.live_score }}</span> <span class="live-clock-text">{{ match.live_clock }}</span></div>
         </div>
-        <div class="line-module-row">
-            <div class="module-label" style="color: #ffeb3b;">TOTALS</div>
+        <div class="line-module-row" style="border-left-color: #ffeb3b;">
+            <div class="module-label">TOTALS</div>
             <div class="module-value" style="color: #ffeb3b;">{{ match.live_ou_status }}</div>
         </div>
-        <div class="line-module-row">
-            <div class="module-label" style="color: #38bdf8;">LINES</div>
+        <div class="line-module-row" style="border-left-color: #38bdf8;">
+            <div class="module-label">LINES</div>
             <div class="module-value" style="color: #38bdf8;">{{ match.market_alert }}</div>
         </div>
-        <div class="line-module-row">
-            <div class="module-label" style="color: #e2e8f0;">SPLITS</div>
-            <div class="module-value" style="color: #e2e8f0; font-size: 0.75rem;">{{ match.splits_data }}</div>
+        <div class="line-module-row" style="border-left-color: #a855f7;">
+            <div class="module-label">WEATHER</div>
+            <div class="module-value" style="color: #a855f7; font-size: 0.75rem;">{{ match.scan_status }}</div>
         </div>
-        <div class="line-module-row">
-            <div class="module-label" style="color: #00e676;">ENV</div>
-            <div class="module-value" style="color: #64748b; font-size: 0.75rem;">{{ match.scan_status }}</div>
+        <div class="line-module-row" style="border-left-color: #e2e8f0;">
+            <div class="module-label">SPLITS</div>
+            <div class="module-value" style="color: #e2e8f0; font-size: 0.75rem;">{{ match.splits_data }}</div>
         </div>
 
         <div class="prop-section">
             <div class="table-header">
-                <div>🎯 ADAPTIVE PROP SLIDERS</div>
-                <div style="text-align: right; padding-right: 75px;">SAFETY ADJUST</div>
-                <div>FLOOR</div>
+                <div>🎯 PLAYER PROP MATRIX</div>
+                <div>SHARP SELECTION FLOORS</div>
             </div>
             {% for player in match.players %}
             <div class="prop-row">
                 <div class="player-name">{{ player.name }}</div>
-                <div class="milestone-display-container">
-                    <div class="slider-controls">
-                        <button class="btn-adjust" onclick="adjustSlider('{{ player.name }}', -1)">-</button>
-                        <button class="btn-adjust" onclick="adjustSlider('{{ player.name }}', 1)">+</button>
-                    </div>
-                    <div class="milestone-text" id="val-{{ player.name }}">Over {{ player.milestone }}</div>
-                </div>
+                <div class="milestone-value">{{ player.milestone }}</div>
             </div>
             {% endfor %}
         </div>
@@ -183,31 +254,28 @@
         {% endif %}
 
         {% elif match.sport == 'NHL' %}
-        <div class="sport-type">🏒 HOCKEY CONTRARIAN INTELLIGENCE CORE</div>
-        <div class="game-title-row">
-            <div class="game-title">{{ match.away_team }} @ {{ match.home_team }}</div>
-            <div class="live-clock-badge" style="background: #38bdf8;">{{ match.live_clock }}</div>
-        </div>
+        <div class="sport-type">🏒 NHL LIVE HOCKEY DIRECTIVE SLATE</div>
+        <div class="game-title">{{ match.away_team }} @ {{ match.home_team }}</div>
         
-        <div class="line-module-row">
-            <div class="module-label" style="color: #ff4d4d;">SCORE</div>
-            <div class="module-value" style="font-size: 0.9rem;">{{ match.live_score }}</div>
+        <div class="line-module-row" style="border-left-color: #ff4d4d;">
+            <div class="module-label">SCORE</div>
+            <div class="module-value"><span>{{ match.live_score }}</span> <span class="live-clock-text" style="background: #38bdf8;">{{ match.live_clock }}</span></div>
         </div>
-        <div class="line-module-row">
-            <div class="module-label" style="color: #ffeb3b;">TOTALS</div>
+        <div class="line-module-row" style="border-left-color: #ffeb3b;">
+            <div class="module-label">TOTALS</div>
             <div class="module-value" style="color: #ffeb3b;">{{ match.live_ou_status }}</div>
         </div>
-        <div class="line-module-row">
-            <div class="module-label" style="color: #38bdf8;">LINES</div>
+        <div class="line-module-row" style="border-left-color: #38bdf8;">
+            <div class="module-label">LINES</div>
             <div class="module-value" style="color: #38bdf8;">{{ match.market_alert }}</div>
         </div>
-        <div class="line-module-row">
-            <div class="module-label" style="color: #e2e8f0;">SPLITS</div>
+        <div class="line-module-row" style="border-left-color: #e2e8f0;">
+            <div class="module-label">SPLITS</div>
             <div class="module-value" style="color: #e2e8f0; font-size: 0.75rem;">{{ match.splits_data }}</div>
         </div>
-        <div class="line-module-row">
-            <div class="module-label" style="color: #00e676;">ENV</div>
-            <div class="module-value" style="color: #64748b; font-size: 0.75rem;">{{ match.scan_status }}</div>
+        
+        <div class="nhl-status-tracker" style="background: #0f162a; padding: 10px; margin-top: 8px;">
+            <strong>CEE Recon Environment:</strong> {{ match.scan_status }}
         </div>
         {% endif %}
         
@@ -216,8 +284,5 @@
     
 </div>
 
-<script>
-function adjustSlider(playerName, direction) {
-    const textElement = document.getElementById('val-' + playerName);
-    if (!textElement) return;
-    
+</body>
+</html>
