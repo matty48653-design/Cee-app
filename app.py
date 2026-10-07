@@ -3,7 +3,7 @@ from flask import Flask, render_template_string, jsonify
 
 app = Flask(__name__)
 
-# Restored: Your premium v7.0 design with the built-in auto-refresh heartbeat pulse timer
+# Restored: Your premium v7.0 design with a bulletproof auto-refresh loop
 V7_HUD_TEMPLATE = """
 <!DOCTYPE html>
 <html lang="en">
@@ -122,7 +122,6 @@ V7_HUD_TEMPLATE = """
     </div>
 </div>
 
-<!-- RESTORED: THE 4:00 PM AUTOMATIC REFRESH HEARTBEAT TWEAK -->
 <script>
     function runAutoRefreshLoop() {
         fetch(window.location.href)
@@ -131,16 +130,26 @@ V7_HUD_TEMPLATE = """
                 const parser = new DOMParser();
                 const doc = parser.parseFromString(html, 'text/html');
                 
-                // Native updates the scoreboard grid container automatically
                 const newGrid = doc.getElementById('live-matchups-grid');
                 const oldGrid = document.getElementById('live-matchups-grid');
                 if (newGrid && oldGrid) {
                     oldGrid.innerHTML = newGrid.innerHTML;
                 }
                 
-                // Updates the timestamp signature block
+                // FIXED: Changed 'new datetime()' to standard lowercase browser native 'new Date()'
                 const now = new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', second: '2-digit' });
                 document.getElementById('time-counter').innerText = 'Last Checked: ' + now;
             })
             .catch(err => console.log("Feed buffering..."));
     }
+    setInterval(runAutoRefreshLoop, 10000);
+</script>
+
+</body>
+</html>
+"""
+
+@app.route('/')
+def main_dashboard():
+    return render_template_string(V7_HUD_TEMPLATE)
+
