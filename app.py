@@ -1,34 +1,139 @@
 # app.py
 import os
 import json
+import time
+import threading
+import urllib.request
 from flask import Flask, render_template_string, jsonify
 
 app = Flask(__name__)
-JSON_CACHE_FILE = "sports_data.json"
 
-def read_local_feed():
-    """Reads local data storage instantly with complete crash protection."""
-    if os.path.exists(JSON_CACHE_FILE):
-        try:
-            with open(JSON_CACHE_FILE, "r") as f:
-                return json.load(f)
-        except Exception:
-            pass
-    # Safety template fallback frame to prevent empty page crashes
-    return {
-        "timestamp": "12:00 AM",
-        "sharp_sheet": {
-            "game_spread_edge": "Syncing Data Bridge...",
-            "game_spread_desc": "Waiting for feed_bridge.py background boot initialization cycle.",
-            "totals_edge": "Syncing System...",
-            "totals_desc": "Standby."
-        },
-        "slates": []
-    }
+# =====================================================================
+# CEE CORE ENGINE SYSTEM MEMORY (No Disk Reads = No More Freezing)
+# =====================================================================
+SYSTEM_VERSION = "10.0 UNIFIED CORE"
+SYSTEM_CACHE = {
+    "timestamp": "Initializing...",
+    "sharp_sheet": {
+        "game_spread_edge": "Scanning...",
+        "game_spread_desc": "Engaging live market contrarian data lines.",
+        "totals_edge": "Scanning...",
+        "totals_desc": "Analyzing public totals money distribution."
+    },
+    "slates": []
+}
 
+def get_espn_json(league_rpc):
+    """Secure direct telemetry hook into the public ESPN tracker wire."""
+    url = f"https://espn.com{league_rpc}/scoreboard"
+    try:
+        req = urllib.request.Request(
+            url, 
+            headers={'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)'}
+        )
+        with urllib.request.urlopen(req, timeout=8) as response:
+            return json.loads(response.read().decode('utf-8'))
+    except Exception as e:
+        print(f"[CEE Error] Network data obstruction on {league_rpc}: {e}")
+        return None
+
+def cee_background_automation_loop():
+    """Isolated thread loop updating scores every 60s without disrupting the UI."""
+    global SYSTEM_CACHE
+    print("CEE Embedded Data Stream Engine Initialized.")
+    
+    while True:
+        current_time_str = time.strftime("%-I:%M %p")
+        
+        # Fresh baseline frame mirroring your custom analytics requirements
+        fresh_data = {
+            "timestamp": current_time_str,
+            "sharp_sheet": {
+                "game_spread_edge": "Fading Public Consensus Bias",
+                "game_spread_desc": "Heavy ticket concentrations filtering into house traps; sharp hard money buying the dog trenches.",
+                "totals_edge": "Early-Season Total Inflations",
+                "totals_desc": "Clock-bleed simulation profiles mapping massive value into overlooked Unders."
+            },
+            "slates": []
+        }
+
+        # 1. PARSE COLLEGE FOOTBALL LIVE TRACKS
+        cfb_raw = get_espn_json("football/college-football")
+        if cfb_raw and "events" in cfb_raw:
+            for event in cfb_raw["events"]:
+                short_name = event.get("shortName", "")
+                try:
+                    comp = event["competitions"][0]
+                    status_text = comp["status"]["type"]["detail"]
+                    
+                    # Safe deep index mapping to extract real team arrays and avoid loops
+                    competitors = comp["competitors"]
+                    away_score = competitors[1]["score"]
+                    home_score = competitors[0]["score"]
+                    
+                    fresh_data["slates"].append({
+                        "league": "CFB",
+                        "matchup": short_name,
+                        "score": f"{away_score} - {home_score}",
+                        "line_label": "Game Status:",
+                        "line_value": status_text,
+                        "target_label": "CEE Target:",
+                        "target_value": "Reverse Line Bait Trap Assessment Active",
+                        "kickoff": "Mid-Week Open-Air Trench Warfare Tracker"
+                    })
+                except Exception:
+                    pass
+
+        # 2. PARSE NHL LIVE TRACKS
+        nhl_raw = get_espn_json("hockey/nhl")
+        if nhl_raw and "events" in nhl_raw:
+            for event in nhl_raw["events"]:
+                short_name = event.get("shortName", "")
+                try:
+                    comp = event["competitions"][0]
+                    status_text = comp["status"]["type"]["detail"]
+                    
+                    competitors = comp["competitors"]
+                    away_score = competitors[1]["score"]
+                    home_score = competitors[0]["score"]
+                    
+                    fresh_data["slates"].append({
+                        "league": "NHL",
+                        "matchup": short_name,
+                        "score": f"{away_score} - {home_score}",
+                        "line_label": "Game Status:",
+                        "line_value": status_text,
+                        "target_label": "CEE Target:",
+                        "target_value": "Goaltending Slider Variance Placement",
+                        "kickoff": "Arena Main Track Feed Active"
+                    })
+                except Exception:
+                    pass
+
+        # 3. NFL THURSDAY NIGHT FOOTBALL LANE PRE-SET
+        fresh_data["slates"].append({
+            "league": "NFL",
+            "matchup": "TB @ DAL",
+            "score": "0 - 0",
+            "line_label": "House Line:",
+            "line_value": "Cowboys -3.5",
+            "target_label": "CEE Target:",
+            "target_value": "Buccaneers +3.5 (Morale Deficit Advantage)",
+            "kickoff": "TNF Kickoff: Thursday at 8:15 PM EDT • Roof Closed"
+        })
+
+        # Update server memory instantly with zero disk file-locking lag
+        SYSTEM_CACHE = fresh_data
+        time.sleep(60)
+
+# Start the background data collector loop automatically on boot
+threading.Thread(target=cee_background_automation_loop, daemon=True).start()
+
+# =====================================================================
+# MASTER WEB UI ROUTING LAYER (Draws your custom layout screen)
+# =====================================================================
 @app.route('/')
 def index():
-    matrix_data = read_local_feed()
     html_template = """
     <!DOCTYPE html>
     <html lang="en">
@@ -63,25 +168,23 @@ def index():
             .telemetry-footer { text-align: center; font-size: 10px; color: #475569; margin-top: 20px; font-family: monospace; }
         </style>
         <script>
-            function autoUpdateScreen() {
+            let cachedTime = "";
+            function refreshMatrixData() {
                 fetch('/api/live_stream')
-                    .then(response => {
-                        if (!response.ok) throw new Error();
-                        return response.json();
-                    })
+                    .then(res => res.json())
                     .then(data => {
-                        // Smoothly streams clock and matrix validation state changes without full page flickering
-                        document.getElementById('live-clock').innerText = "SYS TIME: " + data.timestamp + " // MATRIX LIVE";
+                        document.getElementById('live-clock').innerText = "SYS TIME: " + data.timestamp + " // AUTOMATION LIVE";
                         
-                        // Forces page reload only if a live scoring data shift occurs
-                        if(document.body.innerText.includes("Syncing Data Bridge...")) {
+                        // Safely re-draw elements if fresh score variables change in memory
+                        if (cachedTime !== "" && cachedTime !== data.timestamp) {
                             location.reload();
                         }
+                        cachedTime = data.timestamp;
                     })
-                    .catch(err => console.log("CEE Core Buffer Stream Syncing..."));
+                    .catch(e => console.log("Buffering telemetry pipeline..."));
             }
-            // Background thread updates your device every 30 seconds smoothly
-            setInterval(autoUpdateScreen, 30000);
+            // Seamlessly refreshes phone layout elements every 30 seconds
+            setInterval(refreshMatrixData, 30000);
         </script>
     </head>
     <body>
@@ -98,44 +201,3 @@ def index():
                     <div class="sheet-desc">{{ data.sharp_sheet.game_spread_desc }}</div>
                 </div>
                 <div class="sheet-row" style="margin-bottom: 0;">
-                    <div><span class="sheet-label">Totals Over/Under</span><span class="sheet-value">{{ data.sharp_sheet.totals_edge }}</span></div>
-                    <div class="sheet-desc">{{ data.sharp_sheet.totals_desc }}</div>
-                </div>
-            </div>
-
-            <div class="section-title">📺 UPCOMING SLATES & CEE MARGIN EDGES</div>
-
-            {% for game in data.slates %}
-            <div class="game-card">
-                <div class="card-top">
-                    <span class="matchup-text">[{{ game.league }}] {{ game.matchup }}</span>
-                    <span class="live-score">{{ game.score }}</span>
-                </div>
-                <div class="data-grid">
-                    <div class="data-row">
-                        <span class="lbl">{{ game.line_label }}</span>
-                        <span class="val-house">{{ game.line_value }}</span>
-                    </div>
-                    <div class="data-row">
-                        <span class="lbl">{{ game.target_label }}</span>
-                        <span class="val-cee">{{ game.target_value }}</span>
-                    </div>
-                </div>
-                <div class="kickoff-text">{{ game.kickoff }}</div>
-            </div>
-            {% endfor %}
-
-            <div class="telemetry-footer" id="live-clock">SYS TIME: {{ data.timestamp }} // LOC: Arcadia, FL</div>
-        </div>
-    </body>
-    </html>
-    """
-    return render_template_string(html_template, data=matrix_data)
-
-@app.route('/api/live_stream')
-def live_stream():
-    return jsonify(read_local_feed())
-
-if __name__ == '__main__':
-    port = int(os.environ.get("PORT", 5000))
-    app.run(host='0.0.0.0', port=port)
