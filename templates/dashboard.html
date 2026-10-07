@@ -3,298 +3,91 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cee App - CEE MASTER ENGINE CENTER</title>
+    <title>CEE v5.3 HUD</title>
     <style>
-        body {
-            background-color: #050811;
-            color: #e2e8f0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            margin: 0;
-            padding: 14px;
-            -webkit-font-smoothing: antialiased;
-        }
-        
-        #matrix-container {
-            max-width: 480px;
-            margin: 0 auto;
-        }
-
-        .hud-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 4px;
-        }
-
-        .hud-title {
-            font-size: 1.4rem;
-            font-weight: 800;
-            color: #ffffff;
-            letter-spacing: 0.02em;
-        }
-
-        .pipeline-badge {
-            background: rgba(0, 230, 118, 0.1);
-            border: 1px solid #00e676;
-            color: #00e676;
-            font-size: 0.75rem;
-            font-weight: 800;
-            padding: 4px 8px;
-            border-radius: 4px;
-            text-transform: uppercase;
-        }
-
-        .last-checked {
-            color: #475569;
-            font-size: 0.75rem;
-            text-align: right;
-            margin-bottom: 20px;
-        }
-
-        .action-card {
-            background: #090f1d;
-            border: 1px solid rgba(0, 230, 118, 0.3);
-            border-radius: 12px;
-            padding: 16px;
-            margin-bottom: 20px;
-            box-shadow: 0 4px 15px rgba(0, 230, 118, 0.05);
-        }
-
-        .action-header-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            gap: 10px;
-            margin-bottom: 12px;
-        }
-
-        .action-directive {
-            font-size: 1.05rem;
-            font-weight: 800;
-            color: #ffffff;
-            line-height: 1.3;
-        }
-
-        .strike-badge {
-            background: rgba(0, 230, 118, 0.1);
-            color: #00e676;
-            font-size: 0.7rem;
-            font-weight: 900;
-            padding: 4px 6px;
-            border-radius: 4px;
-            text-align: center;
-            line-height: 1.2;
-            min-width: 65px;
-        }
-
-        .action-instructions {
-            color: #94a3b8;
-            font-size: 0.85rem;
-            line-height: 1.4;
-        }
-
-        .section-label {
-            color: #64748b;
-            font-size: 0.8rem;
-            font-weight: 800;
-            letter-spacing: 0.05em;
-            text-transform: uppercase;
-            margin-bottom: 14px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .panel-box {
-            background: #090f1d;
-            border: 1px solid #16203b;
-            border-radius: 10px;
-            padding: 14px;
-            margin-bottom: 16px;
-        }
-
-        .split-row {
-            display: flex;
-            justify-content: space-between;
-            padding: 8px 0;
-            font-size: 0.9rem;
-            border-bottom: 1px solid #16203b;
-        }
-
-        .split-label { font-weight: 700; color: #ffffff; }
-        .split-value { font-weight: 700; color: #ff9100; }
-
-        .slate-card {
-            background: #0c1222;
-            border-radius: 12px;
-            padding: 16px;
-            margin-bottom: 14px;
-            border: 1px solid #1a2640;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
-        }
-
-        .edge-rating-tag {
-            font-size: 0.7rem;
-            font-weight: 900;
-            letter-spacing: 0.06em;
-            text-transform: uppercase;
-            margin-bottom: 8px;
-            display: inline-block;
-            padding: 2px 6px;
-            border-radius: 4px;
-            background: rgba(255, 255, 255, 0.03);
-        }
-
-        .game-title-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 12px;
-        }
-
-        .game-title {
-            font-size: 1.25rem;
-            font-weight: 800;
-            color: #ffffff;
-            letter-spacing: -0.01em;
-        }
-
-        .live-clock-badge {
-            background: #ff4d4d;
-            color: #ffffff;
-            font-size: 0.65rem;
-            font-weight: 800;
-            padding: 2px 6px;
-            border-radius: 4px;
-            text-transform: uppercase;
-        }
-
-        .line-module-row {
-            display: grid;
-            grid-template-columns: 80px 1fr;
-            background: #060914;
-            border: 1px solid #141d30;
-            border-radius: 6px;
-            margin-bottom: 6px;
-            overflow: hidden;
-            font-size: 0.8rem;
-        }
-
-        .module-label {
-            background: #101726;
-            color: #64748b;
-            font-weight: 800;
-            font-size: 0.65rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-transform: uppercase;
-            border-right: 1px solid #141d30;
-        }
-
-        .module-value { padding: 10px 12px; font-weight: 700; color: #ffffff; }
-
-        .table-header {
-            display: flex;
-            justify-content: space-between;
-            color: #475569;
-            font-size: 0.65rem;
-            font-weight: 800;
-            text-transform: uppercase;
-            padding-bottom: 6px;
-            border-bottom: 1px solid #1a2640;
-            margin-bottom: 6px;
-        }
-
-        .prop-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px 0;
-            border-bottom: 1px solid #0f182b;
-        }
-        .prop-player { font-size: 0.9rem; font-weight: 700; color: #ffffff; }
-        .prop-line { font-size: 0.85rem; font-weight: 700; color: #ffeb3b; }
-        .prop-pct { color: #00e676; font-weight: 800; font-size: 0.95rem; text-align: right; }
+        body { background-color: #0d0f14; color: #cbd5e1; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 0; padding: 16px; }
+        .banner { background: #1e1b4b; border: 1px solid #3b82f6; color: #38bdf8; text-align: center; padding: 10px; font-weight: bold; border-radius: 6px; font-size: 12px; letter-spacing: 0.05em; margin-bottom: 20px; }
+        .section-title { font-size: 14px; font-weight: 700; text-transform: uppercase; color: #94a3b8; letter-spacing: 0.1em; margin: 24px 0 12px 0; border-left: 3px solid #ef4444; padding-left: 8px; }
+        .matrix-table { width: 100%; border-collapse: collapse; background: #111827; border-radius: 8px; overflow: hidden; border: 1px solid #1f2937; margin-bottom: 20px; }
+        .matrix-table th { background: #1f2937; color: #94a3b8; font-size: 11px; text-transform: uppercase; text-align: left; padding: 12px; font-weight: 600; }
+        .matrix-table td { padding: 14px 12px; font-size: 13px; border-bottom: 1px solid #1f2937; }
+        .matrix-table tr:last-child td { border-bottom: none; }
+        .badge { background: #14532d; color: #4ade80; padding: 2px 6px; border-radius: 4px; font-size: 11px; font-weight: 600; display: inline-block; }
+        .badge-alt { background: #7c2d12; color: #f97316; padding: 2px 6px; border-radius: 4px; font-size: 11px; font-weight: 600; display: inline-block; }
+        .badge-nfl { background: #1e3a8a; color: #60a5fa; padding: 2px 6px; border-radius: 4px; font-size: 11px; font-weight: 600; display: inline-block; }
     </style>
 </head>
 <body>
 
-<div id="matrix-container">
+    <div class="banner">⚡ ENGINE STATUS: VERTICAL COMPACT MATRIX LIVE</div>
 
-    <div class="hud-header">
-        <div class="hud-title">CEE ENGINE HUD</div>
-        <div class="pipeline-badge">{{ data.pipeline_version }}</div>
-    </div>
-    <div class="last-checked" id="time-counter">Last Checked: Connecting Data Feed...</div>
+    <div class="section-title">Low-Volume Contrarian Splits</div>
+    <table class="matrix-table">
+        <thead>
+            <tr>
+                <th>Matchup</th>
+                <th>Target</th>
+                <th>Pub Tkts</th>
+                <th>Sharp $</th>
+                <th>Vol State</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for game in cache.low_volume_splits.games %}
+            <tr>
+                <td><b>{{ game.matchup }}</b></td>
+                <td><span style="color: #f87171;">{{ game.target }}</span></td>
+                <td>{{ game.tickets }}</td>
+                <td style="color: #4ade80;">{{ game.cash }}</td>
+                <td><span class="badge-alt">{{ game.state }}</span></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 
-    <div class="action-card">
-        <div class="action-header-row">
-            <div class="action-directive">👉 {{ data.action_target.title }}</div>
-            <div class="strike-badge" style="border: 1px solid #00e676;">{{ data.action_target.status }}</div>
-        </div>
-        <div class="action-instructions">
-            <strong>Instructions:</strong> {{ data.action_target.instructions }}
-        </div>
-    </div>
+    <div class="section-title">NFL Passing & Rushing Milestones</div>
+    <table class="matrix-table">
+        <thead>
+            <tr>
+                <th>Player</th>
+                <th>Metric</th>
+                <th>Line</th>
+                <th>Safety Floor</th>
+                <th>Edge Matrix</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for prop in cache.nfl_player_props.milestones %}
+            <tr>
+                <td><b>{{ prop.player }}</b> <small style="color: #64748b;">{{ prop.team }} {{ prop.matchup }}</small></td>
+                <td>{{ prop.metric }}</td>
+                <td><span style="color: #f87171;">{{ prop.house_line }}</span></td>
+                <td><span style="color: #4ade80; font-weight: bold;">{{ prop.safety_floor }}</span></td>
+                <td><span class="badge-nfl">{{ prop.edge_status }}</span></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 
-    <div class="section-label">🎯 SYNDICATE CONSENSUS & SENTIMENT VOLATILITY</div>
-    <div class="panel-box" style="margin-bottom: 20px;">
-        {% for item in data.syndicate_consensus %}
-        <div class="split-row" {% if loop.last %}style="border-bottom:none;"{% endif %}>
-            <div>
-                <div class="split-label">{{ item.name }}</div>
-                <div style="color:#475569; font-size:0.75rem; font-weight:bold; margin-top:2px;">Size: {{ item.size }}</div>
-            </div>
-            <div style="text-align:right;">
-                <div style="font-weight:700; color:#38bdf8;">{{ item.target }}</div>
-                <div class="split-value" style="font-size:0.75rem; margin-top:2px;">{{ item.resistance }}</div>
-            </div>
-        </div>
-        {% endfor %}
-    </div>
+    <div class="section-title">NHL Slate Matrix</div>
+    <table class="matrix-table">
+        <thead>
+            <tr>
+                <th>Matchup</th>
+                <th>O/U</th>
+                <th>Edge Detection</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for game in cache.nhl_slate.games %}
+            <tr>
+                <td><b>{{ game.matchup }}</b></td>
+                <td>{{ game.ou }}</td>
+                <td><span class="badge">{{ game.contrarian_edge }}</span></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 
-    <div class="section-label">📺 LIVE SLATE RECON MONITOR & WHALE TRACKER</div>
-    <div style="margin-bottom: 20px;" id="live-recon-grid">
-        {% for match in data.matchups %}
-        <div class="slate-card">
-            
-            <div class="edge-rating-tag" style="border: 1px solid {{ match.edge_color }}; color: {{ match.edge_color }};">
-                {{ match.edge_rating }}
-            </div>
-
-            <div class="game-title-row">
-                <div class="game-title">{{ match.away }} @ {{ match.home }}</div>
-                <div class="live-clock-badge" {% if match.sport == 'NHL' %}style="background: #38bdf8;"{% endif %}>{{ match.score_status }}</div>
-            </div>
-            
-            <div class="line-module-row">
-                <div class="module-label" style="color: #ff4d4d;">SCORE</div>
-                <div class="module-value" style="font-size: 0.95rem; color: #00e676;">{{ match.clock_label }}</div>
-            </div>
-            <div class="line-module-row">
-                <div class="module-label" style="color: #ffeb3b;">TOTALS</div>
-                <div class="module-value" style="color: #ffeb3b;">{{ match.live_ou_status }}</div>
-            </div>
-            <div class="line-module-row">
-                <div class="module-label" style="color: #38bdf8;">LINES</div>
-                <div class="module-value" style="color: #38bdf8;">{{ match.market_alert }}</div>
-            </div>
-            <div class="line-module-row">
-                <div class="module-label" style="color: #e2e8f0;">WHALES</div>
-                <div class="module-value" style="color: #e2e8f0; font-size: 0.75rem;">{{ match.splits_data }}</div>
-            </div>
-            <div class="line-module-row">
-                <div class="module-label" style="color: #a855f7;">ENV</div>
-                <div class="module-value" style="color: #64748b; font-size: 0.75rem;">{{ match.env_info }}</div>
-            </div>
-
-            {% if match.props %}
-            <div class="prop-section" style="margin-top: 14px;">
-                <div class="table-header">
-                    <div>🎯 DRAFTKINGS ALTERNATE PROP LINE</div>
-                    <div style="text-align: right;">CEE EXPECTED PROBABILITY</div>
-                </div>
-                {% for prop in match.props %}
-                <div class="prop-row">
-                    <div>
+</body>
+</html>
