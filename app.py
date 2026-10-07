@@ -3,9 +3,9 @@ import requests
 
 app = Flask(__name__)
 
-# THE CONTRARIAN EDGE ENGINE (CEE) v10.5 - LIVE CONSENSUS SCRAPER
-# Overwrites application script to deploy an active, on-demand market data scraper.
-# Queries VSiN public DraftKings endpoints to calculate real cash handle divergence.
+# THE CONTRARIAN EDGE ENGINE (CEE) v10.8 - STABLE REAL-TIME MATRIX
+# Completely overwrites app.py. Combines raw live scoring structures with market data.
+# Defensive error catch blocks guarantee zero server crashes on Render.
 
 SUPREME_DASHBOARD_HTML = """
 <!DOCTYPE html>
@@ -139,58 +139,59 @@ SUPREME_DASHBOARD_HTML = """
         }
     </style>
     <script>
-        async function updateMarketData() {
+        // On-demand background fetching function loop (Interval: 10 seconds)
+        async function fetchActiveMatrixData() {
             try {
-                const res = await fetch('/api/market-edges');
+                const res = await fetch('/api/active-matrix');
                 const data = await res.json();
                 const container = document.getElementById('market-edges-dock');
                 container.innerHTML = '';
                 
-                if (!data.edges || data.edges.length === 0) {
-                    container.innerHTML = '<div style="font-size:0.75rem; color:#8c96a3; padding-left:4px; font-style:italic;">No upcoming consensus slates detected on wire. Tracking networks...</div>';
+                if (!data.games || data.games.length === 0) {
+                    container.innerHTML = '<div style="font-size:0.75rem; color:#8c96a3; padding-left:4px; font-style:italic;">No live active network feeds found for this timeframe. Monitoring pipelines...</div>';
                     return;
                 }
                 
-                data.edges.forEach(e => {
+                data.games.forEach(g => {
                     const box = document.createElement('div');
                     box.className = 'edge-box';
                     box.innerHTML = `
                         <div class="row-header">
-                            <span style="color:#ffffff; font-size:0.82rem; font-weight:700;">[${e.league}] ${e.matchup}</span>
-                            <span class="value" style="color:#00e676;">${e.market_status}</span>
+                            <span style="color:#ffffff; font-size:0.82rem; font-weight:700;">[${g.league}] ${g.away_team} @ ${g.home_team}</span>
+                            <span class="value" style="color:#00e676;">${g.away_score} - ${g.home_score}</span>
                         </div>
                         <div style="font-size:0.75rem; color:#66fcf1; margin-top:4px; font-weight:500;">
-                            Target Matrix Line: ${e.target_prop}
+                            Live Status Clock: ${g.clock}
                         </div>
                         <div class="metrics-grid">
                             <div class="metric-item">
-                                <span class="metric-lbl">Current House O/U</span>
-                                <span class="metric-val" style="color:#66fcf1;">${e.house_line}</span>
+                                <span class="metric-lbl">House O/U Line</span>
+                                <span class="metric-val" style="color:#66fcf1;">${g.house_line}</span>
                             </div>
                             <div class="metric-item">
                                 <span class="metric-lbl">CEE Net Advantage</span>
-                                <span class="metric-val edge">${e.cee_calculated_edge}</span>
+                                <span class="metric-val edge">${g.cee_calculated_edge}</span>
                             </div>
                             <div class="metric-item">
                                 <span class="metric-lbl">Public Ticket Vol</span>
-                                <span class="metric-val" style="color:#e06666;">${e.public_volume}</span>
+                                <span class="metric-val" style="color:#e06666;">${g.public_volume}</span>
                             </div>
                             <div class="metric-item">
                                 <span class="metric-lbl">Sharp Handle Share</span>
-                                <span class="metric-val" style="color:#4ade80;">${e.sharp_money}</span>
+                                <span class="metric-val" style="color:#4ade80;">${g.sharp_money}</span>
                             </div>
                         </div>
                         <div class="morale-strip">
-                            <span style="color:#ff4d4d; font-weight:700;">⚠️ INJURY REGISTER:</span> ${e.injury_tracker}<br>
-                            <span style="color:#ff9100; font-weight:700;">📉 MORALE CONTEXT CRITERIA:</span> ${e.morale_deficit}
+                            <span style="color:#ff4d4d; font-weight:700;">⚠️ INJURY TRACKER:</span> ${g.injury_tracker}<br>
+                            <span style="color:#ff9100; font-weight:700;">📉 LOCKER ROOM MORALE:</span> ${g.morale_deficit}
                         </div>
                     `;
                     container.appendChild(box);
                 });
-            } catch(e) { console.error(e); }
+            } catch(e) { console.error("Telemetry connection error:", e); }
         }
-        setInterval(updateMarketData, 10000);
-        window.onload = updateMarketData;
+        setInterval(fetchActiveMatrixData, 10000);
+        window.onload = fetchActiveMatrixData;
     </script>
 </head>
 <body>
@@ -226,10 +227,10 @@ SUPREME_DASHBOARD_HTML = """
             </div>
         </div>
 
-        <!-- LIVE SCRAPED MODULES -->
-        <div class="section-header">📊 SCRAPED EDGES & CONTRACT SLIDERS</div>
+        <!-- STREAMED PANELS TARGET -->
+        <div class="section-header">📊 CALCULATED EDGES & REAL-TIME CLOCKS</div>
         <div id="market-edges-dock">
-            <div style="font-size:0.75rem; color:#8c96a3; padding-left:4px;">Initializing Web Scraping Protocol...</div>
+            <div style="font-size:0.75rem; color:#8c96a3; padding-left:4px;">Initializing True Scoring Arrays...</div>
         </div>
     </div>
 </body>
@@ -240,24 +241,24 @@ SUPREME_DASHBOARD_HTML = """
 def home():
     return render_template_string(SUPREME_DASHBOARD_HTML)
 
-@app.route('/api/market-edges')
-def get_market_edges():
-    # Targeted VSiN layout URL mapping
-    vsin_endpoint = "https://data.vsin.com/betting-splits/"
-    parsed_edges = []
+@app.route('/api/active-matrix')
+def get_active_matrix():
+    parsed_games = []
     
-    try:
-        # Executes synchronous network query against the consensus server
-        res = requests.get(vsin_endpoint, timeout=6)
-        if res.status_code == 200:
-            raw_data = res.json()
-            # Iterates through active league slates parsed in response payload arrays
-            for data_block in raw_data.get('leagues', []):
-                league_lbl = data_block.get('name', 'UNK')
-                if league_lbl not in ["NFL", "CFB", "NHL", "NCAAF"]:
-                    continue  # Enforces structural filters to block MLB or unrequested sports
-                
-                for matchup in data_block.get('games', []):
-                    # Isolate consensus points
-                    total_data = matchup.get('total', {})
-                    under_handle = float(total_data.get('underHandlePct', 0))
+    # 1. PARSE LIVE GAME CLOCKS AND SCORING SPLITS DIRECT FROM RAW ROOT FEEDS
+    score_endpoints = {
+        "NFL": "https://espn.com",
+        "CFB": "https://espn.com",
+        "NHL": "https://espn.com"
+    }
+    
+    live_scores = {}
+    for league, url in score_endpoints.items():
+        try:
+            res = requests.get(url, timeout=4)
+            if res.status_code == 200:
+                events = res.json().get('events', [])
+                for event in events:
+                    comp = event.get('competitions', [{}])[0]
+                    status_obj = event.get('status', {})
+                    
