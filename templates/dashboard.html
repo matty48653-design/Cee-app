@@ -3,253 +3,256 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cee App - Live Action Commands</title>
+    <title>Cee App - CEE ENGINE HUD</title>
     <style>
         body {
-            background-color: #060913;
+            background-color: #050811;
             color: #e2e8f0;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             margin: 0;
-            padding: 12px;
+            padding: 14px;
             -webkit-font-smoothing: antialiased;
         }
         
         #matrix-container {
             max-width: 480px;
             margin: 0 auto;
-            padding-top: 10px;
         }
 
-        .system-test-badge {
-            background: rgba(0, 230, 118, 0.05);
-            border: 1px solid #00e676;
-            color: #00e676;
-            text-align: left;
-            font-size: 0.85rem;
-            font-weight: 800;
-            padding: 10px 14px;
-            border-radius: 8px;
-            letter-spacing: 0.03em;
-            text-transform: uppercase;
-            margin-bottom: 20px;
+        .hud-header {
             display: flex;
+            justify-content: space-between;
             align-items: center;
-            gap: 8px;
+            margin-bottom: 4px;
         }
 
-        .status-dot {
-            width: 10px;
-            height: 10px;
-            background-color: #00e676;
-            border-radius: 50%;
-            display: inline-block;
-            box-shadow: 0 0 10px #00e676;
-        }
-
-        .slate-card {
-            background: #090f1d;
-            border-radius: 12px;
-            padding: 16px;
-            margin-bottom: 14px;
-            border: 1px solid #152238;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-        }
-
-        .edge-rating-tag {
-            font-size: 0.7rem;
-            font-weight: 900;
-            letter-spacing: 0.06em;
-            text-transform: uppercase;
-            margin-bottom: 6px;
-            display: inline-block;
-            padding: 2px 6px;
-            border-radius: 4px;
-            background: rgba(255, 255, 255, 0.03);
-        }
-
-        .sport-type {
-            color: #ff4d4d;
-            font-size: 0.7rem;
-            font-weight: 900;
-            letter-spacing: 0.06em;
-            text-transform: uppercase;
-            margin-bottom: 8px;
-        }
-
-        .game-title {
-            font-size: 1.25rem;
-            font-weight: 700;
+        .hud-title {
+            font-size: 1.4rem;
+            font-weight: 800;
             color: #ffffff;
-            letter-spacing: -0.01em;
-            margin-bottom: 14px;
-        }
-
-        .line-module-row {
-            display: grid;
-            grid-template-columns: 80px 1fr;
-            background: #0f162a;
-            border-left: 3px solid #1e293b;
-            margin-bottom: 6px;
-            overflow: hidden;
-            font-size: 0.85rem;
-        }
-
-        .module-label {
-            color: #64748b;
-            font-weight: 800;
-            font-size: 0.65rem;
-            display: flex;
-            align-items: center;
-            padding: 10px 12px;
-            text-transform: uppercase;
             letter-spacing: 0.02em;
         }
 
-        .module-value {
-            padding: 10px 12px;
-            font-weight: 700;
-            color: #ffffff;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .live-clock-text {
-            background: #ff4d4d;
-            color: #ffffff;
-            font-size: 0.65rem;
+        .pipeline-badge {
+            background: rgba(0, 230, 118, 0.1);
+            border: 1px solid #00e676;
+            color: #00e676;
+            font-size: 0.75rem;
             font-weight: 800;
-            padding: 2px 6px;
+            padding: 4px 8px;
             border-radius: 4px;
             text-transform: uppercase;
         }
 
-        .table-header {
+        .last-checked {
+            color: #475569;
+            font-size: 0.75rem;
+            text-align: right;
+            margin-bottom: 20px;
+        }
+
+        /* ENGINE GREEN-LIGHT ACTION TARGET BOX */
+        .action-card {
+            background: #090f1d;
+            border: 1px solid rgba(0, 230, 118, 0.3);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(0, 230, 118, 0.05);
+        }
+
+        .action-header-row {
             display: flex;
             justify-content: space-between;
-            color: #475569;
-            font-size: 0.65rem;
+            align-items: flex-start;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .action-directive {
+            font-size: 1.05rem;
             font-weight: 800;
+            color: #ffffff;
+            line-height: 1.3;
+        }
+
+        .strike-badge {
+            background: rgba(0, 230, 118, 0.1);
+            color: #00e676;
+            font-size: 0.7rem;
+            font-weight: 900;
+            padding: 4px 6px;
+            border-radius: 4px;
+            text-align: center;
+            line-height: 1.2;
+            min-width: 65px;
+        }
+
+        .action-instructions {
+            color: #94a3b8;
+            font-size: 0.85rem;
+            line-height: 1.4;
+        }
+
+        .section-label {
+            color: #64748b;
+            font-size: 0.8rem;
+            font-weight: 800;
+            letter-spacing: 0.05em;
             text-transform: uppercase;
-            padding-bottom: 6px;
-            border-bottom: 1px solid #152238;
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* SLATE CARDS GRID */
+        .slate-card {
+            background: #0c1222;
+            border-radius: 10px;
+            padding: 14px;
+            margin-bottom: 10px;
+            border: 1px solid #16203b;
+        }
+
+        .game-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
             margin-bottom: 6px;
         }
 
-        .prop-row {
+        .game-name-text {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: #ffffff;
+        }
+
+        .score-box {
+            text-align: right;
+        }
+
+        .score-text {
+            font-size: 1.1rem;
+            font-weight: 800;
+            color: #00e676;
+        }
+
+        .status-text {
+            font-size: 0.7rem;
+            font-weight: 800;
+            color: #ff9100;
+            letter-spacing: 0.02em;
+            margin-top: 2px;
+        }
+
+        .env-text {
+            color: #64748b;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        /* BOX SECTIONS FROM YOUR OTHER SHEET VIEWS */
+        .panel-box {
+            background: #090f1d;
+            border: 1px solid #16203b;
+            border-radius: 10px;
+            padding: 14px;
+            margin-bottom: 16px;
+        }
+
+        .split-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            font-size: 0.9rem;
+            border-bottom: 1px solid #16203b;
+        }
+
+        .split-label { font-weight: 700; color: #ffffff; }
+        .split-value { font-weight: 700; color: #ff9100; }
+
+        .param-row {
             display: flex;
             justify-content: space-between;
             align-items: center;
             padding: 10px 0;
         }
-        .prop-row:not(:last-child) {
-            border-bottom: 1px solid #0d1627;
-        }
-
-        .player-name {
-            font-size: 0.9rem;
-            font-weight: 700;
-            color: #ffffff;
-        }
-
-        .milestone-value {
-            font-size: 0.9rem;
-            font-weight: 700;
-            color: #00e676;
-            text-align: right;
-        }
-
-        .deficit-stream-title {
-            color: #ff9100;
-            font-size: 0.75rem;
-            font-weight: 800;
-            margin-top: 18px;
-            margin-bottom: 8px;
-            text-transform: uppercase;
-            border-top: 1px solid #152238;
-            padding-top: 12px;
-        }
-
-        .deficit-row {
-            display: flex;
-            align-items: center;
-            font-size: 0.75rem;
-            padding: 4px 0;
-        }
-
-        .deficit-player { color: #f87171; text-decoration: line-through; font-weight: 600; width: 110px; }
-        .deficit-status { color: #f87171; font-weight: 800; width: 45px; }
-        .deficit-desc { color: #94a3b8; flex: 1; padding-left: 4px; }
+        .param-player { font-size: 0.95rem; font-weight: 700; color: #ffffff; }
+        .param-milestone { background: rgba(255, 145, 0, 0.1); color: #ff9100; font-size: 0.75rem; font-weight: 800; padding: 4px 8px; border-radius: 4px; }
+        .param-pct { color: #00e676; font-weight: 800; font-size: 1rem; }
     </style>
 </head>
 <body>
 
 <div id="matrix-container">
 
-    <div class="system-test-badge">
-        <span class="status-dot"></span> 5:00 PM MASTER LAYER LIVE · WEB SCRAPER RUNNING
+    <!-- CEE ENGINE HUD HEADER -->
+    <div class="hud-header">
+        <div class="hud-title">CEE ENGINE HUD</div>
+        <div class="pipeline-badge">Pipeline Active {{ data.pipeline_version }}</div>
+    </div>
+    <div class="last-checked">Last Checked: Just Now</div>
+
+    <!-- ENGINE GREEN-LIGHT ACTION TARGET COMPONENT -->
+    <div class="action-card">
+        <div class="action-header-row">
+            <div class="action-directive">👉 {{ data.action_target.title }}</div>
+            <div class="strike-badge" style="border: 1px solid #00e676;">{{ data.action_target.status }}</div>
+        </div>
+        <div class="action-instructions">
+            <strong>Instructions:</strong> {{ data.action_target.instructions }}
+        </div>
     </div>
 
-    {% for match in matchups %}
-    <div class="slate-card">
-        
-        <div class="edge-rating-tag" style="border: 1px solid {{ match.edge_color }}; color: {{ match.edge_color }};">
-            {{ match.edge_rating }}
-        </div>
-
-        <div class="sport-type">🎯 LIVE AUTOMATED DIRECTIVE SHEET</div>
-        <div class="game-title">{{ match.away_team }} @ {{ match.home_team }}</div>
-        
-        <div class="line-module-row" style="border-left-color: #ff4d4d;">
-            <div class="module-label">SCORE</div>
-            <div class="module-value"><span>{{ match.live_score }}</span> <span class="live-clock-text">{{ match.live_clock }}</span></div>
-        </div>
-        <div class="line-module-row" style="border-left-color: #ffeb3b;">
-            <div class="module-label">TOTALS</div>
-            <div class="module-value" style="color: #ffeb3b;">{{ match.live_ou_status }}</div>
-        </div>
-        <div class="line-module-row" style="border-left-color: #38bdf8;">
-            <div class="module-label">LINES</div>
-            <div class="module-value" style="color: #38bdf8;">{{ match.market_alert }}</div>
-        </div>
-        <div class="line-module-row" style="border-left-color: #e2e8f0;">
-            <div class="module-label">SPLITS</div>
-            <div class="module-value" style="color: #e2e8f0; font-size: 0.75rem;">{{ match.splits_data }}</div>
-        </div>
-
-        {% if match.sport == 'NFL' %}
-        <div class="line-module-row" style="border-left-color: #a855f7;">
-            <div class="module-label">WEATHER</div>
-            <div class="module-value" style="color: #a855f7; font-size: 0.75rem;">{{ match.scan_status }}</div>
-        </div>
-
-        <div class="prop-section">
-            <div class="table-header">
-                <div>🎯 PLAYER PROP MATRIX</div>
-                <div>SHARP SELECTION FLOORS</div>
+    <!-- SYNDICATE CONSENSUS SECTION (FROM PIC 1) -->
+    <div class="section-label">🎯 SYNDICATE CONSENSUS & SENTIMENT VOLATILITY</div>
+    <div class="panel-box" style="margin-bottom: 20px;">
+        {% for item in data.syndicate_consensus %}
+        <div class="split-row" {% if loop.last %}style="border-bottom:none;"{% endif %}>
+            <div>
+                <div class="split-label">{{ item.name }}</div>
+                <div style="color:#475569; font-size:0.75rem; font-weight:bold; margin-top:2px;">Size: {{ item.size }}</div>
             </div>
-            {% for player in match.players %}
-            <div class="prop-row">
-                <div class="player-name">{{ player.name }}</div>
-                <div class="milestone-value">{{ player.milestone }}</div>
+            <div style="text-align:right;">
+                <div style="font-weight:700; color:#38bdf8;">{{ item.target }}</div>
+                <div class="split-value" style="font-size:0.75rem; margin-top:2px;">{{ item.resistance }}</div>
             </div>
-            {% endfor %}
-        </div>
-
-        {% if match.morale_deficits %}
-        <div class="deficit-stream-title">⚠️ ACTIVE MORALE DEFICIT STREAM</div>
-        {% for def in match.morale_deficits %}
-        <div class="deficit-row">
-            <div class="deficit-player">{{ def.name }}</div>
-            <div class="deficit-status">{{ def.status }}</div>
-            <div class="deficit-desc">{{ def.impact }}</div>
         </div>
         {% endfor %}
-        {% endif %}
-        {% endif %}
-        
     </div>
-    {% endfor %}
+
+    <!-- SLATE MONITOR MAP VIEW COMPONENTS -->
+    <div class="section-label">📺 LIVE SLATE & STADIUM WEATHER MONITOR</div>
+    <div style="margin-bottom: 20px;">
+        {% for match in data.matchups %}
+        <div class="slate-card">
+            <div class="game-row">
+                <div>
+                    <span style="color:#64748b; font-size:0.65rem; font-weight:900; letter-spacing:0.04em; margin-right:4px;">{{ match.sport }}</span>
+                    <span class="game-name-text">{{ match.away }} @ {{ match.home }}</span>
+                </div>
+                <div class="score-box">
+                    <div class="score-text">{{ match.clock_label }}</div>
+                    <div class="status-text">{{ match.score_status }}</div>
+                </div>
+            </div>
+            <div class="env-text">{{ match.env_info }}</div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- CFB SCRIPT SELECTION VALUE PARAMETERS SECTION -->
+    <div class="section-label">🏈 CFB GAME SCRIPT PARAMETERS</div>
+    <div class="panel-box">
+        {% for param in data.cfb_params %}
+        <div class="param-row">
+            <div class="param-player">{{ param.player }}</div>
+            <div class="param-milestone">{{ param.milestone }}</div>
+            <div class="param-pct">{{ param.probability }}</div>
+        </div>
+        {% endfor %}
+    </div>
     
 </div>
 
