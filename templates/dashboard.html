@@ -51,7 +51,6 @@
             margin-bottom: 20px;
         }
 
-        /* ENGINE GREEN-LIGHT ACTION TARGET BOX */
         .action-card {
             background: #090f1d;
             border: 1px solid rgba(0, 230, 118, 0.3);
@@ -106,7 +105,6 @@
             gap: 6px;
         }
 
-        /* SLATE CARDS GRID */
         .slate-card {
             background: #0c1222;
             border-radius: 10px;
@@ -152,7 +150,6 @@
             font-weight: 500;
         }
 
-        /* BOX SECTIONS FROM YOUR OTHER SHEET VIEWS */
         .panel-box {
             background: #090f1d;
             border: 1px solid #16203b;
@@ -187,14 +184,12 @@
 
 <div id="matrix-container">
 
-    <!-- CEE ENGINE HUD HEADER -->
     <div class="hud-header">
         <div class="hud-title">CEE ENGINE HUD</div>
         <div class="pipeline-badge">Pipeline Active {{ data.pipeline_version }}</div>
     </div>
-    <div class="last-checked">Last Checked: Just Now</div>
+    <div class="last-checked" id="time-counter">Last Checked: Just Now</div>
 
-    <!-- ENGINE GREEN-LIGHT ACTION TARGET COMPONENT -->
     <div class="action-card">
         <div class="action-header-row">
             <div class="action-directive">👉 {{ data.action_target.title }}</div>
@@ -205,7 +200,6 @@
         </div>
     </div>
 
-    <!-- SYNDICATE CONSENSUS SECTION (FROM PIC 1) -->
     <div class="section-label">🎯 SYNDICATE CONSENSUS & SENTIMENT VOLATILITY</div>
     <div class="panel-box" style="margin-bottom: 20px;">
         {% for item in data.syndicate_consensus %}
@@ -222,9 +216,8 @@
         {% endfor %}
     </div>
 
-    <!-- SLATE MONITOR MAP VIEW COMPONENTS -->
     <div class="section-label">📺 LIVE SLATE & STADIUM WEATHER MONITOR</div>
-    <div style="margin-bottom: 20px;">
+    <div style="margin-bottom: 20px;" id="live-matchups-grid">
         {% for match in data.matchups %}
         <div class="slate-card">
             <div class="game-row">
@@ -242,7 +235,6 @@
         {% endfor %}
     </div>
 
-    <!-- CFB SCRIPT SELECTION VALUE PARAMETERS SECTION -->
     <div class="section-label">🏈 CFB GAME SCRIPT PARAMETERS</div>
     <div class="panel-box">
         {% for param in data.cfb_params %}
@@ -255,6 +247,30 @@
     </div>
     
 </div>
+
+<!-- NATIVE INTERNET PIPELINE AUTO-POLLING REFRESH LOOP -->
+<script>
+    setInterval(function() {
+        fetch(window.location.href)
+            .then(response => response.text())
+            .then(html => {
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+                
+                // Live update the matchup clocks and scores container elements natively
+                const newGrid = doc.getElementById('live-matchups-grid');
+                const oldGrid = document.getElementById('live-matchups-grid');
+                if (newGrid && oldGrid) {
+                    oldGrid.innerHTML = newGrid.innerHTML;
+                }
+                
+                // Update timestamp signature
+                const now = new datetime().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', second: '2-digit' });
+                document.getElementById('time-counter').innerText = 'Last Checked: ' + now;
+            })
+            .catch(err => console.error("Live streaming data feed sync paused:", err));
+    }, 30000); // Fires every 30 seconds to fetch live data completely on autopilot
+</script>
 
 </body>
 </html>
