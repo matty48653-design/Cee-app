@@ -188,7 +188,7 @@
         <div class="hud-title">CEE ENGINE HUD</div>
         <div class="pipeline-badge">Pipeline Active {{ data.pipeline_version }}</div>
     </div>
-    <div class="last-checked" id="time-counter">Last Checked: Connecting...</div>
+    <div class="last-checked">Last Checked: Just Now</div>
 
     <div class="action-card">
         <div class="action-header-row">
@@ -218,67 +218,21 @@
 
     <div class="section-label">📺 LIVE SLATE & STADIUM WEATHER MONITOR</div>
     <div style="margin-bottom: 20px;">
-        
-        <!-- CFB CARD SLOT WITH BROWSER INTERNET PIPELINE OBJECTS -->
+        {% for match in data.matchups %}
         <div class="slate-card">
             <div class="game-row">
                 <div>
-                    <span style="color:#64748b; font-size:0.65rem; font-weight:900; letter-spacing:0.04em; margin-right:4px;">CFB</span>
-                    <span class="game-name-text">Southern Miss @ Troy</span>
+                    <span style="color:#64748b; font-size:0.65rem; font-weight:900; letter-spacing:0.04em; margin-right:4px;">{{ match.sport }}</span>
+                    <span class="game-name-text">{{ match.away }} @ {{ match.home }}</span>
                 </div>
                 <div class="score-box">
-                    <div class="score-text" id="cfb-score">0 - 0</div>
-                    <div class="status-text" id="cfb-clock">PRE-GAME</div>
+                    <div class="score-text">{{ match.clock_label }}</div>
+                    <div class="status-text">{{ match.score_status }}</div>
                 </div>
             </div>
-            <div class="env-text">Outdoor Open-Air · 72° · Clear · Wind: 5mph · Live Network Stream 🌐</div>
+            <div class="env-text">{{ match.env_info }}</div>
         </div>
-
-        <!-- NHL CARD SLOT 1 -->
-        <div class="slate-card">
-            <div class="game-row">
-                <div>
-                    <span style="color:#64748b; font-size:0.65rem; font-weight:900; letter-spacing:0.04em; margin-right:4px;">NHL</span>
-                    <span class="game-name-text" id="nhl1-names">Ottawa Senators @ Detroit Red Wings</span>
-                </div>
-                <div class="score-box">
-                    <div class="score-text" id="nhl1-score">0 - 0</div>
-                    <div class="status-text" id="nhl1-clock">1ST PER</div>
-                </div>
-            </div>
-            <div class="env-text">Indoor Arena · Indoor · Climate Controlled · Live Network Stream 🌐</div>
-        </div>
-
-        <!-- NHL CARD SLOT 2 -->
-        <div class="slate-card">
-            <div class="game-row">
-                <div>
-                    <span style="color:#64748b; font-size:0.65rem; font-weight:900; letter-spacing:0.04em; margin-right:4px;">NHL</span>
-                    <span class="game-name-text" id="nhl2-names">Nashville Predators @ Toronto Maple Leafs</span>
-                </div>
-                <div class="score-box">
-                    <div class="score-text" id="nhl2-score">0 - 0</div>
-                    <div class="status-text" id="nhl2-clock">1ST PER</div>
-                </div>
-            </div>
-            <div class="env-text">Indoor Arena · Indoor · Climate Controlled · Live Network Stream 🌐</div>
-        </div>
-
-        <!-- NHL CARD SLOT 3 -->
-        <div class="slate-card">
-            <div class="game-row">
-                <div>
-                    <span style="color:#64748b; font-size:0.65rem; font-weight:900; letter-spacing:0.04em; margin-right:4px;">NHL</span>
-                    <span class="game-name-text" id="nhl3-names">Vegas Golden Knights @ Seattle Kraken</span>
-                </div>
-                <div class="score-box">
-                    <div class="score-text" id="nhl3-score">0 - 0</div>
-                    <div class="status-text" id="nhl3-clock">1ST PER</div>
-                </div>
-            </div>
-            <div class="env-text">Indoor Arena · Indoor · Climate Controlled · Live Network Stream 🌐</div>
-        </div>
-
+        {% endfor %}
     </div>
 
     <div class="section-label">🏈 CFB GAME SCRIPT PARAMETERS</div>
@@ -294,5 +248,5 @@
     
 </div>
 
-<!-- BYPASS CLOUD RESISTANCE: DIRECT-BROWSER STREAMING SCRAPER -->
-<script>
+</body>
+</html>
