@@ -21,22 +21,24 @@ def load_live_feed_cache():
     if os.path.exists(json_path):
         try:
             with open(json_path, "r") as f:
-                return json.load(f)
+                data = json.load(f)
+                # REALIGNMENT: Force app to look for the "slates" data structure
+                if "slates" in data:
+                    return data
         except Exception:
             pass
-    # Empty fallback structure so the HTML framework doesn't throw a server error 500 crash
-    return {"low_volume_splits": {"games": []}, "nfl_player_props": {"milestones": []}, "nhl_slate": {"games": []}}
+    return {"slates": []}
 
 @app.route("/")
 def index():
-    # Asynchronously launch the feed bridge script on every refresh to pull real lines
+    # Launch the live feed bridge in the background on every refresh
     threading.Thread(target=run_live_feed_bridge, daemon=True).start()
     
     cache_data = load_live_feed_cache()
     try:
         return render_template("dashboard.html", cache=cache_data)
     except Exception:
-        return "<html><body><h1>CEE Matrix Active - Processing Real-World Feed Lines</h1></body></html>"
+        return "<html><body><h1>CEE Matrix Active - Syncing Real-World Live Data</h1></body></html>"
 
 @app.route("/api/v5/engine/cache", methods=["GET"])
 def get_engine_cache():
