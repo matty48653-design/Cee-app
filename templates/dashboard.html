@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cee App - Premium Master Command</title>
+    <title>Cee App - Advanced Command Center</title>
     <style>
         body {
             background-color: #050811;
@@ -19,7 +19,6 @@
             margin: 0 auto;
         }
 
-        /* Sleek Status Bar Header Row */
         .system-test-badge {
             background: linear-gradient(90deg, rgba(0, 230, 118, 0.08) 0%, rgba(0, 184, 212, 0.02) 100%);
             border: 1px solid #00e676;
@@ -35,19 +34,10 @@
             display: flex;
             align-items: center;
             gap: 8px;
-            box-shadow: 0 4px 15px rgba(0, 230, 118, 0.05);
         }
 
-        .status-dot {
-            width: 8px;
-            height: 8px;
-            background-color: #00e676;
-            border-radius: 50%;
-            display: inline-block;
-            box-shadow: 0 0 10px #00e676;
-        }
+        .status-dot { width: 8px; height: 8px; background-color: #00e676; border-radius: 50%; display: inline-block; box-shadow: 0 0 10px #00e676; }
 
-        /* Clean High-Contrast Cards */
         .slate-card {
             background: #0c1222;
             border-radius: 12px;
@@ -57,41 +47,11 @@
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
         }
 
-        .sport-type {
-            color: #ff4d4d;
-            font-size: 0.65rem;
-            font-weight: 900;
-            letter-spacing: 0.08em;
-            text-transform: uppercase;
-            margin-bottom: 4px;
-        }
+        .sport-type { color: #ff4d4d; font-size: 0.65rem; font-weight: 900; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 4px; }
+        .game-title-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+        .game-title { font-size: 1.2rem; font-weight: 800; color: #ffffff; letter-spacing: -0.01em; }
+        .live-clock-badge { background: #ff4d4d; color: #ffffff; font-size: 0.65rem; font-weight: 800; padding: 2px 6px; border-radius: 4px; text-transform: uppercase; }
 
-        .game-title-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 12px;
-        }
-
-        .game-title {
-            font-size: 1.2rem;
-            font-weight: 800;
-            color: #ffffff;
-            letter-spacing: -0.01em;
-        }
-
-        .live-clock-badge {
-            background: #ff4d4d;
-            color: #ffffff;
-            font-size: 0.65rem;
-            font-weight: 800;
-            padding: 2px 6px;
-            border-radius: 4px;
-            text-transform: uppercase;
-            letter-spacing: 0.02em;
-        }
-
-        /* Distinct Betting Line Module Layout Blocks */
         .line-module-row {
             display: grid;
             grid-template-columns: 80px 1fr;
@@ -112,20 +72,33 @@
             align-items: center;
             justify-content: center;
             text-transform: uppercase;
-            letter-spacing: 0.02em;
             border-right: 1px solid #141d30;
         }
 
-        .module-value {
-            padding: 8px 12px;
-            font-weight: 700;
-            color: #ffffff;
+        .module-value { padding: 8px 12px; font-weight: 700; color: #ffffff; }
+
+        /* Interactive Milestone Layout Slider Elements */
+        .slider-controls {
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
 
-        /* Clean Matrix Tables */
-        .prop-section {
-            margin-top: 14px;
+        .btn-adjust {
+            background: #1e293b;
+            color: #ffffff;
+            border: 1px solid #334155;
+            border-radius: 4px;
+            width: 24px;
+            height: 24px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
+        .btn-adjust:active { background: #38bdf8; color: #000000; }
 
         .table-header {
             display: flex;
@@ -139,51 +112,17 @@
             margin-bottom: 4px;
         }
 
-        .prop-row {
-            padding: 8px 0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .prop-row:not(:last-child) {
-            border-bottom: 1px solid #0f182b;
-        }
+        .prop-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #0f182b; }
+        .player-name { font-size: 0.85rem; font-weight: 700; color: #ffffff; }
+        .milestone-display-container { display: flex; align-items: center; gap: 10px; }
+        .milestone-text { font-size: 0.85rem; font-weight: 700; color: #00e676; min-width: 65px; text-align: right; }
 
-        .player-name {
-            font-size: 0.85rem;
-            font-weight: 700;
-            color: #ffffff;
-        }
-
-        .milestone-value {
-            font-size: 0.85rem;
-            font-weight: 700;
-            color: #00e676;
-            text-align: right;
-        }
-
-        /* Crisp Morale Deficit Component Protocol Loops */
-        .deficit-stream-title {
-            color: #ff9100;
-            font-size: 0.7rem;
-            font-weight: 800;
-            margin-top: 14px;
-            margin-bottom: 6px;
-            text-transform: uppercase;
-            border-top: 1px solid #1a2640;
-            padding-top: 10px;
-        }
-
-        .deficit-row {
-            display: flex;
-            align-items: center;
-            font-size: 0.75rem;
-            padding: 4px 0;
-        }
-
+        .deficit-stream-title { color: #ff9100; font-size: 0.7rem; font-weight: 800; margin-top: 14px; margin-bottom: 6px; text-transform: uppercase; border-top: 1px solid #1a2640; padding-top: 10px; }
+        .deficit-row { display: flex; align-items: center; font-size: 0.75rem; padding: 4px 0; }
         .deficit-player { color: #f87171; text-decoration: line-through; font-weight: 600; width: 110px; }
         .deficit-status { color: #f87171; font-weight: 800; width: 45px; }
         .deficit-desc { color: #94a3b8; flex: 1; padding-left: 4px; }
+        .nhl-status-tracker { color: #94a3b8; font-size: 0.8rem; line-height: 1.4; padding-top: 4px; }
     </style>
 </head>
 <body>
@@ -191,14 +130,14 @@
 <div id="matrix-container">
 
     <div class="system-test-badge">
-        <span class="status-dot"></span> V9.0 MATRICES ACTIVE · LIVE RECON DISPATCH LAYER
+        <span class="status-dot"></span> V10.0 ENGINE ADVANCED ANALYTICAL RUN ACTIVE
     </div>
 
     {% for match in matchups %}
     <div class="slate-card">
         
         {% if match.sport == 'NFL' %}
-        <div class="sport-type">🏈 FOOTBALL SELECTION CORE</div>
+        <div class="sport-type">🏈 FOOTBALL ADAPTIVE ADVANTAGE SHEET</div>
         <div class="game-title-row">
             <div class="game-title">{{ match.away_team }} @ {{ match.home_team }}</div>
             <div class="live-clock-badge">{{ match.live_clock }}</div>
@@ -206,7 +145,7 @@
         
         <div class="line-module-row">
             <div class="module-label" style="color: #ff4d4d;">SCORE</div>
-            <div class="module-value" style="font-size: 0.9rem; letter-spacing: 0.02em;">{{ match.live_score }}</div>
+            <div class="module-value" style="font-size: 0.9rem;">{{ match.live_score }}</div>
         </div>
         <div class="line-module-row">
             <div class="module-label" style="color: #ffeb3b;">TOTALS</div>
@@ -217,19 +156,30 @@
             <div class="module-value" style="color: #38bdf8;">{{ match.market_alert }}</div>
         </div>
         <div class="line-module-row">
-            <div class="module-label" style="color: #a855f7;">WEATHER</div>
-            <div class="module-value" style="color: #a855f7; font-size: 0.75rem;">{{ match.scan_status }}</div>
+            <div class="module-label" style="color: #a855f7;">SPLITS</div>
+            <div class="module-value" style="color: #e2e8f0; font-size: 0.75rem;">{{ match.splits_data }}</div>
+        </div>
+        <div class="line-module-row">
+            <div class="module-label" style="color: #00e676;">ENV</div>
+            <div class="module-value" style="color: #64748b; font-size: 0.75rem;">{{ match.scan_status }}</div>
         </div>
 
         <div class="prop-section">
             <div class="table-header">
-                <div>🎯 PLAYER PROP MATRIX</div>
-                <div>SHARP SELECTION TARGET</div>
+                <div>🎯 ADAPTIVE PROP SLIDERS</div>
+                <div style="text-align: right; padding-right: 75px;">SAFETY ADJUST</div>
+                <div>FLOOR</div>
             </div>
             {% for player in match.players %}
             <div class="prop-row">
                 <div class="player-name">{{ player.name }}</div>
-                <div class="milestone-value">{{ player.milestone }}</div>
+                <div class="milestone-display-container">
+                    <div class="slider-controls">
+                        <button class="btn-adjust" onclick="adjustSlider('{{ player.name }}', -1)">-</button>
+                        <button class="btn-adjust" onclick="adjustSlider('{{ player.name }}', 1)">+</button>
+                    </div>
+                    <div class="milestone-text" id="val-{{ player.name }}">Over {{ player.milestone }}</div>
+                </div>
             </div>
             {% endfor %}
         </div>
@@ -246,7 +196,7 @@
         {% endif %}
 
         {% elif match.sport == 'NHL' %}
-        <div class="sport-type">🏒 HOCKEY SELECTION CORE</div>
+        <div class="sport-type">🏒 HOCKEY CONTRARIAN INTELLIGENCE CORE</div>
         <div class="game-title-row">
             <div class="game-title">{{ match.away_team }} @ {{ match.home_team }}</div>
             <div class="live-clock-badge" style="background: #38bdf8;">{{ match.live_clock }}</div>
@@ -254,7 +204,7 @@
         
         <div class="line-module-row">
             <div class="module-label" style="color: #ff4d4d;">SCORE</div>
-            <div class="module-value" style="font-size: 0.9rem; letter-spacing: 0.02em;">{{ match.live_score }}</div>
+            <div class="module-value" style="font-size: 0.9rem;">{{ match.live_score }}</div>
         </div>
         <div class="line-module-row">
             <div class="module-label" style="color: #ffeb3b;">TOTALS</div>
@@ -265,8 +215,12 @@
             <div class="module-value" style="color: #38bdf8;">{{ match.market_alert }}</div>
         </div>
         <div class="line-module-row">
-            <div class="module-label" style="color: #a855f7;">ENV</div>
-            <div class="module-value" style="color: #a855f7; font-size: 0.75rem;">{{ match.scan_status }}</div>
+            <div class="module-label" style="color: #a855f7;">SPLITS</div>
+            <div class="module-value" style="color: #e2e8f0; font-size: 0.75rem;">{{ match.splits_data }}</div>
+        </div>
+        <div class="line-module-row">
+            <div class="module-label" style="color: #00e676;">ENV</div>
+            <div class="module-value" style="color: #64748b; font-size: 0.75rem;">{{ match.scan_status }}</div>
         </div>
         {% endif %}
         
@@ -275,5 +229,11 @@
     
 </div>
 
-</body>
-</html>
+<script>
+function adjustSlider(playerName, direction) {
+    const textElement = document.getElementById('val-' + playerName);
+    if (!textElement) return;
+    
+    let currentVal = parseFloat(textElement.innerText.replace('Over ', ''));
+    let step = playerName.includes('(QB)') ? 1.0 : 5.0; // Completions move by 1, yards move by 5
+    
