@@ -12,82 +12,69 @@
         .matrix-table th { background: #1f2937; color: #94a3b8; font-size: 11px; text-transform: uppercase; text-align: left; padding: 12px; font-weight: 600; }
         .matrix-table td { padding: 14px 12px; font-size: 13px; border-bottom: 1px solid #1f2937; }
         .matrix-table tr:last-child td { border-bottom: none; }
-        .badge { background: #14532d; color: #4ade80; padding: 2px 6px; border-radius: 4px; font-size: 11px; font-weight: 600; display: inline-block; }
+        .badge { background: #1e3a8a; color: #60a5fa; padding: 2px 6px; border-radius: 4px; font-size: 11px; font-weight: 600; display: inline-block; }
         .badge-alt { background: #7c2d12; color: #f97316; padding: 2px 6px; border-radius: 4px; font-size: 11px; font-weight: 600; display: inline-block; }
-        .badge-nfl { background: #1e3a8a; color: #60a5fa; padding: 2px 6px; border-radius: 4px; font-size: 11px; font-weight: 600; display: inline-block; }
+        .input-box { background: #111827; border: 1px solid #1f2937; border-radius: 8px; padding: 14px; margin-bottom: 20px; }
+        .input-box input, .input-box select { background: #1f2937; border: 1px solid #374151; color: #fff; padding: 8px; border-radius: 4px; margin-bottom: 10px; width: 100%; box-sizing: border-box; }
+        .btn { background: #ef4444; border: none; color: #fff; padding: 10px 16px; border-radius: 4px; font-weight: bold; width: 100%; cursor: pointer; }
+        .btn-clear { background: #374151; margin-top: 8px; }
     </style>
 </head>
 <body>
 
-    <div class="banner">⚡ CEE ENGINE: 10s AUTO-POLLING STREAM ACTIVE</div>
+    <div class="banner">⚡ CEE INTERFACE: BULLETPROOF MANUAL ENTRY MODE ACTIVE</div>
 
-    <div class="section-title">Live Dynamic Tracker Slates</div>
-    <div id="live-matrix-container">
-        <table class="matrix-table">
-            <thead>
-                <tr>
-                    <th>League</th>
-                    <th>Matchup</th>
-                    <th>Live Score</th>
-                    <th>Status</th>
-                    <th>Target Metric</th>
-                </tr>
-            </thead>
-            <tbody id="matrix-rows">
-                {% if cache.slates %}
-                    {% for game in cache.slates %}
-                    <tr>
-                        <td><span class="badge">{{ game.league }}</span></td>
-                        <td><b>{{ game.matchup }}</b></td>
-                        <td style="color: #4ade80; font-weight: bold; font-family: monospace;">{{ game.score }}</td>
-                        <td><small style="color: #94a3b8;">{{ game.line_value }}</small></td>
-                        <td><span class="badge-alt">{{ game.target_value }}</span></td>
-                    </tr>
-                    {% endfor %}
-                {% else %}
-                    <tr>
-                        <td colspan="5" style="text-align: center; color: #94a3b8; padding: 20px;">
-                            Waking up live data connections... Loop firing in 10s.
-                        </td>
-                    </tr>
-                {% endif %}
-            </tbody>
-        </table>
+    <div class="section-title">Matrix Entry Terminal</div>
+    <div class="input-box">
+        <form action="/api/v5/update" method="POST">
+            <select name="league">
+                <option value="NHL">NHL</option>
+                <option value="CFB">CFB</option>
+                <option value="NFL">NFL</option>
+                <option value="NBA">NBA</option>
+            </select>
+            <input type="text" name="matchup" placeholder="Matchup (e.g. Avalanche @ Jets)" required>
+            <input type="text" name="score" placeholder="Line / Total (e.g. O/U 6.5)" required>
+            <input type="text" name="line_value" placeholder="Public Tickets (e.g. Tkts: 67%)" required>
+            <input type="text" name="target_value" placeholder="Sharp Cash Edge (e.g. Sharp: 58% Under)" required>
+            <button type="submit" class="btn">PUSH GAME TO MATRIX</button>
+        </form>
+        <form action="/api/v5/clear" method="POST">
+            <button type="submit" class="btn btn-clear">WIPE BOARD CLEAN</button>
+        </form>
     </div>
 
-    <script>
-        // Automatic 10-second polling mechanism to ensure live data refreshes instantly
-        async function fetchLiveUpdates() {
-            try {
-                const response = await fetch('/api/v5/engine/cache');
-                if (response.ok) {
-                    const data = await response.json();
-                    const tbody = document.getElementById('matrix-rows');
-                    
-                    if (data.slates && data.slates.length > 0) {
-                        let htmlRows = '';
-                        data.slates.forEach(game => {
-                            htmlRows += `
-                                <tr>
-                                    <td><span class="badge">${game.league}</span></td>
-                                    <td><b>${game.matchup}</b></td>
-                                    <td style="color: #4ade80; font-weight: bold; font-family: monospace;">${game.score}</td>
-                                    <td><small style="color: #94a3b8;">${game.line_value}</small></td>
-                                    <td><span class="badge-alt">${game.target_value}</span></td>
-                                </tr>
-                            `;
-                        });
-                        tbody.innerHTML = htmlRows;
-                    }
-                }
-            } catch (error) {
-                console.log("Stream synchronization pending...");
-            }
-        }
-        
-        // Fire polling routine every 10 seconds endlessly
-        setInterval(fetchLiveUpdates, 10000);
-    </script>
+    <div class="section-title">Live Edge Matrix Board</div>
+    <table class="matrix-table">
+        <thead>
+            <tr>
+                <th>League</th>
+                <th>Matchup</th>
+                <th>Target Line</th>
+                <th>Public Volume</th>
+                <th>CEE Strategy Edge</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if cache.slates and cache.slates|length > 0 %}
+                {% for game in cache.slates %}
+                <tr>
+                    <td><span class="badge">{{ game.league }}</span></td>
+                    <td><b>{{ game.matchup }}</b></td>
+                    <td style="color: #f87171; font-weight: bold;">{{ game.score }}</td>
+                    <td>{{ game.line_value }}</td>
+                    <td><span class="badge-alt">{{ game.target_value }}</span></td>
+                </tr>
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td colspan="5" style="text-align: center; color: #94a3b8; padding: 20px;">
+                        No games pushed yet. Type parameters above to lock lines in.
+                    </td>
+                </tr>
+            {% endif %}
+        </tbody>
+    </table>
 
 </body>
 </html>
