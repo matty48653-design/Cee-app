@@ -4,7 +4,7 @@ from flask import Flask, render_template_string, jsonify
 
 app = Flask(__name__)
 
-# MASTER DESIGN MATRIX HYBRID SHELL: HOUSES YOUR ENTIRE V7.0 PREMIUM DARK THEME NATIVELY
+# BULLETPROOF SYNTAX SHELL: HOUSES YOUR ENTIRE V7.0 DARK HUD THEME NATIVELY
 V7_HUD_TEMPLATE = """
 <!DOCTYPE html>
 <html lang="en">
@@ -232,23 +232,23 @@ V7_HUD_TEMPLATE = """
 
     <!-- CEE MAIN HUD PANEL -->
     <div class="hud-header">
-        <div class="hud-title">CEE MASTER ENGINE HUD</div>
-        <div class="pipeline-badge">PIPELINE v12.0 PERSONAL SYNC ACTIVE 🌐</div>
+        <div class="hud-title">CEE ENGINE HUD</div>
+        <div class="pipeline-badge">v7.0 PERSONAL SYNC ACTIVE 🌐</div>
     </div>
-    <div class="last-checked" id="time-counter">Last Checked: Synced with Personal Context...</div>
+    <div class="last-checked" id="time-counter">Last Checked: Connecting Data Feed...</div>
 
     <!-- STRATEGIC ACTION TARGET DIRECTIVES PANEL -->
     <div class="action-card">
         <div class="action-header-row">
-            <div class="action-directive">👉 TARGET LOCK: Strike Nashville ML (+130) & Alternate Passing Volumes Floor.</div>
-            <div class="strike-badge" style="border: 1px solid #00e676; background: rgba(0, 230, 118, 0.05);">READY</div>
+            <div class="action-directive">👉 TARGET LOCK: Southern Miss +10.5 (CFB) & Nashville ML +130 (NHL)</div>
+            <div class="strike-badge" style="border: 1px solid #00e676; background: rgba(0, 230, 118, 0.05);">STRIKE</div>
         </div>
         <div class="action-instructions">
-            <strong>Personal Settings:</strong> Tracking milestones matched to your specific platform preferences (No Onions, Pickles, or standard house juice metrics allowed).
+            <strong>Instructions:</strong> Erase standard house totals. Pull custom sliders to focus entirely on alternate passing volume cushions or flat contrarian moneylines.
         </div>
     </div>
 
-    <!-- PERSONALIZED SYNDICATE AND TEAM WATCHLIST PANEL -->
+    <!-- PERSONALIZED SYNDICATE AND WATCHLIST PANEL -->
     <div class="section-label">🎯 PERSONALIZED WHALE CONSENSUS & WATCHLIST</div>
     <div class="panel-box" style="margin-bottom: 20px;">
         <div class="split-row">
@@ -267,14 +267,14 @@ V7_HUD_TEMPLATE = """
 
     <!-- FULL BOARD SCANNER AND DIRECT WEBPACK LOOPS GRID -->
     <div class="section-label">📺 LIVE BOARD SCANNER MONITOR & RECON DATA GRID</div>
-    <div style="margin-bottom: 20px;" id="live-recon-grid">
+    <div style="margin-bottom: 20px;" id="live-matchups-container">
         
         <!-- COLLEGE FOOTBALL ACTIVE CONTAINER DOCK -->
         <div class="slate-card">
             <div class="edge-rating-tag" style="border: 1px solid #ffeb3b; color: #ffeb3b;">SHARP VALUE WINDOW 🥈</div>
             <div class="game-title-row">
                 <div class="game-title">Southern Miss @ Troy</div>
-                <div class="live-clock-badge" id="cfb-clock">LOADING...</div>
+                <div class="live-clock-badge" id="cfb-clock">7:30 PM ET</div>
             </div>
             <div class="line-module-row"><div class="module-label" style="color: #ff4d4d;">SCORE</div><div class="module-value" id="cfb-score" style="color: #00e676;">0 - 0</div></div>
             <div class="line-module-row"><div class="module-label" style="color: #ffeb3b;">TOTALS</div><div class="module-value" style="color: #ffeb3b;">Pacing UNDER (Closing Line: 51.5 ▼)</div></div>
