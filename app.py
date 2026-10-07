@@ -3,9 +3,8 @@ import requests
 
 app = Flask(__name__)
 
-# THE CONTRARIAN EDGE ENGINE (CEE) v5.6 - COMPLETE REBUILD
-# Fully overwritten to implement the verified NHL v2 data pipeline.
-# Keeps app tracking logic strictly isolated from personal variables.
+# THE CONTRARIAN EDGE ENGINE (CEE) v5.7 - HOCKEY ENDPOINT RESOLVED
+# Overwrites data mappings to parse the exact layout keys for live NHL streams.
 
 DASHBOARD_HTML = """
 <!DOCTYPE html>
@@ -89,7 +88,6 @@ DASHBOARD_HTML = """
         }
     </style>
     <script>
-        // Automatic 10-second polling background routine
         async function fetchLiveScores() {
             try {
                 const response = await fetch('/api/live-board');
@@ -128,11 +126,11 @@ DASHBOARD_HTML = """
     <div class="hud-container">
         <div class="hud-header">
             <div class="hud-title">CEE ENGINE HUD</div>
-            <div class="pipeline-badge">v5.6 LIVE RECON</div>
+            <div class="pipeline-badge">v5.7 PIPELINE RECON</div>
         </div>
         
         <div class="grid-layout">
-            <!-- STRATEGIC DIRECTIVES PANEL -->
+            <!-- CONTROL CONFIGURATION -->
             <div class="card">
                 <div class="card-header">STRATEGIC DIRECTIVES CORE</div>
                 <div class="metric-row">
@@ -149,7 +147,7 @@ DASHBOARD_HTML = """
                 </div>
             </div>
 
-            <!-- LIVE SLATE TRACKER -->
+            <!-- SCRAPER MONITOR -->
             <div class="card">
                 <div class="card-header">LIVE BOARD SCANNER</div>
                 <div id="live-matchups-container">
@@ -171,9 +169,8 @@ def home():
 
 @app.route('/api/live-board')
 def get_live_board():
-    # FIXED: Swapped NHL branch from site.api to endpoints.v2 to capture hockey data correctly
     endpoints = {
-        "NFL": "https://espn.com",
+        "NFL": "https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard",
         "CFB": "https://espn.com",
         "NHL": "https://espn.com"
     }
@@ -187,20 +184,28 @@ def get_live_board():
                 data = response.json()
                 for event in data.get('events', []):
                     competition = event.get('competitions', [{}])[0]
-                    status_type = event.get('status', {}).get('type', {})
-                    status = status_type.get('detail', 'Scheduled')
+                    status_obj = event.get('status', {})
+                    
+                    # Handles variant clock key hierarchies between football and hockey payloads cleanly
+                    clock_detail = status_obj.get('type', {}).get('shortDetail', 'Scheduled')
+                    if league in ["NFL", "CFB"]:
+                        clock_detail = status_obj.get('type', {}).get('detail', 'Scheduled')
                     
                     competitors = competition.get('competitors', [])
                     home = next((c for c in competitors if c.get('homeAway') == 'home'), {})
                     away = next((c for c in competitors if c.get('homeAway') == 'away'), {})
                     
+                    # Fallback logic handles shortDisplayName vs fallback abbreviation differences
+                    home_name = home.get('team', {}).get('shortDisplayName', home.get('team', {}).get('abbreviation', 'UNK'))
+                    away_name = away.get('team', {}).get('shortDisplayName', away.get('team', {}).get('abbreviation', 'UNK'))
+                    
                     parsed_games.append({
                         "league": league,
-                        "home_team": home.get('team', {}).get('shortDisplayName', 'UNK'),
-                        "away_team": away.get('team', {}).get('shortDisplayName', 'UNK'),
+                        "home_team": home_name,
+                        "away_team": away_name,
                         "home_score": home.get('score', '0'),
                         "away_score": away.get('score', '0'),
-                        "clock": status
+                        "clock": clock_detail
                     })
         except Exception as e:
             continue
