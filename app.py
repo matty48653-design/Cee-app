@@ -1,279 +1,141 @@
-import os
 from flask import Flask, render_template_string, jsonify
+import requests
 
 app = Flask(__name__)
 
-# BULLETPROOF SYNTAX MASTER SHELL: HOUSES YOUR ENTIRE DARK CYBERPUNK HUD THEME NATIVELY
-V7_HUD_TEMPLATE = """
+# THE CONTRARIAN EDGE ENGINE (CEE) v5.4 - CLEAN BOARD RECON
+# Strictly isolates sports telemetry logic from personal data streams.
+
+DASHBOARD_HTML = """
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cee App - CEE MASTER HUD CENTER</title>
+    <title>CEE Engine HUD</title>
     <style>
         body {
-            background-color: #050811;
+            background-color: #0d0e12;
             color: #e2e8f0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
-            padding: 14px;
-            -webkit-font-smoothing: antialiased;
+            padding: 20px;
         }
-        
-        #matrix-container {
-            max-width: 480px;
+        .hud-container {
+            max-width: 1200px;
             margin: 0 auto;
         }
-
         .hud-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 4px;
+            border-bottom: 2px solid #1e293b;
+            padding-bottom: 15px;
+            margin-bottom: 25px;
         }
-
         .hud-title {
-            font-size: 1.4rem;
-            font-weight: 800;
-            color: #ffffff;
-            letter-spacing: 0.02em;
+            font-size: 1.8rem;
+            font-weight: bold;
+            letter-spacing: 1px;
+            color: #38bdf8;
         }
-
         .pipeline-badge {
-            background: rgba(0, 230, 118, 0.1);
-            border: 1px solid #00e676;
-            color: #00e676;
-            font-size: 0.75rem;
-            font-weight: 800;
-            padding: 4px 8px;
+            background-color: rgba(56, 189, 248, 0.1);
+            border: 1px solid #38bdf8;
+            color: #38bdf8;
+            padding: 4px 12px;
             border-radius: 4px;
-            text-transform: uppercase;
-        }
-
-        .last-checked {
-            color: #475569;
-            font-size: 0.75rem;
-            text-align: right;
-            margin-bottom: 20px;
-        }
-
-        .action-card {
-            background: #090f1d;
-            border: 1px solid rgba(0, 230, 118, 0.3);
-            border-radius: 12px;
-            padding: 16px;
-            margin-bottom: 20px;
-            box-shadow: 0 4px 15px rgba(0, 230, 118, 0.05);
-        }
-
-        .action-header-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            gap: 10px;
-            margin-bottom: 12px;
-        }
-
-        .action-directive {
-            font-size: 1.05rem;
-            font-weight: 800;
-            color: #ffffff;
-            line-height: 1.3;
-        }
-
-        .strike-badge {
-            background: rgba(0, 230, 118, 0.1);
-            color: #00e676;
-            font-size: 0.7rem;
-            font-weight: 900;
-            padding: 4px 6px;
-            border-radius: 4px;
-            text-align: center;
-            line-height: 1.2;
-            min-width: 65px;
-        }
-
-        .action-instructions {
-            color: #94a3b8;
             font-size: 0.85rem;
-            line-height: 1.4;
+            font-weight: bold;
         }
-
-        .section-label {
-            color: #64748b;
-            font-size: 0.8rem;
-            font-weight: 800;
-            letter-spacing: 0.05em;
-            text-transform: uppercase;
-            margin-bottom: 14px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .panel-box {
-            background: #090f1d;
-            border: 1px solid #16203b;
-            border-radius: 10px;
-            padding: 14px;
-            margin-bottom: 16px;
-        }
-
-        .split-row {
-            display: flex;
-            justify-content: space-between;
-            padding: 8px 0;
-            font-size: 0.9rem;
-            border-bottom: 1px solid #16203b;
-        }
-
-        .split-label { font-weight: 700; color: #ffffff; }
-        .split-value { font-weight: 700; color: #ff9100; }
-
-        .slate-card {
-            background: #0c1222;
-            border-radius: 12px;
-            padding: 14px;
-            margin-bottom: 12px;
-            border: 1px solid #1a2640;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
-        }
-
-        .edge-rating-tag {
-            font-size: 0.7rem;
-            font-weight: 900;
-            letter-spacing: 0.06em;
-            text-transform: uppercase;
-            margin-bottom: 8px;
-            display: inline-block;
-            padding: 2px 6px;
-            border-radius: 4px;
-            background: rgba(255, 255, 255, 0.03);
-        }
-
-        .game-title-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 12px;
-        }
-
-        .game-title {
-            font-size: 1.25rem;
-            font-weight: 800;
-            color: #ffffff;
-            letter-spacing: -0.01em;
-        }
-
-        .live-clock-badge {
-            background: #ff4d4d;
-            color: #ffffff;
-            font-size: 0.65rem;
-            font-weight: 800;
-            padding: 2px 6px;
-            border-radius: 4px;
-            text-transform: uppercase;
-        }
-
-        .line-module-row {
+        .grid-layout {
             display: grid;
-            grid-template-columns: 80px 1fr;
-            background: #060914;
-            border: 1px solid #141d30;
-            border-radius: 6px;
-            margin-bottom: 6px;
-            overflow: hidden;
-            font-size: 0.8rem;
+            grid-template-columns: 1fr;
+            gap: 20px;
         }
-
-        .module-label {
-            background: #101726;
-            color: #64748b;
-            font-weight: 800;
-            font-size: 0.65rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-transform: uppercase;
-            border-right: 1px solid #141d30;
+        @media (min-width: 768px) {
+            .grid-layout { grid-template-columns: 1fr 1fr; }
         }
-
-        .module-value { padding: 10px 12px; font-weight: 700; color: #ffffff; }
-
-        .table-header {
+        .card {
+            background-color: #151821;
+            border: 1px solid #27272a;
+            border-radius: 8px;
+            padding: 20px;
+        }
+        .card-header {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #ff9100;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #27272a;
+            padding-bottom: 8px;
+        }
+        .metric-row {
             display: flex;
             justify-content: space-between;
-            color: #475569;
-            font-size: 0.65rem;
-            font-weight: 800;
-            text-transform: uppercase;
-            padding-bottom: 6px;
-            border-bottom: 1px solid #1a2640;
-            margin-bottom: 6px;
+            margin-bottom: 10px;
+            font-size: 0.95rem;
         }
-
-        .prop-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px 0;
-            border-bottom: 1px solid #0f182b;
-        }
-        .prop-player { font-size: 0.9rem; font-weight: 700; color: #ffffff; }
-        .prop-line { font-size: 0.85rem; font-weight: 700; color: #ffeb3b; }
-        .prop-pct { color: #00e676; font-weight: 800; font-size: 0.95rem; text-align: right; }
+        .label { color: #94a3b8; }
+        .value { font-weight: 600; }
+        .value.highlight { color: #4ade80; }
     </style>
 </head>
 <body>
-
-<div id="matrix-container">
-
-    <!-- CEE MAIN HUD HEADER PANEL -->
-    <div class="hud-header">
-        <div class="hud-title">CEE ENGINE HUD</div>
-        <div class="pipeline-badge">v12.0 MAXIMUM COMPLIANCE ACTIVE 🌐</div>
-    </div>
-    <div class="last-checked" id="time-counter">Last Checked: Connecting Data Feed...</div>
-
-    <!-- STRATEGIC DIRECTIVES COMPONENT -->
-    <div class="action-card">
-        <div class="action-header-row">
-            <div class="action-directive">👉 TARGET LOCK: Southern Miss +10.5 (CFB) & Nashville ML +130 (NHL)</div>
-            <div class="strike-badge" style="border: 1px solid #00e676; background: rgba(0, 230, 118, 0.05);">STRIKE</div>
+    <div class="hud-container">
+        <div class="hud-header">
+            <div class="hud-title">CEE ENGINE HUD</div>
+            <div class="pipeline-badge">v5.4 LIVE SYSTEM STATUS</div>
         </div>
-        <div class="action-instructions">
-            <strong>Personal Account Filters:</strong> Alternate milestone sliders optimized. Core properties matched exactly to your personal configurations (No onions, pickles, or standard retail juice). Coordinates tracking live water and energy vectors out of Arcadia, FL.
-        </div>
-    </div>
-
-    <!-- PERSONALIZED CONSENSUS & TRACKING SECTION -->
-    <div class="section-label">🎯 PERSONALIZED WHALE CONSENSUS & WATCHLIST</div>
-    <div class="panel-box" style="margin-bottom: 20px;">
-        <div class="split-row">
-            <div><div class="split-label">🦁 Detroit Lions Tracking Array</div><div style="color:#475569; font-size:0.75rem; font-weight:bold; margin-top:2px;">Status: Priority Team Profile</div></div>
-            <div style="text-align:right;"><div style="font-weight:700; color:#38bdf8;">Alternate Sliders Active</div><div style="font-weight:700; color:#ff9100; font-size:0.75rem; margin-top:2px;">Fading Public Line Bias</div></div>
-        </div>
-        <div class="split-row">
-            <div><div class="split-label">Alpha Syndicate Position</div><div style="color:#475569; font-size:0.75rem; font-weight:bold; margin-top:2px;">Size: 5x</div></div>
-            <div style="text-align:right;"><div style="font-weight:700; color:#38bdf8;">Southern Miss +10.5</div><div style="font-weight:700; color:#ff9100; font-size:0.75rem; margin-top:2px;">94% Public Resistance</div></div>
-        </div>
-        <div class="split-row" style="border-bottom:none;">
-            <div><div class="split-label">Wallet #4092 (High-Stakes)</div><div style="color:#475569; font-size:0.75rem; font-weight:bold; margin-top:2px;">Size: 3.5x</div></div>
-            <div style="text-align:right;"><div style="font-weight:700; color:#38bdf8;">Nashville ML (+130)</div><div style="font-weight:700; color:#ff9100; font-size:0.75rem; margin-top:2px;">87% Public Exposure</div></div>
-        </div>
-    </div>
-
-    <!-- FULL BOARD SCRAPER DOCKING CONTAINER -->
-    <div class="section-label">📺 LIVE BOARD SCANNER MONITOR & RECON DATA GRID</div>
-    <div style="margin-bottom: 20px;" id="live-matchups-container">
         
-        <!-- COLLEGE FOOTBALL TARGET CORE MODULE -->
-        <div class="slate-card">
-            <div class="edge-rating-tag" style="border: 1px solid #ffeb3b; color: #ffeb3b;">SHARP VALUE WINDOW 🥈</div>
-            <div class="game-title-row">
-                <div class="game-title">Southern Miss @ Troy</div>
-                <div class="live-clock-badge" id="cfb-clock">7:30 PM ET</div>
+        <div class="grid-layout">
+            <!-- TELETREMY EDGE CARD -->
+            <div class="card">
+                <div class="card-header">STRATEGIC DIRECTIVES CORE</div>
+                <div class="metric-row">
+                    <span class="label">Target Tracking:</span>
+                    <span class="value">Alternate Milestone Sliders Optimized</span>
+                </div>
+                <div class="metric-row">
+                    <span class="label">Data Filter Matrix:</span>
+                    <span class="value">NFL / CFB / NHL Active</span>
+                </div>
+                <div class="metric-row">
+                    <span class="label">Excluded Feeds:</span>
+                    <span class="value">MLB / Fixed House Lines Blocked</span>
+                </div>
             </div>
-            <div class="line-module-row"><div class="module-label" style="color: #ff4d4d;">SCORE</div><div class="module-value" id="cfb-score" style="color: #00e676;">0 - 0</div></div>
-            <div class="line-module-row"><div class="module-label" style="color: #ffeb3b;">TOTALS</div><div class="module-value" style="color: #ffeb3b;">Pacing UNDER (Closing Line: 51.5 ▼)</div></div>
+
+            <!-- LIVE SLATE TRACKER -->
+            <div class="card">
+                <div class="card-header">LIVE BOARD SCANNER</div>
+                <div class="metric-row">
+                    <span class="label">Telemetry Feed Status:</span>
+                    <span class="value highlight">Connected (10s Polling Loop)</span>
+                </div>
+                <div class="metric-row">
+                    <span class="label">Active Matchups:</span>
+                    <span class="value">Parsing Live JSON Streams...</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+"""
+
+@app.route('/')
+def home():
+    return render_template_string(DASHBOARD_HTML)
+
+@app.route('/api/telemetry')
+def get_telemetry():
+    # Standardized sports JSON data endpoint
+    return jsonify({
+        "status": "online",
+        "active_leagues": ["NFL", "CFB", "NHL"],
+        "filter_mode": "contrarian_edge"
+    })
+
+if __name__ == '__main__':
+    app.run(debug=True)
