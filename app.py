@@ -3,9 +3,9 @@ import requests
 
 app = Flask(__name__)
 
-# THE CONTRARIAN EDGE ENGINE (CEE) v9.9 - PROP INTELLIGENCE & MARKET EDGE
-# Fully overwritten. Drops ESPN scoreboards to target DraftKings alternate lines
-# and calculated sharp market volume edges natively.
+# THE CONTRARIAN EDGE ENGINE (CEE) v10.5 - LIVE CONSENSUS SCRAPER
+# Overwrites application script to deploy an active, on-demand market data scraper.
+# Queries VSiN public DraftKings endpoints to calculate real cash handle divergence.
 
 SUPREME_DASHBOARD_HTML = """
 <!DOCTYPE html>
@@ -130,6 +130,13 @@ SUPREME_DASHBOARD_HTML = """
         .metric-lbl { color: #8c96a3; font-size: 0.68rem; text-transform: uppercase;}
         .metric-val { color: #ffffff; font-weight: 600; margin-top: 2px;}
         .metric-val.edge { color: #00e676; }
+        .morale-strip {
+            margin-top: 8px;
+            padding-top: 6px;
+            border-top: 1px dashed rgba(255, 255, 255, 0.05);
+            font-size: 0.72rem;
+            line-height: 1.3;
+        }
     </style>
     <script>
         async function updateMarketData() {
@@ -139,34 +146,43 @@ SUPREME_DASHBOARD_HTML = """
                 const container = document.getElementById('market-edges-dock');
                 container.innerHTML = '';
                 
+                if (!data.edges || data.edges.length === 0) {
+                    container.innerHTML = '<div style="font-size:0.75rem; color:#8c96a3; padding-left:4px; font-style:italic;">No upcoming consensus slates detected on wire. Tracking networks...</div>';
+                    return;
+                }
+                
                 data.edges.forEach(e => {
                     const box = document.createElement('div');
                     box.className = 'edge-box';
                     box.innerHTML = `
                         <div class="row-header">
                             <span style="color:#ffffff; font-size:0.82rem; font-weight:700;">[${e.league}] ${e.matchup}</span>
-                            <span class="value">${e.market_status}</span>
+                            <span class="value" style="color:#00e676;">${e.market_status}</span>
                         </div>
-                        <div style="font-size:0.75rem; color:#ff9100; margin-top:4px; font-weight:500;">
-                            Target Prop: ${e.target_prop}
+                        <div style="font-size:0.75rem; color:#66fcf1; margin-top:4px; font-weight:500;">
+                            Target Matrix Line: ${e.target_prop}
                         </div>
                         <div class="metrics-grid">
                             <div class="metric-item">
-                                <span class="metric-lbl">House Set Line</span>
+                                <span class="metric-lbl">Current House O/U</span>
                                 <span class="metric-val" style="color:#66fcf1;">${e.house_line}</span>
                             </div>
                             <div class="metric-item">
-                                <span class="metric-lbl">CEE Edge Matrix</span>
+                                <span class="metric-lbl">CEE Net Advantage</span>
                                 <span class="metric-val edge">${e.cee_calculated_edge}</span>
                             </div>
                             <div class="metric-item">
-                                <span class="metric-lbl">Public Handle</span>
+                                <span class="metric-lbl">Public Ticket Vol</span>
                                 <span class="metric-val" style="color:#e06666;">${e.public_volume}</span>
                             </div>
                             <div class="metric-item">
-                                <span class="metric-lbl">Sharp Placement</span>
+                                <span class="metric-lbl">Sharp Handle Share</span>
                                 <span class="metric-val" style="color:#4ade80;">${e.sharp_money}</span>
                             </div>
+                        </div>
+                        <div class="morale-strip">
+                            <span style="color:#ff4d4d; font-weight:700;">⚠️ INJURY REGISTER:</span> ${e.injury_tracker}<br>
+                            <span style="color:#ff9100; font-weight:700;">📉 MORALE CONTEXT CRITERIA:</span> ${e.morale_deficit}
                         </div>
                     `;
                     container.appendChild(box);
@@ -210,10 +226,10 @@ SUPREME_DASHBOARD_HTML = """
             </div>
         </div>
 
-        <!-- DETECTED MARKET EDGES -->
-        <div class="section-header">📊 CALCULATED EDGES & ALTERNATE LINES</div>
+        <!-- LIVE SCRAPED MODULES -->
+        <div class="section-header">📊 SCRAPED EDGES & CONTRACT SLIDERS</div>
         <div id="market-edges-dock">
-            <div style="font-size:0.75rem; color:#8c96a3; padding-left:4px;">Connecting Market Intelligence...</div>
+            <div style="font-size:0.75rem; color:#8c96a3; padding-left:4px;">Initializing Web Scraping Protocol...</div>
         </div>
     </div>
 </body>
@@ -226,40 +242,22 @@ def home():
 
 @app.route('/api/market-edges')
 def get_market_edges():
-    # Direct simulation matrix pulling market handles and alternate sliders 
-    edges_data = [
-        {
-            "league": "CFB",
-            "matchup": "USM @ TROY",
-            "market_status": "MONITORING VOL",
-            "target_prop": "Pass Completions (Landry Lyddy)",
-            "house_line": "13.5 (Alt Slider Locked)",
-            "cee_calculated_edge": "OVER 13.5 (+12% Margin)",
-            "public_volume": "28% of Tickets",
-            "sharp_money": "72% of Cash Handle"
-        },
-        {
-            "league": "NHL",
-            "matchup": "OTT @ DET",
-            "market_status": "SHARP BLOCK LOCKED",
-            "target_prop": "Total Goals Alternate Slider",
-            "house_line": "6.5 Goals",
-            "cee_calculated_edge": "UNDER 6.5 (Goaltender Factor)",
-            "public_volume": "84% on Over (Trap)",
-            "sharp_money": "68% Limit Order Block"
-        },
-        {
-            "league": "NFL",
-            "matchup": "TB @ DAL",
-            "market_status": "FEED ACTIVE",
-            "target_prop": "Rushing Yards Alternate Line",
-            "house_line": "39.5 Yards",
-            "cee_calculated_edge": "OVER 39.5 (Trench Advantage)",
-            "public_volume": "31% of Tickets",
-            "sharp_money": "69% Syndicate Move"
-        }
-    ]
-    return jsonify({"edges": edges_data})
-
-if __name__ == '__main__':
-    app.run(debug=True)
+    # Targeted VSiN layout URL mapping
+    vsin_endpoint = "https://data.vsin.com/betting-splits/"
+    parsed_edges = []
+    
+    try:
+        # Executes synchronous network query against the consensus server
+        res = requests.get(vsin_endpoint, timeout=6)
+        if res.status_code == 200:
+            raw_data = res.json()
+            # Iterates through active league slates parsed in response payload arrays
+            for data_block in raw_data.get('leagues', []):
+                league_lbl = data_block.get('name', 'UNK')
+                if league_lbl not in ["NFL", "CFB", "NHL", "NCAAF"]:
+                    continue  # Enforces structural filters to block MLB or unrequested sports
+                
+                for matchup in data_block.get('games', []):
+                    # Isolate consensus points
+                    total_data = matchup.get('total', {})
+                    under_handle = float(total_data.get('underHandlePct', 0))
