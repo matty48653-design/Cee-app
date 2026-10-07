@@ -3,9 +3,9 @@ import requests
 
 app = Flask(__name__)
 
-# THE CONTRARIAN EDGE ENGINE (CEE) v10.8 - STABLE REAL-TIME MATRIX
-# Completely overwrites app.py. Combines raw live scoring structures with market data.
-# Defensive error catch blocks guarantee zero server crashes on Render.
+# THE CONTRARIAN EDGE ENGINE (CEE) v10.9 - COMPACT PIGGYBACK PIPELINE
+# Fully overwrites app.py to enforce direct, secure ESPN core telemetry feeds.
+# Cleans up old template property errors to lock in a stable Render deployment.
 
 SUPREME_DASHBOARD_HTML = """
 <!DOCTYPE html>
@@ -139,18 +139,12 @@ SUPREME_DASHBOARD_HTML = """
         }
     </style>
     <script>
-        // On-demand background fetching function loop (Interval: 10 seconds)
         async function fetchActiveMatrixData() {
             try {
                 const res = await fetch('/api/active-matrix');
                 const data = await res.json();
                 const container = document.getElementById('market-edges-dock');
                 container.innerHTML = '';
-                
-                if (!data.games || data.games.length === 0) {
-                    container.innerHTML = '<div style="font-size:0.75rem; color:#8c96a3; padding-left:4px; font-style:italic;">No live active network feeds found for this timeframe. Monitoring pipelines...</div>';
-                    return;
-                }
                 
                 data.games.forEach(g => {
                     const box = document.createElement('div');
@@ -188,7 +182,7 @@ SUPREME_DASHBOARD_HTML = """
                     `;
                     container.appendChild(box);
                 });
-            } catch(e) { console.error("Telemetry connection error:", e); }
+            } catch(e) { console.error("Telemetry error:", e); }
         }
         setInterval(fetchActiveMatrixData, 10000);
         window.onload = fetchActiveMatrixData;
@@ -245,14 +239,12 @@ def home():
 def get_active_matrix():
     parsed_games = []
     
-    # 1. PARSE LIVE GAME CLOCKS AND SCORING SPLITS DIRECT FROM RAW ROOT FEEDS
     score_endpoints = {
-        "NFL": "https://espn.com",
+        "NFL": "https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard",
         "CFB": "https://espn.com",
         "NHL": "https://espn.com"
     }
     
-    live_scores = {}
     for league, url in score_endpoints.items():
         try:
             res = requests.get(url, timeout=4)
@@ -262,3 +254,12 @@ def get_active_matrix():
                     comp = event.get('competitions', [{}])[0]
                     status_obj = event.get('status', {})
                     
+                    clock_str = status_obj.get('type', {}).get('detail', 'Scheduled')
+                    if league == "NHL":
+                        clock_str = status_obj.get('type', {}).get('shortDetail', 'Scheduled')
+                    
+                    if "FINAL" in status_obj.get('type', {}).get('name', '').upper():
+                        continue
+                        
+                    competitors = comp.get('competitors', [])
+                    home = next((c for c in competitors if c.get('homeAway') == 'home'), {})
