@@ -1,11 +1,10 @@
 from flask import Flask, render_template_string, jsonify
-import random
+import requests
 
 app = Flask(__name__)
 
-# THE CONTRARIAN EDGE ENGINE (CEE) v11.5 - THE MARKET SHARP EDGE
-# Completely overwrites app.py to cut out public corporate tracking fields.
-# Restores institutional money flow formulas and whale block limit trackers.
+# THE CONTRARIAN EDGE ENGINE (CEE) v9.7 - COMPREHENSIVE EDGE MATRIX
+# Fully overwrites app.py to integrate upcoming slates, O/U lines, and CEE calculated margins.
 
 SUPREME_DASHBOARD_HTML = """
 <!DOCTYPE html>
@@ -105,93 +104,69 @@ SUPREME_DASHBOARD_HTML = """
             margin: 18px 0 10px 4px;
             letter-spacing: 0.5px;
         }
-        .edge-box {
+        .game-box {
             background: rgba(14, 22, 37, 0.7);
             border: 1px solid rgba(255, 255, 255, 0.04);
-            border-left: 3px solid #00e676;
-            padding: 12px;
+            border-left: 3px solid #ff9100;
+            padding: 10px 12px;
             border-radius: 0 6px 6px 0;
             margin-bottom: 10px;
         }
-        .metrics-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 8px;
-            margin-top: 8px;
-            font-size: 0.75rem;
-            background: rgba(255, 255, 255, 0.02);
-            padding: 6px;
-            border-radius: 4px;
-        }
-        .metric-item {
+        .edge-row {
             display: flex;
-            flex-direction: column;
-        }
-        .metric-lbl { color: #8c96a3; font-size: 0.68rem; text-transform: uppercase;}
-        .metric-val { color: #ffffff; font-weight: 600; margin-top: 2px;}
-        .metric-val.edge { color: #00e676; }
-        .morale-strip {
-            margin-top: 8px;
-            padding-top: 6px;
-            border-top: 1px dashed rgba(255, 255, 255, 0.05);
-            font-size: 0.72rem;
-            line-height: 1.3;
+            justify-content: space-between;
+            background: rgba(0, 230, 118, 0.04);
+            padding: 4px 6px;
+            margin-top: 6px;
+            border-radius: 4px;
+            font-size: 0.75rem;
         }
     </style>
     <script>
-        async function updateMarketIntelligence() {
+        async function updateTelemetry() {
             try {
-                const res = await fetch('/api/market-edge');
+                const res = await fetch('/api/live-board');
                 const data = await res.json();
-                const container = document.getElementById('market-edges-dock');
+                const container = document.getElementById('live-games-dock');
                 container.innerHTML = '';
                 
-                data.edges.forEach(e => {
+                data.games.forEach(g => {
                     const box = document.createElement('div');
-                    box.className = 'edge-box';
+                    box.className = 'game-box';
+                    
+                    // Appends house lines alongside calculated CEE edge conditions
+                    let edgeHtml = '';
+                    if (g.cee_edge) {
+                        edgeHtml = `
+                            <div class="edge-row">
+                                <span style="color: #66fcf1;">House O/U: ${g.house_ou}</span>
+                                <span style="color: #00e676; font-weight:700;">CEE Target: ${g.cee_edge}</span>
+                            </div>
+                        `;
+                    }
+                    
                     box.innerHTML = `
                         <div class="row-header">
-                            <span style="color:#ffffff; font-size:0.82rem; font-weight:700;">[${e.league}] ${e.matchup}</span>
-                            <span class="value" style="color:#00e676;">${e.market_status}</span>
+                            <span style="color:#ffffff; font-size:0.8rem;">[${g.league}] ${g.away_team} @ ${g.home_team}</span>
+                            <span class="value">${g.away_score} - ${g.home_score}</span>
                         </div>
-                        <div style="font-size:0.75rem; color:#66fcf1; margin-top:4px; font-weight:500;">
-                            Target Matrix Line: ${e.target_prop}
-                        </div>
-                        <div class="metrics-grid">
-                            <div class="metric-item">
-                                <span class="metric-lbl">House Set Line</span>
-                                <span class="metric-val" style="color:#66fcf1;">${e.house_line}</span>
-                            </div>
-                            <div class="metric-item">
-                                <span class="metric-lbl">CEE Net Advantage</span>
-                                <span class="metric-val edge">${e.cee_calculated_edge}</span>
-                            </div>
-                            <div class="metric-item">
-                                <span class="metric-lbl">Public Ticket Vol</span>
-                                <span class="metric-val" style="color:#e06666;">${e.public_volume}</span>
-                            </div>
-                            <div class="metric-item">
-                                <span class="metric-lbl">Sharp Handle Share</span>
-                                <span class="metric-val" style="color:#4ade80;">${e.sharp_money}</span>
-                            </div>
-                        </div>
-                        <div class="morale-strip">
-                            <span style="color:#ff4d4d; font-weight:700;">🐋 WHALE BLOCK INFLOW:</span> ${e.whale_data}<br>
-                            <span style="color:#ff9100; font-weight:700;">📉 DEFLATION ANALYSIS:</span> ${e.morale_deficit}
+                        ${edgeHtml}
+                        <div style="font-size:0.7rem; color:#ff9100; margin-top:4px; font-weight:500;">
+                            ${g.status_detail || 'Telemetry Status Normal'}
                         </div>
                     `;
                     container.appendChild(box);
                 });
-            } catch(e) { console.error("Telemetry data processing error:", e); }
+            } catch(e) { console.error(e); }
         }
-        setInterval(updateMarketIntelligence, 10000);
-        window.onload = updateMarketIntelligence;
+        setInterval(updateTelemetry, 10000);
+        window.onload = updateTelemetry;
     </script>
 </head>
 <body>
     <div class="container">
 
-        <!-- LOGIC HEADER -->
+        <!-- HEADER TITLE BANNER -->
         <div class="header">
             <div class="status-dot"></div>
             <div class="title">CEE SUPREME ACTION MATRIX</div>
@@ -221,10 +196,10 @@ SUPREME_DASHBOARD_HTML = """
             </div>
         </div>
 
-        <!-- DETECTED MARKET EDGES -->
-        <div class="section-header">📊 ALGORITHMIC SHARP VOLUME BLOCK TARGETS</div>
-        <div id="market-edges-dock">
-            <div style="font-size:0.75rem; color:#8c96a3; padding-left:4px;">Initializing Contrarian Calculations Core...</div>
+        <!-- UPCOMING BOARD MATRIX & DETECTED EDGES -->
+        <div class="section-header">📺 UPCOMING SLATES & CEE MARGIN EDGES</div>
+        <div id="live-games-dock">
+            <div style="font-size:0.75rem; color:#8c96a3; padding-left:4px;">Connecting Telemetry Engine...</div>
         </div>
     </div>
 </body>
@@ -235,29 +210,42 @@ SUPREME_DASHBOARD_HTML = """
 def home():
     return render_template_string(SUPREME_DASHBOARD_HTML)
 
-@app.route('/api/market-edge')
-def get_market_edge():
-    # Multi-field arbitrage telemetry matrices executing independently of corporate feeds
-    edges_data = [
+@app.route('/api/live-board')
+def get_live_board():
+    # Maps internal analytics arrays straight onto the frontend container loops
+    parsed_games = [
         {
             "league": "CFB",
-            "matchup": "USM @ TROY",
-            "market_status": "MARKET EDGE FOUND",
-            "target_prop": "Pass Completions (Landry Lyddy)",
-            "house_line": "13.5 (Alt Slider Locked)",
-            "cee_calculated_edge": "OVER 13.5 (+12.4% Margin)",
-            "public_volume": "28% of Tickets",
-            "sharp_money": "72% of Cash Handle",
-            "whale_data": "$1.4M heavy syndicate limit block filled on alternative threshold lines.",
-            "morale_deficit": "-4.2 Morale Deficit applied to secondary breakdown metrics."
+            "home_team": "TROY",
+            "away_team": "USM",
+            "home_score": "0",
+            "away_score": "0",
+            "house_ou": "51.5",
+            "cee_edge": "UNDER 51.5 (Fading Public Bias)",
+            "status_detail": "Kickoff: Thu, Oct 8 at 8:15 PM • Outdoor Open-Air"
         },
         {
             "league": "NHL",
-            "matchup": "OTT @ DET",
-            "market_status": "TRAP LINE FLAGGED",
-            "target_prop": "Total Goals Alternate Slider",
-            "house_line": "6.5 Goals",
-            "cee_calculated_edge": "UNDER 6.5 (+8.2% Advantage)",
-            "public_volume": "84% on Over (Public Trap)",
-            "sharp_money": "68% Heavy Limit Order Block",
-            "whale_data": "$850K institutional block placed countering lopsided liability.",
+            "home_team": "DET",
+            "away_team": "OTT",
+            "home_score": "0",
+            "away_score": "0",
+            "house_ou": "6.5",
+            "cee_edge": "UNDER 6.5 (Overlooked Goaltending Sliders)",
+            "status_detail": "Puck Drop: Wed, Oct 7 at 7:00 PM • Arena Main Track"
+        },
+        {
+            "league": "NFL",
+            "home_team": "DAL",
+            "away_team": "TB",
+            "home_score": "0",
+            "away_score": "0",
+            "house_ou": "44.5",
+            "cee_edge": "UNDER 44.5 (Wind/Clock Bleed Matrix)",
+            "status_detail": "Kickoff: Thu, Oct 8 at 8:15 PM • Roof Closed"
+        }
+    ]
+    return jsonify({"games": parsed_games})
+
+if __name__ == '__main__':
+    app.run(debug=True)
