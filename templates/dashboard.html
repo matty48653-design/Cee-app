@@ -85,7 +85,6 @@
             align-items: center;
             justify-content: center;
             text-transform: uppercase;
-            letter-spacing: 0.02em;
             border-right: 1px solid #141d30;
         }
 
@@ -124,7 +123,7 @@
 <div id="matrix-container">
 
     <div class="system-test-badge">
-        <span class="status-dot"></span> MASTER RECON CORE ACTIVE · CLOCK AUTO-PACING LIVE
+        <span class="status-dot"></span> RECON MASTER ENGINE ACTIVE · TIMELINE SYNCHRONIZED
     </div>
 
     {% for match in matchups %}
@@ -134,7 +133,12 @@
             {{ match.edge_rating }}
         </div>
 
-        <div class="sport-type">🎰 LIVE SELECTION MATRIX SHEET</div>
+        {% if match.sport == 'NFL' %}
+        <div class="sport-type">🏈 FOOTBALL ADAPTIVE ADVANTAGE SHEET</div>
+        {% else %}
+        <div class="sport-type">🏒 HOCKEY CONTRARIAN INTELLIGENCE CORE</div>
+        {% endif %}
+
         <div class="game-title-row">
             <div class="game-title">{{ match.away_team }} @ {{ match.home_team }}</div>
             <div class="live-clock-badge">{{ match.live_clock }}</div>
@@ -153,16 +157,15 @@
             <div class="module-value" style="color: #38bdf8;">{{ match.market_alert }}</div>
         </div>
         <div class="line-module-row">
+            <div class="module-label" style="color: #e2e8f0;">SPLITS</div>
+            <div class="module-value" style="color: #e2e8f0; font-size: 0.75rem;">{{ match.splits_data }}</div>
+        </div>
+        <div class="line-module-row">
             <div class="module-label" style="color: #a855f7;">ENV</div>
             <div class="module-value" style="color: #a855f7; font-size: 0.75rem;">{{ match.scan_status }}</div>
         </div>
 
         {% if match.sport == 'NFL' %}
-        <div class="line-module-row">
-            <div class="module-label" style="color: #e2e8f0;">SPLITS</div>
-            <div class="module-value" style="color: #e2e8f0; font-size: 0.75rem;">{{ match.splits_data }}</div>
-        </div>
-
         <div class="prop-section">
             <div class="table-header">
                 <div>🎯 ADAPTIVE PROP SLIDERS</div>
@@ -193,12 +196,6 @@
         </div>
         {% endfor %}
         {% endif %}
-
-        {% elif match.sport == 'NHL' %}
-        <div class="line-module-row">
-            <div class="module-label" style="color: #e2e8f0;">SPLITS</div>
-            <div class="module-value" style="color: #e2e8f0; font-size: 0.75rem;">{{ match.splits_data }}</div>
-        </div>
         {% endif %}
         
     </div>
