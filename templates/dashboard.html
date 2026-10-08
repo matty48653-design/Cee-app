@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CEE SUPREME ACTION MATRIX</title>
     <style>
-        /* Matrix Base Design Configuration */
         body { 
             background-color: #030708; 
             color: #e2e8f0; 
@@ -15,7 +14,6 @@
             -webkit-font-smoothing: antialiased;
         }
         
-        /* Neon Status Header Banner */
         .banner { 
             background: linear-gradient(135deg, #091114 0%, #050b0d 100%); 
             border: 1px solid #10b981; 
@@ -37,7 +35,6 @@
             gap: 8px;
         }
 
-        /* Sharp Sheet Branding Sub-Panel Layout */
         .sharp-panel {
             background: #090f11;
             border: 1px solid #1e293b;
@@ -57,7 +54,6 @@
         .sharp-value { color: #10b981; font-weight: 800; }
         .sharp-desc { color: #64748b; font-size: 12px; margin-top: 2px; }
 
-        /* Content Architecture Dividers */
         .section-title { 
             font-size: 12px; 
             font-weight: 800; 
@@ -70,7 +66,6 @@
             gap: 6px;
         }
 
-        /* Matrix Data Content Blocks */
         .matrix-card {
             background: linear-gradient(180deg, #0b1316 0%, #070c0e 100%);
             border: 1px solid #1e293b;
@@ -89,41 +84,38 @@
         .card-score { font-size: 14px; font-weight: 800; color: #10b981; font-family: monospace; }
         
         .card-body {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            display: block;
+            margin-top: 5px;
             font-size: 13px;
         }
         .line-label { color: #64748b; }
-        .line-value { color: #38bdf8; font-weight: 700; margin-left: 6px; }
+        .line-value { color: #ffffff; font-weight: 700; margin-left: 6px; }
         
-        /* CEE Custom System Badges */
-        .badge {
-            padding: 5px 10px;
-            border-radius: 4px;
-            font-size: 11px;
-            font-weight: 800;
-            letter-spacing: 0.03em;
+        .pick-box {
+            background: rgba(16, 185, 129, 0.08); 
+            border: 1px dashed #10b981; 
+            padding: 10px; 
+            border-radius: 6px; 
+            color: #10b981; 
+            font-size: 12px; 
+            font-weight: bold; 
+            letter-spacing: 0.02em;
+            margin-top: 10px;
         }
-        .badge-cfb { background: rgba(249, 115, 22, 0.1); color: #f97316; border: 1px solid rgba(249, 115, 22, 0.3); }
-        .badge-nhl { background: rgba(56, 189, 248, 0.1); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.3); }
-        .badge-nfl { background: rgba(168, 85, 247, 0.1); color: #a855f7; border: 1px solid rgba(168, 85, 247, 0.3); }
-        .badge-status { background: rgba(16, 185, 129, 0.15); color: #10b981; border: 1px solid #10b981; font-size: 11px; }
-
+        
+        .badge-status { background: rgba(16, 185, 129, 0.15); color: #10b981; border: 1px solid #10b981; font-size: 11px; padding: 5px 10px; border-radius: 4px; font-weight: 800; }
         .kickoff-time { font-size: 11px; color: #f59e0b; margin-top: 10px; font-weight: 500; }
     </style>
 </head>
 <body>
 
-    <!-- Header Status Indicator Banner -->
     <div class="banner">
         <div class="banner-title">
             <span style="color: #10b981;">●</span> CEE SUPREME ACTION MATRIX
         </div>
-        <span id="sync-status" class="badge badge-status">LIVE SYNCING</span>
+        <span id="sync-status" class="badge-status">LIVE SYNCING</span>
     </div>
 
-    <!-- Top Tier Selection Sheet Block -->
     <div class="sharp-panel">
         <div class="sharp-row">
             <span class="sharp-label">🎯 SHARP SELECTION SHEET</span>
@@ -131,7 +123,7 @@
         </div>
         <div style="border-bottom: 1px solid #1e293b; margin: 10px 0;"></div>
         <div class="sharp-row">
-            <span style="color: #94a3b8;">● GAME SPREAD EDGE</span>
+            <span style="color: #94a3b8;">● GAME SPREED EDGE</span>
             <span class="sharp-value" style="color: #38bdf8;">Southern Miss +10.5</span>
         </div>
         <div class="sharp-desc">Public is forcing value into the underdog trench script.</div>
@@ -144,22 +136,21 @@
 
     <div class="section-title">📺 UPCOMING SLATES & CEE MARGIN EDGES</div>
 
-    <!-- Dynamic Container Slot for Javascript Auto-Update Injection -->
     <div id="matrix-container-slots">
-        <!-- Loops map data immediately on raw browser loads -->
         {% for game in cache.cfb_slate.games %}
         <div class="matrix-card">
             <div class="card-header">
-                <span class="card-matchup">[CFB] {{ game.matchup }}</span>
-                <span class="card-score">0 - 0</span>
+                <span class="card-matchup">{{ game.matchup }}</span>
+                <span class="card-score" style="color: #ff5370; font-size: 11px;">CEE INSIGHT</span>
             </div>
             <div class="card-body">
-                <div>
-                    <span class="line-label">House O/U:</span><span class="line-value">{{ game.ou_line }}</span>
+                <div style="margin-bottom: 10px; font-size: 12px; color: #94a3b8;">
+                    <span>Current Line:</span><span class="line-value">{{ game.ou_line }}</span>
                 </div>
-                <span class="badge badge-cfb">{{ game.edge_detection }}</span>
+                <div class="pick-box">
+                    📢 {{ game.edge_detection }}
+                </div>
             </div>
-            <div class="kickoff-time">Kickoff: Thu, Oct 8 at 8:15 PM • Outdoor Open-Air</div>
         </div>
         {% endfor %}
     </div>
@@ -179,39 +170,21 @@
                 const container = document.getElementById('matrix-container-slots');
                 container.innerHTML = '';
 
-                // 1. Build College Football Card Slots Dynamically
                 data.cfb_slate.games.forEach(game => {
                     container.innerHTML += `
                         <div class="matrix-card">
                             <div class="card-header">
-                                <span class="card-matchup">[CFB] ${game.matchup}</span>
-                                <span class="card-score">0 - 0</span>
+                                <span class="card-matchup">${game.matchup}</span>
+                                <span class="card-score" style="color: #ff5370; font-size: 11px;">CEE INSIGHT</span>
                             </div>
                             <div class="card-body">
-                                <div>
-                                    <span class="line-label">House O/U:</span><span class="line-value">${game.ou_line}</span>
+                                <div style="margin-bottom: 10px; font-size: 12px; color: #94a3b8;">
+                                    <span>Current Line:</span><span class="line-value" style="color: #ffffff; font-weight: bold; margin-left: 6px;">${game.ou_line}</span>
                                 </div>
-                                <span class="badge badge-cfb">${game.edge_detection}</span>
-                            </div>
-                            <div class="kickoff-time">Kickoff: Thu, Oct 8 at 8:15 PM • Outdoor Open-Air</div>
-                        </div>`;
-                });
-
-                // 2. Build NHL Hockey Card Slots Dynamically
-                data.nhl_slate.games.forEach(game => {
-                    container.innerHTML += `
-                        <div class="matrix-card">
-                            <div class="card-header">
-                                <span class="card-matchup">[NHL] ${game.matchup}</span>
-                                <span class="card-score">0 - 0</span>
-                            </div>
-                            <div class="card-body">
-                                <div>
-                                    <span class="line-label">House O/U:</span><span class="line-value">${game.ou_line}</span>
+                                <div class="pick-box">
+                                    📢 ${game.edge_detection}
                                 </div>
-                                <span class="badge badge-nhl">${game.edge_detection}</span>
                             </div>
-                            <div class="kickoff-time">Puck Drop: Wed, Oct 7 at 7:00 PM • Arena Main Track</div>
                         </div>`;
                 });
 
