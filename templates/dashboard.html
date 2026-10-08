@@ -13,6 +13,7 @@
         .matrix-table td { padding: 14px 12px; border-bottom: 1px solid #1f2937; font-size: 13px; }
         .badge-nfl { background: #1e3a8a; color: #fff; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; }
         .badge-cfb { background: #7c2d12; color: #fff; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; }
+        .badge-nhl { background: #047857; color: #fff; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; }
         .badge-status { background: #10b981; color: #fff; padding: 4px 8px; border-radius: 4px; font-size: 11px; }
     </style>
 </head>
@@ -39,6 +40,27 @@
                 <td><b>{{ game.matchup }}</b></td>
                 <td>{{ game.ou_line }}</td>
                 <td><span class="badge-cfb">{{ game.edge_detection }}</span></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- NHL HOCKEY SLATE TABLE -->
+    <div class="section-title">NHL Live Slate Matrix</div>
+    <table class="matrix-table">
+        <thead>
+            <tr>
+                <th>Matchup</th>
+                <th>Goal Line</th>
+                <th>Edge Detection</th>
+            </tr>
+        </thead>
+        <tbody id="nhl-table-body">
+            {% for game in cache.nhl_slate.games %}
+            <tr>
+                <td><b>{{ game.matchup }}</b></td>
+                <td>{{ game.ou_line }}</td>
+                <td><span class="badge-nhl">{{ game.edge_detection }}</span></td>
             </tr>
             {% endfor %}
         </tbody>
@@ -93,7 +115,19 @@
                         </tr>`;
                 });
 
-                // 2. Rebuild NFL Player Milestone Rows
+                // 2. Rebuild NHL Hockey Rows
+                const nhlBody = document.getElementById('nhl-table-body');
+                nhlBody.innerHTML = '';
+                data.nhl_slate.games.forEach(game => {
+                    nhlBody.innerHTML += `
+                        <tr>
+                            <td><b>${game.matchup}</b></td>
+                            <td>${game.ou_line}</td>
+                            <td><span class="badge-nhl">${game.edge_detection}</span></td>
+                        </tr>`;
+                });
+
+                // 3. Rebuild NFL Player Milestone Rows
                 const nflBody = document.getElementById('nfl-table-body');
                 nflBody.innerHTML = '';
                 data.nfl_player_props.milestones.forEach(prop => {
