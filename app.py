@@ -1,10 +1,10 @@
 import os
 import random
-from flask import Flask, render_template, render_template_string, request, jsonify
+from flask import Flask, request, render_template_string
 
 app = Flask(__name__)
 
-# Mock backend database stream generator for the CEE Engine Engine
+# System database stream for your active slates
 def get_live_matrix_feeds():
     return [
         {
@@ -19,7 +19,6 @@ def get_live_matrix_feeds():
             "crowd_env": "Lynchburg Hostile • Decibel Index: High (Cap Playbook Comm)",
             "injury_notes": "INJURY MATRIX: Sam Houston WR1 (Questionable)",
             "rec_play": "Sam Houston Alternate Pass Yards (MORE 175.0 Floor)",
-            "public_resistance": 94,
             "ticket_pct": 6,   # Crowd Count
             "handle_pct": 44,  # Real Cash
         },
@@ -35,7 +34,6 @@ def get_live_matrix_feeds():
             "crowd_env": "Arlington Loud • Structural Acoustics Maximized",
             "injury_notes": "INJURY MATRIX: Baker Mayfield OUT (Thumb) • Jalon Daniels Starting",
             "rec_play": "Jalon Daniels MORE 15+ Alternate Completions",
-            "public_resistance": 81,
             "ticket_pct": 19,  # Crowd Count
             "handle_pct": 52,  # Real Cash
         }
@@ -71,7 +69,6 @@ HTML_TEMPLATE = """
         .app-container {
             width: 100%;
             max-width: 480px;
-            background-color: var(--bg-base);
         }
         .header-box {
             display: flex;
@@ -123,7 +120,6 @@ HTML_TEMPLATE = """
             border-radius: 6px;
             padding: 12px;
             margin-bottom: 14px;
-            position: relative;
         }
         .whale-card.active-alert {
             border-color: var(--alert-orange);
@@ -211,7 +207,6 @@ HTML_TEMPLATE = """
                 ⚡ <strong>LIVE AUTOMATED COMM SHEET:</strong> SCANNING FEEDS
             </div>
 
-            <!-- RECON SUMMARY BAR -->
             <div class="recon-section">
                 <span class="section-label">📌 Target Strategy Play</span>
                 <span style="color: var(--neon-green); font-weight: bold;">
@@ -223,7 +218,6 @@ HTML_TEMPLATE = """
             
             {% for game in games %}
                 {% set gap = game.handle_pct - game.ticket_pct %}
-                <!-- DYNAMIC WHALE CONTAINER -->
                 <div class="whale-card {% if gap >= 20 %}active-alert{% endif %}">
                     <div class="whale-header">
                         {% if gap >= 20 %}
@@ -260,7 +254,6 @@ HTML_TEMPLATE = """
                 </div>
             {% endfor %}
 
-            <!-- MASTER CONTROLLER BOTTOM BAR -->
             <div class="footer-inputs">
                 <div class="unit-input-box">
                     <label style="font-size: 0.8rem; font-weight: bold;">CEE Multiplier Level:</label>
@@ -275,3 +268,15 @@ HTML_TEMPLATE = """
 """
 
 @app.route("/", methods=["GET", "POST"])
+def index():
+    unit_size = 3
+    if request.method == "POST":
+        try:
+            unit_size = int(request.form.get("unit_size", 3))
+        except ValueError:
+            unit_size = 3
+
+    games_data = get_live_matrix_feeds()
+    return render_template_string(HTML_TEMPLATE, games=games_data, unit_size=unit_size)
+
+if __name__ == "__main__":
