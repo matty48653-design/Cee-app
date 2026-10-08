@@ -1,4 +1,58 @@
 {
-    "slates": []
+  "framework_version": "9.5-Quantum-Core",
+  "global_rules": {
+    "block_volatile_micro_lines": true,
+    "enforce_milestone_slider_floors": true
+  },
+  "cfb_slate": {
+    "status": "active_monitoring",
+    "games": [
+      {
+        "matchup": "Sam Houston @ Liberty",
+        "ou_line": "52.5",
+        "edge_detection": "TRAILING_VOLUME_EDGE"
+      },
+      {
+        "matchup": "South Florida @ UTSA",
+        "ou_line": "58.5",
+        "edge_detection": "SHOOTOUT_VOLUME_FLOOR"
+      },
+      {
+        "matchup": "South Alabama @ Arkansas State",
+        "ou_line": "54.5",
+        "edge_detection": "TEMPO_MATRIX_EDGE"
+      }
+    ]
+  },
+  "nfl_player_props": {
+    "status": "active_monitoring",
+    "milestones": [
+      {
+        "player": "Jalon Daniels",
+        "team": "TB",
+        "metric": "Pass Yards",
+        "house_line": "148.5",
+        "safety_floor": "150+",
+        "edge_status": "HIGH_TRAILING_VOLUME"
+      },
+      {
+        "player": "CeeDee Lamb",
+        "team": "DAL",
+        "metric": "Receptions",
+        "house_line": "6.0",
+        "safety_floor": "6+",
+        "edge_status": "SECURE_ANCHOR_FLOOR"
+      }
+    ]
+  },
+  "nhl_slate": {
+    "status": "active_monitoring",
+    "games": [
+      {
+        "matchup": "Colorado @ Winnipeg",
+        "ou_line": "6.5",
+        "edge_detection": "SHARP_UNDER_SPLIT"
+      }
+    ]
+  }
 }
-
