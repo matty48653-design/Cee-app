@@ -1,6 +1,7 @@
 import os
 import json
 import time
+import datetime
 import requests
 from flask import Flask, render_template, jsonify, request, render_template_string
 
@@ -9,12 +10,34 @@ app = Flask(__name__)
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DATA_FILE = os.path.join(BASE_DIR, 'sports_data.json')
 
-# STEP 1 & 2: Safe API Ingestion Function using your Environment Key
+# 🐋 NEW ADDITION: CEE Syndicate Implied Probability Value Algorithm
+def calculate_whale_probability_edge(american_odds, real_world_probability):
+    if american_odds > 0:
+        implied_prob = 100 / (american_odds + 100)
+    else:
+        implied_prob = abs(american_odds) / (abs(american_odds) + 100)
+        
+    edge_gap = real_world_probability - implied_prob
+    
+    if edge_gap >= 0.05:
+        system_status = "🐋 ALPHA WHALE SIGNAL: HEAVY MISPRICING EXPOSED"
+    elif edge_gap > 0:
+        system_status = "📊 MARGINAL VALUE ATTAINED"
+    else:
+        system_status = "🪤 PUBLIC TRAP LINE: DEFENSIVE OVER-JUICING"
+        
+    return {
+        "bookmaker_implied_prob_pct": round(implied_prob * 100, 2),
+        "true_volume_probability_pct": round(real_world_probability * 100, 2),
+        "extracted_edge_pct": round(edge_gap * 100, 2),
+        "cee_matrix_signal": system_status
+    }
+
+# Core API Ingestion Function
 def get_live_matrix_feeds():
-    # Safely look for your hidden master token variable on the server
     api_key = os.environ.get("SPORTS_DATA_KEY")
     
-    # Fallback to pristine local mock array if key isn't active yet
+    # Fallback to local structured data if key isn't live
     if not api_key:
         return [
             {
@@ -29,8 +52,8 @@ def get_live_matrix_feeds():
                 "crowd_env": "Lynchburg Hostile • Decibel Index: High (Cap Playbook Comm)",
                 "injury_notes": "INJURY MATRIX: Sam Houston WR1 (Questionable)",
                 "rec_play": "Sam Houston Alternate Pass Yards (MORE 175.0 Floor)",
-                "ticket_pct": 6,   # Crowd Count
-                "handle_pct": 44,  # Real Cash
+                "ticket_pct": 6,   
+                "handle_pct": 44,  
             },
             {
                 "id": "game_2",
@@ -44,22 +67,19 @@ def get_live_matrix_feeds():
                 "crowd_env": "Arlington Loud • Structural Acoustics Maximized",
                 "injury_notes": "INJURY MATRIX: Baker Mayfield OUT (Thumb) • Jalon Daniels Starting",
                 "rec_play": "Jalon Daniels MORE 15+ Alternate Completions",
-                "ticket_pct": 19,  # Crowd Count
-                "handle_pct": 52,  # Real Cash
+                "ticket_pct": 19,  
+                "handle_pct": 52,  
             }
         ]
     
-    # Official whitelisted datacenter endpoint connection string
     url = "https://api-sports.io"
     headers = {"x-apisports-key": api_key}
-    
     try:
         response = requests.get(url, headers=headers, timeout=10)
         return response.json().get("results", [])
     except Exception:
         return []
 
-# Core data management from your stable original version
 def load_data():
     if os.path.exists(DATA_FILE):
         try:
@@ -270,12 +290,4 @@ HTML_TEMPLATE = """
                     </div>
 
                     <div class="grid-3">
-                        <div>
-                            <div style="font-size: 0.65rem; color: var(--text-dim);">👥 CROWD COUNT</div>
-                            <div class="grid-val">{{ game.ticket_pct }}%</div>
-                        </div>
-                        <div>
-                            <div style="font-size: 0.65rem; color: var(--text-dim);">💰 REAL CASH</div>
-                            <div class="grid-val text-high">{{ game.handle_pct }}%</div>
-                        </div>
                         <div>
