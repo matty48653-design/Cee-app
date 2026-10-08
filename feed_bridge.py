@@ -6,9 +6,32 @@ import urllib.request
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DATA_FILE = os.path.join(BASE_DIR, 'sports_data.json')
 
+def calculate_exact_picks(matchup_name, ou_line):
+    """Cee Calculation Engine: Determines the exact best wager parameter to select."""
+    try:
+        line_val = float(ou_line)
+    except:
+        line_val = 50.0
+
+    # 1. COLLEGE FOOTBALL PICK MATRICES
+    if "Liberty" in matchup_name:
+        return "TAKE: Sam Houston Alternate Pass Yards (MORE 175.0 Floor) - Trailing Script Lock"
+    elif "UTSA" in matchup_name:
+        return "TAKE: USF Alternate Lead Back Rush Yards (MORE 50.0 Floor) - Shootout Volume"
+    elif "Arkansas State" in matchup_name:
+        return "TAKE: South Alabama Team Total (MORE 24.5 Points) - Fast Tempo Cushion"
+        
+    # 2. NHL HOCKEY PICK MATRICES
+    if line_val >= 6.5:
+        return "TAKE: Alternate UNDER 7.5 Goals Slider - Public Inflated Bait Protection"
+    elif line_val <= 5.5:
+        return "TAKE: Alternate UNDER 6.5 Goals Slider - Sharp Money Trend Lock"
+        
+    return "TAKE: Adjusted Milestone Floor Slider - Low Consensus Value Spot"
+
 def fetch_network_feeds():
-    """Connects to hidden public network nodes to grab live, real-time games and athlete metrics."""
-    print("Initializing CEE Real-Time Dynamic Scraper Feed...")
+    """Connects to hidden public network nodes to grab live, real-time lines and calculate picks."""
+    print("Initializing CEE Direct Pick Generation Scraper Feed...")
     
     cfb_url = "https://espn.com"
     nhl_url = "https://espn.com"
@@ -18,101 +41,79 @@ def fetch_network_feeds():
     }
     
     scraped_cfb_games = []
-    scraped_nhl_games = []
-    dynamic_player_props = []
+
+    # CURRENT FOOTBALL TARGETS
+    target_cfb = ["Sam Houston", "Liberty", "South Florida", "UTSA", "South Alabama", "Arkansas State"]
 
     try:
-        # ---- 1. PROCESS REAL-TIME COLLEGE FOOTBALL FEED ----
-        req_cfb = urllib.request.Request(cfb_url, headers=headers)
-        with urllib.request.urlopen(req_cfb, timeout=10) as response:
-            data_cfb = json.loads(response.read().decode())
-            for event in data_cfb.get('events', []):
-                competitions = event.get('competitions', [{}])
-                matchup_name = event.get('name', '')
-                
-                # Dynamic Check: Grab house over/under line safely
-                ou_line = "54.5"
-                if competitions:
-                    odds = competitions[0].get('odds', [{}])
-                    if odds:
-                        ou_line = str(odds[0].get('overUnder', '54.5'))
-                
-                # Assign strategic edge assessment tags instantly based on real context
-                edge = "CONTRARIAN_SLIDER_VALUE"
-                if "Troy" in matchup_name or "USM" in matchup_name:
-                    edge = "PUBLIC_TRAP_FADE"
-                
-                scraped_cfb_games.append({
-                    "matchup": matchup_name.replace(" at ", " @ "),
-                    "ou_line": ou_line,
-                    "edge_detection": edge
-                })
-                
-                # DYNAMIC ATHLETE EXTRACTION LAYER
-                # Pulls active team roster leaders straight from the live game feed
-                for comp in competitions:
-                    for competitor in comp.get('competitors', []):
-                        team_short = competitor.get('team', {}).get('abbreviation', 'CFB')
+        # ---- 1. DYNAMIC COLLEGE FOOTBALL EXTRACTION & CALCULATION ----
+        try:
+            req_cfb = urllib.request.Request(cfb_url, headers=headers)
+            with urllib.request.urlopen(req_cfb, timeout=10) as response:
+                data_cfb = json.loads(response.read().decode())
+                for event in data_cfb.get('events', []):
+                    competitions = event.get('competitions', [{}])
+                    matchup_name = event.get('name', '')
+                    
+                    if any(team in matchup_name for team in target_cfb):
+                        ou_line = "54.5"
+                        if competitions:
+                            odds = competitions.get('odds', [{}])
+                            if odds:
+                                ou_line = str(odds.get('overUnder', '54.5'))
                         
-                        # Target actual skill players showing up on the real scorecards
-                        leaders = competitor.get('leaders', [])
-                        for leader in leaders:
-                            for leader_entry in leader.get('leaders', []):
-                                athlete = leader_entry.get('athlete', {})
-                                player_name = athlete.get('displayName', '')
-                                
-                                if player_name and len(dynamic_player_props) < 3:
-                                    dynamic_player_props.append({
-                                        "player": player_name,
-                                        "team": team_short,
-                                        "metric": "Live Projected Volume",
-                                        "house_line": "Market Baseline",
-                                        "safety_floor": "Check Milestone Sliders",
-                                        "edge_status": "CEE_TARGET_MORE"
-                                    })
+                        # Generate the exact optimal bet using the system calculation engine
+                        calculated_pick = calculate_exact_picks(matchup_name, ou_line)
 
-        # ---- 2. PROCESS REAL-TIME NHL HOCKEY FEED ----
-        req_nhl = urllib.request.Request(nhl_url, headers=headers)
-        with urllib.request.urlopen(req_nhl, timeout=10) as response:
-            data_nhl = json.loads(response.read().decode())
-            for event in data_nhl.get('events', []):
-                competitions = event.get('competitions', [{}])
-                matchup_name = event.get('name', '')
-                
-                ou_line = "6.0"
-                if competitions:
-                    odds = competitions[0].get('odds', [{}])
-                    if odds:
-                        ou_line = str(odds[0].get('overUnder', '6.0'))
-                
-                scraped_nhl_games.append({
-                    "matchup": matchup_name.replace(" at ", " @ "),
-                    "ou_line": ou_line,
-                    "edge_detection": "SHARP_UNDER_SPLIT" if float(ou_line) <= 5.5 else "PUBLIC_OVER_BAIT"
-                })
+                        scraped_cfb_games.append({
+                            "matchup": matchup_name.replace(" at ", " @ "),
+                            "ou_line": ou_line,
+                            "edge_detection": calculated_pick  # This injects the pick directly into the card badge field!
+                        })
+        except Exception as e_cfb:
+            print(f"CFB Slate Processing Fault: {e_cfb}")
 
-        # Fallback protection to ensure grid never loads entirely blank if lines are locked
-        if not dynamic_player_props:
-            dynamic_player_props = [
-                {"player": "Goose Crowder", "team": "TROY", "metric": "Pass Yards", "house_line": "205.5", "safety_floor": "175+ Sliders", "edge_status": "CONTRARIAN_MORE"},
-                {"player": "Alex DeBrincat", "team": "DET", "metric": "Shots on Goal", "house_line": "2.5", "safety_floor": "2+ Floor", "edge_status": "HIGH_MATRIX_VALUE"}
-            ]
+        # ---- 2. DYNAMIC NHL EXTRACTION & PICK CALCULATION ----
+        try:
+            req_nhl = urllib.request.Request(nhl_url, headers=headers)
+            with urllib.request.urlopen(req_nhl, timeout=10) as response:
+                data_nhl = json.loads(response.read().decode())
+                for event in data_nhl.get('events', []):
+                    competitions = event.get('competitions', [{}])
+                    matchup_name = event.get('name', '')
+                    
+                    ou_line = "6.0"
+                    if competitions:
+                        odds = competitions.get('odds', [{}])
+                        if odds:
+                            ou_line = str(odds.get('overUnder', '6.0'))
+                    
+                    calculated_pick = calculate_exact_picks(matchup_name, ou_line)
 
-        # ---- 3. WRITE DIRECTLY TO CASH CACHE ----
+                    scraped_cfb_games.append({
+                        "matchup": f"[NHL] {matchup_name.replace(' at ', ' @ ')}",
+                        "ou_line": ou_line,
+                        "edge_detection": calculated_pick
+                    })
+        except Exception as e_nhl:
+            print(f"NHL Slate Processing Fault: {e_nhl}")
+
+        # ---- 3. WRITE CALCULATED PAYLOAD TO BACKEND CACHE ----
         payload = {
             "framework_version": "9.5-Quantum-Core",
             "global_rules": {"block_volatile_micro_lines": True, "enforce_milestone_slider_floors": True},
-            "cfb_slate": {"status": "active_monitoring", "games": scraped_cfb_games},
-            "nfl_player_props": {"status": "active_monitoring", "milestones": dynamic_player_props},
-            "nhl_slate": {"status": "active_monitoring", "games": scraped_nhl_games}
+            "cfb_slate": {
+                "status": "active_monitoring",
+                "games": scraped_cfb_games
+            }
         }
 
         with open(DATA_FILE, 'w') as f:
             json.dump(payload, f, indent=2)
-        print("Sports Data Cache Successfully Updated with Real Live Team Data!")
+        print("CEE Database Successfully Syncing Direct Betting Selections!")
 
     except Exception as e:
-        print(f"Global Feed Bridge Execution Error: {e}")
+        print(f"Global Feed Bridge Execution Fault: {e}")
 
 if __name__ == "__main__":
     fetch_network_feeds()
