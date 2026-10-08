@@ -8,7 +8,6 @@ DATA_FILE = os.path.join(BASE_DIR, 'sports_data.json')
 
 def get_human_metrics(matchup_name):
     """Cee Engine Analytical Node: Computes travel fatigue, crowd decibels, injuries, and morale."""
-    # 1. COLLEGE FOOTBALL THURSDAY SLATE ANALYSIS
     if "Sam Houston" in matchup_name or "Liberty" in matchup_name:
         return {
             "travel": "🚀 TRAVEL TRAJECTORY: Sam Houston traveling 1,220 Miles East • Crossed Critical Fatigue Zone",
@@ -20,7 +19,7 @@ def get_human_metrics(matchup_name):
         return {
             "travel": "🚀 TRAVEL TRAJECTORY: USF traveling 1,140 Miles West • 2 Time Zone Shift Fatigue Factor",
             "crowd": "🔊 CROWD ENVIRONMENT: Alamodome Acoustic Enclosure • Extreme Crowded Noise Level Multiplier",
-            "injury": "⚠️ INJURY MATRIX: USF Primary Right Tackle (OUT - Ankle) • Weakens front pass protection edge",
+            "injury": "⚠️ INJURY MATRIX: USF Primary Right Tackle (OUT - Ankle) • Weakens front edge protection",
             "morale": "🧠 ROSTER MORALE: UTSA bouncing back from narrow road loss • Highly volatile bounce-back spot"
         }
     elif "South Alabama" in matchup_name or "Arkansas State" in matchup_name:
@@ -31,7 +30,6 @@ def get_human_metrics(matchup_name):
             "morale": "🧠 ROSTER MORALE: South Alabama roster core highly stable following explosive point performance"
         }
 
-    # 2. NHL HOCKEY SLATE ANALYSIS
     if "Montreal" in matchup_name or "Boston" in matchup_name:
         return {
             "travel": "🚀 TRAVEL TRAJECTORY: Montreal traveling 310 Miles South • Minimal Rest Restriction Impact",
@@ -40,7 +38,6 @@ def get_human_metrics(matchup_name):
             "morale": "🧠 ROSTER MORALE: Premium Focus • Traditional Divisional Rivalry Peak Intensity"
         }
         
-    # Default Baseline Profile
     return {
         "travel": "🚀 TRAVEL TRAJECTORY: Baseline Slate Range • Standard Rest Intervals Active",
         "crowd": "🔊 CROWD ENVIRONMENT: Standard Arena Layout • Noise Metrics Testing Stable",
@@ -74,11 +71,12 @@ def fetch_network_feeds():
                     matchup_name = event.get('name', '')
                     
                     if any(team in matchup_name for team in target_cfb):
-                        teams = competitions[0].get('competitors', []) if competitions else []
+                        comp = competitions[0] if competitions else {}
+                        teams = comp.get('competitors', [])
                         away_score = teams[0].get('score', '0') if len(teams) > 0 else '0'
                         home_score = teams[1].get('score', '0') if len(teams) > 1 else '0'
                         clock_status = status.get('type', {}).get('detail', 'PRE-GAME')
-                        venue = competitions[0].get('venue', {}).get('fullName', 'Stadium') if competitions else 'Stadium'
+                        venue = comp.get('venue', {}).get('fullName', 'Stadium')
                         
                         full_matchup = matchup_name.replace(" at ", " @ ")
                         metrics = get_human_metrics(full_matchup)
@@ -107,11 +105,12 @@ def fetch_network_feeds():
                     status = event.get('status', {})
                     matchup_name = event.get('name', '')
                     
-                    teams = competitions[0].get('competitors', []) if competitions else []
+                    comp = competitions[0] if competitions else {}
+                    teams = comp.get('competitors', [])
                     away_score = teams[0].get('score', '0') if len(teams) > 0 else '0'
                     home_score = teams[1].get('score', '0') if len(teams) > 1 else '0'
                     clock_status = status.get('type', {}).get('detail', 'PRE-GAME')
-                    venue = competitions[0].get('venue', {}).get('fullName', 'Arena Track') if competitions else 'Arena Track'
+                    venue = comp.get('venue', {}).get('fullName', 'Arena Track')
 
                     full_matchup = f"[NHL] {matchup_name.replace(' at ', ' @ ')}"
                     metrics = get_human_metrics(matchup_name)
@@ -151,11 +150,12 @@ def fetch_network_feeds():
             })
 
         # ---- 4. DYNAMIC DIRECTIVE AND SYNDICATE CALCULATIONS ----
-        primary_match = scraped_monitors[0]["matchup"]
-        primary_details = scraped_monitors[0]["details"]
+        primary_match = scraped_monitors[0]["matchup"] if scraped_monitors else "Market Feeds"
+        primary_details = scraped_monitors[0]["details"] if scraped_monitors else "Scanning Channels"
         
         recon_val = "TAKE: Sam Houston Alternate Pass Yards (MORE 175.0 Floor)" if "Liberty" in primary_match else "Awaiting Game Kickoff"
         syndicate_val = "Sam Houston Pass Volume Sliders" if "Liberty" in primary_match else "Scanning Next Value Spot"
 
         scraped_directives = [
             {"label": "LIVE SPREAD RECON", "value": recon_val, "desc": f"Current market context target: {primary_details}."},
+            {"label": "LIVE OVER/UNDER RECON", "value": "Analyzing Pacing", "desc": "Displays live point threshold targets calculated by real-time pacing speeds."},
