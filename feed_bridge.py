@@ -6,34 +6,11 @@ import urllib.request
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DATA_FILE = os.path.join(BASE_DIR, 'sports_data.json')
 
-def calculate_exact_picks(matchup_name, ou_line):
-    """Cee Calculation Engine: Determines the exact best wager parameter to select."""
-    try:
-        line_val = float(ou_line)
-    except:
-        line_val = 50.0
-
-    # 1. COLLEGE FOOTBALL PICK MATRICES
-    if "Liberty" in matchup_name:
-        return "TAKE: Sam Houston Alternate Pass Yards (MORE 175.0 Floor) - Trailing Script Lock"
-    elif "UTSA" in matchup_name:
-        return "TAKE: USF Alternate Lead Back Rush Yards (MORE 50.0 Floor) - Shootout Volume"
-    elif "Arkansas State" in matchup_name:
-        return "TAKE: South Alabama Team Total (MORE 24.5 Points) - Fast Tempo Cushion"
-        
-    # 2. NHL HOCKEY PICK MATRICES
-    if line_val >= 6.5:
-        return "TAKE: Alternate UNDER 7.5 Goals Slider - Public Inflated Bait Protection"
-    elif line_val <= 5.5:
-        return "TAKE: Alternate UNDER 6.5 Goals Slider - Sharp Money Trend Lock"
-        
-    return "TAKE: Adjusted Milestone Floor Slider - Low Consensus Value Spot"
-
 def fetch_network_feeds():
-    """Connects to hidden public network nodes to grab live, real-time lines and calculate picks."""
-    print("Initializing CEE Direct Pick Generation Scraper Feed...")
+    """Connects to hidden public network nodes to grab live, real-time lines for CFB and NHL slates."""
+    print("Initializing CEE Premium Network Scraper Feed...")
     
-    cfb_url = "https://espn.com"
+    cfb_url = "https://site.api.espn.com/apis/site/v2/sports/football/college-football/scoreboard"
     nhl_url = "https://espn.com"
     
     headers = {
@@ -42,11 +19,11 @@ def fetch_network_feeds():
     
     scraped_cfb_games = []
 
-    # CURRENT FOOTBALL TARGETS
+    # CURRENT FOOTBALL TARGETS (The engine sweeps the network for these matches)
     target_cfb = ["Sam Houston", "Liberty", "South Florida", "UTSA", "South Alabama", "Arkansas State"]
 
     try:
-        # ---- 1. DYNAMIC COLLEGE FOOTBALL EXTRACTION & CALCULATION ----
+        # ---- 1. DYNAMIC COLLEGE FOOTBALL EXTRACTION LAYER ----
         try:
             req_cfb = urllib.request.Request(cfb_url, headers=headers)
             with urllib.request.urlopen(req_cfb, timeout=10) as response:
@@ -58,22 +35,25 @@ def fetch_network_feeds():
                     if any(team in matchup_name for team in target_cfb):
                         ou_line = "54.5"
                         if competitions:
-                            odds = competitions.get('odds', [{}])
+                            odds = competitions[0].get('odds', [{}])
                             if odds:
-                                ou_line = str(odds.get('overUnder', '54.5'))
+                                ou_line = str(odds[0].get('overUnder', '54.5'))
                         
-                        # Generate the exact optimal bet using the system calculation engine
-                        calculated_pick = calculate_exact_picks(matchup_name, ou_line)
+                        edge = "TEMPO_MATRIX_EDGE"
+                        if "Liberty" in matchup_name:
+                            edge = "TRAILING_VOLUME_EDGE"
+                        elif "UTSA" in matchup_name:
+                            edge = "SHOOTOUT_VOLUME_FLOOR"
 
                         scraped_cfb_games.append({
                             "matchup": matchup_name.replace(" at ", " @ "),
                             "ou_line": ou_line,
-                            "edge_detection": calculated_pick  # This injects the pick directly into the card badge field!
+                            "edge_detection": edge
                         })
         except Exception as e_cfb:
             print(f"CFB Slate Processing Fault: {e_cfb}")
 
-        # ---- 2. DYNAMIC NHL EXTRACTION & PICK CALCULATION ----
+        # ---- 2. DYNAMIC NHL SLATE EXTRACTION LAYER (Pulls all games automatically) ----
         try:
             req_nhl = urllib.request.Request(nhl_url, headers=headers)
             with urllib.request.urlopen(req_nhl, timeout=10) as response:
@@ -82,23 +62,34 @@ def fetch_network_feeds():
                     competitions = event.get('competitions', [{}])
                     matchup_name = event.get('name', '')
                     
+                    # Safely extract live over/under goal metrics
                     ou_line = "6.0"
                     if competitions:
-                        odds = competitions.get('odds', [{}])
+                        odds = competitions[0].get('odds', [{}])
                         if odds:
-                            ou_line = str(odds.get('overUnder', '6.0'))
+                            ou_line = str(odds[0].get('overUnder', '6.0'))
                     
-                    calculated_pick = calculate_exact_picks(matchup_name, ou_line)
+                    # Automate hockey line calculations through the matrix filters
+                    edge = "NEUTRAL_GOALTENDING"
+                    try:
+                        line_val = float(ou_line)
+                        if line_val >= 6.5:
+                            edge = "PUBLIC_OVER_BAIT"
+                        elif line_val <= 5.5:
+                            edge = "SHARP_UNDER_SPLIT"
+                    except:
+                        pass
 
+                    # This pipes hockey straight into your premium cfb grid template setup!
                     scraped_cfb_games.append({
                         "matchup": f"[NHL] {matchup_name.replace(' at ', ' @ ')}",
                         "ou_line": ou_line,
-                        "edge_detection": calculated_pick
+                        "edge_detection": edge
                     })
         except Exception as e_nhl:
             print(f"NHL Slate Processing Fault: {e_nhl}")
 
-        # ---- 3. WRITE CALCULATED PAYLOAD TO BACKEND CACHE ----
+        # ---- 3. OVERWRITE BACKEND MATRIX DATA SHEET ----
         payload = {
             "framework_version": "9.5-Quantum-Core",
             "global_rules": {"block_volatile_micro_lines": True, "enforce_milestone_slider_floors": True},
@@ -110,7 +101,7 @@ def fetch_network_feeds():
 
         with open(DATA_FILE, 'w') as f:
             json.dump(payload, f, indent=2)
-        print("CEE Database Successfully Syncing Direct Betting Selections!")
+        print("CEE Database Successfully Syncing New Slate Layers!")
 
     except Exception as e:
         print(f"Global Feed Bridge Execution Fault: {e}")
