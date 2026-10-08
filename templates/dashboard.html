@@ -6,199 +6,257 @@
     <title>CEE SUPREME ACTION MATRIX</title>
     <style>
         body { 
-            background-color: #030708; 
-            color: #e2e8f0; 
+            background-color: #0d1117; 
+            color: #c9d1d9; 
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
             padding: 16px;
             margin: 0;
             -webkit-font-smoothing: antialiased;
         }
         
+        /* Banner Branding Header */
         .banner { 
-            background: linear-gradient(135deg, #091114 0%, #050b0d 100%); 
-            border: 1px solid #10b981; 
-            padding: 14px 18px; 
-            border-radius: 8px; 
-            font-weight: 800; 
-            letter-spacing: 0.05em;
-            margin-bottom: 24px; 
             display: flex; 
             justify-content: space-between; 
             align-items: center;
-            box-shadow: 0 0 15px rgba(16, 185, 129, 0.1);
+            margin-bottom: 20px; 
         }
         .banner-title {
             color: #ffffff;
             font-size: 15px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
+            font-weight: 800;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+        .sync-badge { 
+            color: #10b981; 
+            font-size: 11px; 
+            font-weight: 800; 
+            border: 1px solid #10b981;
+            padding: 4px 10px;
+            border-radius: 4px;
+            letter-spacing: 0.05em;
         }
 
-        .sharp-panel {
-            background: #090f11;
-            border: 1px solid #1e293b;
+        /* Top Panel - Live Action Commands Container */
+        .directive-panel {
+            border: 1px dashed #10b981;
+            background: rgba(9, 15, 17, 0.95);
             border-radius: 8px;
             padding: 16px;
             margin-bottom: 24px;
         }
-        .sharp-row {
+        .directive-title-row {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 10px;
+            margin-bottom: 14px;
+        }
+        .directive-header {
+            color: #ffffff;
+            font-size: 13px;
+            font-weight: 800;
+            letter-spacing: 0.03em;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .directive-status {
+            color: #10b981;
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 0.05em;
+        }
+        .directive-row {
+            margin-bottom: 14px;
+        }
+        .directive-row:last-child { margin-bottom: 0; }
+        .directive-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
             font-size: 13px;
         }
-        .sharp-row:last-child { margin-bottom: 0; }
-        .sharp-label { color: #ff5370; font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em; }
-        .sharp-value { color: #10b981; font-weight: 800; }
-        .sharp-desc { color: #64748b; font-size: 12px; margin-top: 2px; }
+        .directive-label { color: #58a6ff; font-weight: 800; letter-spacing: 0.02em; }
+        .directive-value { color: #10b981; font-weight: 800; text-align: right; }
+        .directive-desc { color: #8b949e; font-size: 12px; margin-top: 3px; line-height: 1.4; }
 
-        .section-title { 
+        /* Middle Panel - Syndicate Consensus Box */
+        .syndicate-panel {
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 24px;
+        }
+        .syndicate-title {
+            color: #8b949e;
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-bottom: 14px;
+        }
+        .syndicate-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 13px;
+            margin-bottom: 12px;
+        }
+        .syndicate-row:last-child { margin-bottom: 0; }
+        .group-name { color: #ffffff; font-weight: 700; }
+        .group-size { color: #8b949e; font-size: 11px; margin-top: 2px; }
+        .wager-value { color: #58a6ff; font-weight: 800; text-align: right; }
+        .resistance-value { color: #f0883e; font-size: 11px; font-weight: bold; margin-top: 2px; text-align: right; }
+
+        /* Layout Area Label Separators */
+        .section-separator { 
             font-size: 12px; 
             font-weight: 800; 
-            color: #94a3b8; 
+            color: #8b949e; 
             text-transform: uppercase; 
-            margin: 28px 0 14px 0; 
+            margin: 24px 0 14px 0; 
             letter-spacing: 0.08em;
             display: flex;
             align-items: center;
             gap: 6px;
         }
 
-        .matrix-card {
-            background: linear-gradient(180deg, #0b1316 0%, #070c0e 100%);
-            border: 1px solid #1e293b;
+        /* Bottom Section - Live Matchup Display Cards */
+        .monitor-card {
+            background: #161b22;
+            border: 1px solid #30363d;
             border-radius: 8px;
             padding: 16px;
-            margin-bottom: 14px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
+            margin-bottom: 12px;
         }
-        .card-header {
+        .card-main-line {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 12px;
+            margin-bottom: 6px;
         }
-        .card-matchup { font-size: 15px; font-weight: 800; color: #f8fafc; }
-        .card-score { font-size: 14px; font-weight: 800; color: #10b981; font-family: monospace; }
+        .matchup-text { font-size: 15px; font-weight: 800; color: #f0f6fc; }
+        .score-display { font-size: 16px; font-weight: 800; color: #10b981; font-family: monospace; }
         
-        .card-body {
-            display: block;
-            margin-top: 5px;
-            font-size: 13px;
+        .card-sub-line {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12px;
         }
-        .line-label { color: #64748b; }
-        .line-value { color: #ffffff; font-weight: 700; margin-left: 6px; }
-        
-        .pick-box {
-            background: rgba(16, 185, 129, 0.08); 
-            border: 1px dashed #10b981; 
-            padding: 10px; 
-            border-radius: 6px; 
-            color: #10b981; 
-            font-size: 12px; 
-            font-weight: bold; 
-            letter-spacing: 0.02em;
-            margin-top: 10px;
-        }
-        
-        .badge-status { background: rgba(16, 185, 129, 0.15); color: #10b981; border: 1px solid #10b981; font-size: 11px; padding: 5px 10px; border-radius: 4px; font-weight: 800; }
-        .kickoff-time { font-size: 11px; color: #f59e0b; margin-top: 10px; font-weight: 500; }
+        .weather-details { color: #8b949e; }
+        .time-status { color: #f0883e; font-weight: 800; letter-spacing: 0.03em; text-transform: uppercase; }
     </style>
 </head>
 <body>
 
+    <!-- Main Live Synced Layout Header -->
     <div class="banner">
-        <div class="banner-title">
-            <span style="color: #10b981;">●</span> CEE SUPREME ACTION MATRIX
-        </div>
-        <span id="sync-status" class="badge-status">LIVE SYNCING</span>
+        <div class="banner-title">🟢 CEE SUPREME ACTION MATRIX</div>
+        <span id="sync-status" class="sync-badge">LIVE SYNCING</span>
     </div>
 
-    <div class="sharp-panel">
-        <div class="sharp-row">
-            <span class="sharp-label">🎯 SHARP SELECTION SHEET</span>
-            <span style="color: #64748b; font-size: 11px; font-weight: bold;">CONTRARIAN LOGIC</span>
+    <!-- Live Automated Directive Sheet Panel Layout -->
+    <div class="directive-panel">
+        <div class="directive-title-row">
+            <span class="directive-header">⚡ LIVE AUTOMATED COMM SHEET</span>
+            <span class="directive-status">SCANNING FEEDS</span>
         </div>
-        <div style="border-bottom: 1px solid #1e293b; margin: 10px 0;"></div>
-        <div class="sharp-row">
-            <span style="color: #94a3b8;">● GAME SPREED EDGE</span>
-            <span class="sharp-value" style="color: #38bdf8;">Southern Miss +10.5</span>
-        </div>
-        <div class="sharp-desc">Public is forcing value into the underdog trench script.</div>
-        <div class="sharp-row" style="margin-top: 14px;">
-            <span style="color: #94a3b8;">● TOTALS OVER/UNDER</span>
-            <span class="sharp-value">USM @ TROY UNDER 51.5</span>
-        </div>
-        <div class="sharp-desc">Clock-chewing ground game will trap the public Over.</div>
-    </div>
-
-    <div class="section-title">📺 UPCOMING SLATES & CEE MARGIN EDGES</div>
-
-    <div id="matrix-container-slots">
-        {% for game in cache.cfb_slate.games %}
-        <div class="matrix-card">
-            <div class="card-header">
-                <span class="card-matchup">{{ game.matchup }}</span>
-                <span class="card-score" style="color: #ff5370; font-size: 11px;">CEE INSIGHT</span>
+        <div style="border-bottom: 1px solid rgba(16, 185, 129, 0.2); margin-bottom: 14px;"></div>
+        <div id="directive-container">
+            {% for row in cache.directive_sheet %}
+            <div class="directive-row">
+                <div class="directive-meta">
+                    <span class="directive-label">📌 {{ row.label }}</span>
+                    <span class="directive-value">👉 {{ row.value }}</span>
+                </div>
+                <div class="directive-desc">{{ row.desc }}</div>
             </div>
-            <div class="card-body">
-                <div style="margin-bottom: 10px; font-size: 12px; color: #94a3b8;">
-                    <span>Current Line:</span><span class="line-value">{{ game.ou_line }}</span>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Syndicate Consensus & Sentiment Volatility Panel Layout -->
+    <div class="syndicate-panel">
+        <div class="syndicate-title">👁️ SYNDICATE CONSENSUS & SENTIMENT VOLATILITY</div>
+        <div style="border-bottom: 1px solid #30363d; margin-bottom: 14px;"></div>
+        <div id="syndicate-container">
+            {% for group in cache.syndicate_tracking %}
+            <div class="syndicate-row">
+                <div>
+                    <div class="group-name">{{ group.group }}</div>
+                    <div class="group-size">{{ group.size }}</div>
                 </div>
-                <div class="pick-box">
-                    📢 {{ game.edge_detection }}
+                <div>
+                    <div class="wager-value">{{ group.wager }}</div>
+                    <div class="resistance-value">{{ group.sentiment }}</div>
                 </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="section-separator">📺 LIVE SLATE & STADIUM WEATHER MONITOR</div>
+
+    <!-- Real-Time Target Game Matrix Grid Slots -->
+    <div id="monitor-container">
+        {% for game in cache.live_slate_monitor %}
+        <div class="monitor-card">
+            <div class="card-main-line">
+                <span class="matchup-text"><small style="color: #8b949e; font-weight: bold;">{{ game.sport }}</small> {{ game.matchup }}</span>
+                <span class="score-display">{{ game.score }}</span>
+            </div>
+            <div class="card-sub-line">
+                <span class="weather-details">{{ game.details }}</span>
+                <span class="time-status">{{ game.time_status }}</span>
             </div>
         </div>
         {% endfor %}
     </div>
 
+    <!-- Native Client Background Automation Injector Route -->
     <script>
         async function fetchMatrixUpdate() {
             const statusIndicator = document.getElementById('sync-status');
             try {
                 statusIndicator.textContent = "FETCHING...";
-                statusIndicator.style.borderColor = "#df8a13";
-                statusIndicator.style.color = "#df8a13";
+                statusIndicator.style.borderColor = "#f0883e";
+                statusIndicator.style.color = "#f0883e";
 
                 const response = await fetch('/api/v9/engine/cache');
-                if (!response.ok) throw new Error("Stalled data response node");
+                if (!response.ok) throw new Error("Stalled data connection");
                 const data = await response.json();
 
-                const container = document.getElementById('matrix-container-slots');
-                container.innerHTML = '';
-
-                data.cfb_slate.games.forEach(game => {
-                    container.innerHTML += `
-                        <div class="matrix-card">
-                            <div class="card-header">
-                                <span class="card-matchup">${game.matchup}</span>
-                                <span class="card-score" style="color: #ff5370; font-size: 11px;">CEE INSIGHT</span>
+                // 1. Rebuild Directive Commands Panel
+                const directiveContainer = document.getElementById('directive-container');
+                directiveContainer.innerHTML = '';
+                data.directive_sheet.forEach(row => {
+                    directiveContainer.innerHTML += `
+                        <div class="directive-row">
+                            <div class="directive-meta">
+                                <span class="directive-label">📌 ${row.label}</span>
+                                <span class="directive-value">👉 ${row.value}</span>
                             </div>
-                            <div class="card-body">
-                                <div style="margin-bottom: 10px; font-size: 12px; color: #94a3b8;">
-                                    <span>Current Line:</span><span class="line-value" style="color: #ffffff; font-weight: bold; margin-left: 6px;">${game.ou_line}</span>
-                                </div>
-                                <div class="pick-box">
-                                    📢 ${game.edge_detection}
-                                </div>
+                            <div class="directive-desc">${row.desc}</div>
+                        </div>`;
+                });
+
+                // 2. Rebuild Syndicate Tracker Board
+                const syndicateContainer = document.getElementById('syndicate-container');
+                syndicateContainer.innerHTML = '';
+                data.syndicate_tracking.forEach(group => {
+                    syndicateContainer.innerHTML += `
+                        <div class="syndicate-row">
+                            <div>
+                                <div class="group-name">${group.group}</div>
+                                <div class="group-size">${group.size}</div>
+                            </div>
+                            <div>
+                                <div class="wager-value">${group.wager}</div>
+                                <div class="resistance-value">${group.sentiment}</div>
                             </div>
                         </div>`;
                 });
 
-                statusIndicator.textContent = "LIVE SYNCED";
-                statusIndicator.style.borderColor = "#10b981";
-                statusIndicator.style.color = "#10b981";
-            } catch (error) {
-                console.error("Poller Error:", error);
-                statusIndicator.textContent = "SYNC ERROR";
-                statusIndicator.style.borderColor = "#ef4444";
-                statusIndicator.style.color = "#ef4444";
-            }
-        }
-        setInterval(fetchMatrixUpdate, 30000);
-    </script>
-</body>
-</html>
