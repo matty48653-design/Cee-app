@@ -25,23 +25,23 @@
     ]
   },
   "nfl_player_props": {
-    "status": "active_monitoring",
+    "status": "scanning_market_feeds",
     "milestones": [
       {
-        "player": "Jalon Daniels",
-        "team": "TB",
-        "metric": "Pass Yards",
-        "house_line": "148.5",
-        "safety_floor": "150+",
-        "edge_status": "HIGH_TRAILING_VOLUME"
+        "player": "Sam Houston QB",
+        "team": "SHSU",
+        "metric": "Alternate Pass Yards",
+        "house_line": "Market Baseline",
+        "safety_floor": "Look for 175+ Sliders",
+        "edge_status": "CEE_TARGET_MORE"
       },
       {
-        "player": "CeeDee Lamb",
-        "team": "DAL",
-        "metric": "Receptions",
-        "house_line": "6.0",
-        "safety_floor": "6+",
-        "edge_status": "SECURE_ANCHOR_FLOOR"
+        "player": "South Florida Lead Back",
+        "team": "USF",
+        "metric": "Alternate Rushing Yards",
+        "house_line": "Market Baseline",
+        "safety_floor": "Look for 50+ Sliders",
+        "edge_status": "CEE_TARGET_MORE"
       }
     ]
   },
