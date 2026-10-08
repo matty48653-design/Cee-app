@@ -14,7 +14,6 @@
             -webkit-font-smoothing: antialiased;
         }
         
-        /* Banner Branding Header */
         .banner { 
             display: flex; 
             justify-content: space-between; 
@@ -38,9 +37,8 @@
             letter-spacing: 0.05em;
         }
 
-        /* Top Panel - Live Action Commands Container */
         .directive-panel {
-            border: 1px dashed #10b981;
+            border: 1px solid #10b981;
             background: rgba(9, 15, 17, 0.95);
             border-radius: 8px;
             padding: 16px;
@@ -57,19 +55,13 @@
             font-size: 13px;
             font-weight: 800;
             letter-spacing: 0.03em;
-            display: flex;
-            align-items: center;
-            gap: 6px;
         }
         .directive-status {
             color: #10b981;
             font-size: 11px;
             font-weight: 800;
-            letter-spacing: 0.05em;
         }
-        .directive-row {
-            margin-bottom: 14px;
-        }
+        .directive-row { margin-bottom: 14px; }
         .directive-row:last-child { margin-bottom: 0; }
         .directive-meta {
             display: flex;
@@ -77,11 +69,10 @@
             align-items: flex-start;
             font-size: 13px;
         }
-        .directive-label { color: #58a6ff; font-weight: 800; letter-spacing: 0.02em; }
+        .directive-label { color: #58a6ff; font-weight: 800; }
         .directive-value { color: #10b981; font-weight: 800; text-align: right; }
-        .directive-desc { color: #8b949e; font-size: 12px; margin-top: 3px; line-height: 1.4; }
+        .directive-desc { color: #8b949e; font-size: 12px; margin-top: 3px; }
 
-        /* Middle Panel - Syndicate Consensus Box */
         .syndicate-panel {
             background: #161b22;
             border: 1px solid #30363d;
@@ -104,13 +95,11 @@
             font-size: 13px;
             margin-bottom: 12px;
         }
-        .syndicate-row:last-child { margin-bottom: 0; }
         .group-name { color: #ffffff; font-weight: 700; }
-        .group-size { color: #8b949e; font-size: 11px; margin-top: 2px; }
-        .wager-value { color: #58a6ff; font-weight: 800; text-align: right; }
-        .resistance-value { color: #f0883e; font-size: 11px; font-weight: bold; margin-top: 2px; text-align: right; }
+        .group-size { color: #8b949e; font-size: 11px; }
+        .wager-value { color: #58a6ff; font-weight: 800; }
+        .resistance-value { color: #f0883e; font-size: 11px; font-weight: bold; }
 
-        /* Layout Area Label Separators */
         .section-separator { 
             font-size: 12px; 
             font-weight: 800; 
@@ -118,18 +107,15 @@
             text-transform: uppercase; 
             margin: 24px 0 14px 0; 
             letter-spacing: 0.08em;
-            display: flex;
-            align-items: center;
-            gap: 6px;
         }
 
-        /* Bottom Section - Live Matchup Display Cards */
+        /* Upgraded Monitor Cards with Micro-Metrics Layout */
         .monitor-card {
             background: #161b22;
             border: 1px solid #30363d;
             border-radius: 8px;
             padding: 16px;
-            margin-bottom: 12px;
+            margin-bottom: 16px;
         }
         .card-main-line {
             display: flex;
@@ -145,20 +131,32 @@
             justify-content: space-between;
             align-items: center;
             font-size: 12px;
+            border-bottom: 1px solid #21262d;
+            padding-bottom: 10px;
+            margin-bottom: 10px;
         }
         .weather-details { color: #8b949e; }
-        .time-status { color: #f0883e; font-weight: 800; letter-spacing: 0.03em; text-transform: uppercase; }
+        .time-status { color: #f0883e; font-weight: 800; text-transform: uppercase; }
+
+        /* Tactical Micro-Metrics Text Styles */
+        .metric-block {
+            font-size: 12px;
+            margin-top: 6px;
+            line-height: 1.4;
+        }
+        .met-travel { color: #58a6ff; font-weight: 600; }
+        .met-crowd  { color: #ff7b72; font-weight: 600; }
+        .met-injury { color: #d2a8ff; font-weight: 600; }
+        .met-morale { color: #ffa657; font-weight: 600; }
     </style>
 </head>
 <body>
 
-    <!-- Main Live Synced Layout Header -->
     <div class="banner">
         <div class="banner-title">🟢 CEE SUPREME ACTION MATRIX</div>
         <span id="sync-status" class="sync-badge">LIVE SYNCING</span>
     </div>
 
-    <!-- Live Automated Directive Sheet Panel Layout -->
     <div class="directive-panel">
         <div class="directive-title-row">
             <span class="directive-header">⚡ LIVE AUTOMATED COMM SHEET</span>
@@ -178,7 +176,6 @@
         </div>
     </div>
 
-    <!-- Syndicate Consensus & Sentiment Volatility Panel Layout -->
     <div class="syndicate-panel">
         <div class="syndicate-title">👁️ SYNDICATE CONSENSUS & SENTIMENT VOLATILITY</div>
         <div style="border-bottom: 1px solid #30363d; margin-bottom: 14px;"></div>
@@ -198,9 +195,8 @@
         </div>
     </div>
 
-    <div class="section-separator">📺 LIVE SLATE & STADIUM WEATHER MONITOR</div>
+    <div class="section-separator">📺 LIVE SLATE & HUMAN ADVANTAGE INSIGHTS</div>
 
-    <!-- Real-Time Target Game Matrix Grid Slots -->
     <div id="monitor-container">
         {% for game in cache.live_slate_monitor %}
         <div class="monitor-card">
@@ -212,11 +208,15 @@
                 <span class="weather-details">{{ game.details }}</span>
                 <span class="time-status">{{ game.time_status }}</span>
             </div>
+            <!-- Human & Structural Metrics Presentation Blocks -->
+            <div class="metric-block met-travel">{{ game.travel_distance }}</div>
+            <div class="metric-block met-crowd">{{ game.crowd_factor }}</div>
+            <div class="metric-block met-injury">{{ game.injury_report }}</div>
+            <div class="metric-block met-morale">{{ game.team_morale }}</div>
         </div>
         {% endfor %}
     </div>
 
-    <!-- Native Client Background Automation Injector Route -->
     <script>
         async function fetchMatrixUpdate() {
             const statusIndicator = document.getElementById('sync-status');
