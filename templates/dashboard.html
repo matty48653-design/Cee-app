@@ -50,17 +50,8 @@
             align-items: center;
             margin-bottom: 14px;
         }
-        .directive-header {
-            color: #ffffff;
-            font-size: 13px;
-            font-weight: 800;
-            letter-spacing: 0.03em;
-        }
-        .directive-status {
-            color: #10b981;
-            font-size: 11px;
-            font-weight: 800;
-        }
+        .directive-header { color: #ffffff; font-size: 13px; font-weight: 800; }
+        .directive-status { color: #10b981; font-size: 11px; font-weight: 800; }
         .directive-row { margin-bottom: 14px; }
         .directive-row:last-child { margin-bottom: 0; }
         .directive-meta {
@@ -109,7 +100,6 @@
             letter-spacing: 0.08em;
         }
 
-        /* Upgraded Monitor Cards with Micro-Metrics Layout */
         .monitor-card {
             background: #161b22;
             border: 1px solid #30363d;
@@ -138,16 +128,15 @@
         .weather-details { color: #8b949e; }
         .time-status { color: #f0883e; font-weight: 800; text-transform: uppercase; }
 
-        /* Tactical Micro-Metrics Text Styles */
-        .metric-block {
-            font-size: 12px;
-            margin-top: 6px;
-            line-height: 1.4;
-        }
+        .metric-block { font-size: 12px; margin-top: 6px; line-height: 1.4; }
         .met-travel { color: #58a6ff; font-weight: 600; }
         .met-crowd  { color: #ff7b72; font-weight: 600; }
         .met-injury { color: #d2a8ff; font-weight: 600; }
         .met-morale { color: #ffa657; font-weight: 600; }
+        
+        /* New Premium Tactical Spacing Styles */
+        .met-handle { color: #79c0ff; font-weight: 700; border-top: 1px dashed #21262d; padding-top: 6px; margin-top: 8px; }
+        .met-index  { color: #56d364; font-weight: 700; }
     </style>
 </head>
 <body>
@@ -208,11 +197,12 @@
                 <span class="weather-details">{{ game.details }}</span>
                 <span class="time-status">{{ game.time_status }}</span>
             </div>
-            <!-- Human & Structural Metrics Presentation Blocks -->
             <div class="metric-block met-travel">{{ game.travel_distance }}</div>
             <div class="metric-block met-crowd">{{ game.crowd_factor }}</div>
             <div class="metric-block met-injury">{{ game.injury_report }}</div>
             <div class="metric-block met-morale">{{ game.team_morale }}</div>
+            <div class="metric-block met-handle">{{ game.sharp_handle }}</div>
+            <div class="metric-block met-index">{{ game.power_trajectory }}</div>
         </div>
         {% endfor %}
     </div>
@@ -229,7 +219,6 @@
                 if (!response.ok) throw new Error("Stalled data connection");
                 const data = await response.json();
 
-                // 1. Rebuild Directive Commands Panel
                 const directiveContainer = document.getElementById('directive-container');
                 directiveContainer.innerHTML = '';
                 data.directive_sheet.forEach(row => {
@@ -243,7 +232,6 @@
                         </div>`;
                 });
 
-                // 2. Rebuild Syndicate Tracker Board
                 const syndicateContainer = document.getElementById('syndicate-container');
                 syndicateContainer.innerHTML = '';
                 data.syndicate_tracking.forEach(group => {
@@ -260,3 +248,4 @@
                         </div>`;
                 });
 
+                const monitorContainer = document.getElementById('monitor-container');
