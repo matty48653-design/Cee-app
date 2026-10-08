@@ -5,65 +5,61 @@
     {
       "group": "Alpha Syndicate",
       "size": "Size: 5x",
-      "wager": "Southern Miss +10.5",
+      "wager": "Sam Houston Pass Volume Sliders",
       "sentiment": "94% Public Resistance"
     },
     {
-      "group": "Wallet #4092 (High-Stakes)",
-      "size": "Size: 3.5x",
-      "wager": "Nashville ML (+130)",
-      "sentiment": "87% Public Resistance"
-    },
-    {
       "group": "Vegas Sharp Box",
-      "size": "Size: 2x",
-      "wager": "Ottawa ML (+115)",
-      "sentiment": "69% Public Resistance"
+      "size": "Size: 2.5x",
+      "wager": "NHL Under Adjustments",
+      "sentiment": "74% Public Resistance"
     }
   ],
   "directive_sheet": [
     {
       "label": "LIVE SPREAD RECON",
-      "value": "Awaiting Kickoff",
-      "desc": "Locks target spread instructions automatically as public volume surges."
+      "value": "TAKE: Sam Houston Alternate Pass Yards (MORE 175.0 Floor)",
+      "desc": "Current market context target: Williams Stadium • Line: Liberty -13.5 (O/U 52.5)."
     },
     {
       "label": "LIVE OVER/UNDER RECON",
-      "value": "Awaiting Kickoff",
+      "value": "Analyzing Pacing",
       "desc": "Will display exact live points threshold targets based on quarter pacing."
-    },
-    {
-      "label": "NHL PUCK LINE COMMAND",
-      "value": "Nashville +1.5 Cover",
-      "desc": "Lock before puck drop; high institutional sharp cash alignment."
-    },
-    {
-      "label": "NHL MONEYLINE COMMAND",
-      "value": "Ottawa Senators ML",
-      "desc": "Grab at +115 or better; fading public lopsided volume handle."
     }
   ],
   "live_slate_monitor": [
     {
       "sport": "CFB",
-      "matchup": "Southern Miss @ Troy",
-      "score": "17 - 24",
-      "time_status": "4TH QUARTER • FINAL",
-      "details": "Outdoor Open-Air • 72° • Clear • Wind: 5mph"
+      "matchup": "Sam Houston @ Liberty",
+      "score": "0 - 0",
+      "time_status": "THU 7:00 PM • UPCOMING",
+      "details": "Williams Stadium • Line: Liberty -13.5 (O/U 52.5)",
+      "travel_distance": "🚀 TRAVEL TRAJECTORY: 1,220 Miles East • Severe Fatigue Threshold Cross",
+      "crowd_factor": "🔊 CROWD ENVIRONMENT: Lynchburg Hostile • Decibel Index: High (Cap Playbook Comm)",
+      "injury_report": "⚠️ INJURY MATRIX: Sam Houston WR1 (Questionable - Hamstring) • Limits deep vertical options",
+      "team_morale": "🧠 ROSTER MORALE: High Volatility • Bouncing back from crushing late-game defensive lapse"
+    },
+    {
+      "sport": "CFB",
+      "matchup": "South Florida @ UTSA",
+      "score": "0 - 0",
+      "time_status": "THU 7:30 PM • UPCOMING",
+                    "details": "Alamodome • Line: UTSA -4.5 (O/U 58.5)",
+      "travel_distance": "🚀 TRAVEL TRAJECTORY: 1,140 Miles West • 2 Time Zone Shift Effect",
+      "crowd_factor": "🔊 CROWD ENVIRONMENT: Dome Enclosure Noise Multiplier • Favors Ground Cadence",
+      "injury_report": "⚠️ INJURY MATRIX: USF Starting Right Tackle (OUT - Ankle) • Weakens front edge protection",
+      "team_morale": "🧠 ROSTER MORALE: Stable Core • Focused on heavy trench script to offset line injuries"
     },
     {
       "sport": "NHL",
-      "matchup": "Ottawa Senators @ Detroit Red Wings",
-      "score": "3 - 2",
-      "time_status": "3RD PERIOD • 2:15",
-      "details": "Indoor Arena • Indoor • Climate Controlled"
-    },
-    {
-      "sport": "NHL",
-      "matchup": "Nashville Predators @ Toronto Maple Leafs",
-      "score": "1 - 3",
-      "time_status": "FINAL",
-      "details": "Indoor Arena • Indoor • Climate Controlled • POSITION SECURED"
+      "matchup": "Montreal Canadiens @ Boston Bruins",
+      "score": "0 - 0",
+      "time_status": "THU 7:00 PM • UPCOMING",
+      "details": "TD Garden • Arena Main Track (O/U 6.0)",
+      "travel_distance": "🚀 TRAVEL TRAJECTORY: 310 Miles South • Minimal Rest Restriction Impact",
+      "crowd_factor": "🔊 CROWD ENVIRONMENT: TD Garden High Intensity • Amplifies Early Penalty Whistles",
+      "injury_report": "⚠️ INJURY MATRIX: Boston Clear • Montreal Defenceman (Day-to-Day - Upper Body)",
+      "team_morale": "🧠 ROSTER MORALE: Premium Focus • Standard Divisional Rivalry Peak Intensity"
     }
   ]
 }
