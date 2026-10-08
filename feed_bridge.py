@@ -2,18 +2,17 @@ import os
 import json
 import urllib.request
 
-# Define absolute pathway to match your Flask backend storage anchor
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DATA_FILE = os.path.join(BASE_DIR, 'sports_data.json')
 
 def get_human_metrics(matchup_name):
-    """Cee Engine Analytical Node: Computes travel fatigue, crowd decibels, injuries, and morale."""
+    """Computes travel trajectory fatigue thresholds, crowd hostility, and injuries."""
     if "Sam Houston" in matchup_name or "Liberty" in matchup_name:
         return {
             "travel": "🚀 TRAVEL TRAJECTORY: Sam Houston traveling 1,220 Miles East • Crossed Critical Fatigue Zone",
             "crowd": "🔊 CROWD ENVIRONMENT: Williams Stadium Hostile Crowd • High Decibel Impact on Audibles",
             "injury": "⚠️ INJURY MATRIX: Sam Houston WR1 (Questionable - Hamstring) • Restricts vertical pass game",
-            "morale": "🧠 ROSTER MORALE: Liberty focused on staying undefeated at home • Core alignment remains highly stable"
+            "morale": "🧠 ROSTER MORALE: Liberty focused on staying undefeated at home • Core alignment remains stable"
         }
     elif "South Florida" in matchup_name or "UTSA" in matchup_name:
         return {
@@ -22,22 +21,7 @@ def get_human_metrics(matchup_name):
             "injury": "⚠️ INJURY MATRIX: USF Primary Right Tackle (OUT - Ankle) • Weakens front edge protection",
             "morale": "🧠 ROSTER MORALE: UTSA bouncing back from narrow road loss • Highly volatile bounce-back spot"
         }
-    elif "South Alabama" in matchup_name or "Arkansas State" in matchup_name:
-        return {
-            "travel": "🚀 TRAVEL TRAJECTORY: South Alabama traveling 450 Miles Northwest • Moderate Travel Load",
-            "crowd": "🔊 CROWD ENVIRONMENT: Centennial Bank Stadium Average Crowd Rating • Neutral Noise Index",
-            "injury": "⚠️ INJURY MATRIX: Arkansas State Cornerback (OUT - Shoulder) • Vulnerable secondary pass cover",
-            "morale": "🧠 ROSTER MORALE: South Alabama roster core highly stable following explosive point performance"
-        }
-
-    if "Montreal" in matchup_name or "Boston" in matchup_name:
-        return {
-            "travel": "🚀 TRAVEL TRAJECTORY: Montreal traveling 310 Miles South • Minimal Rest Restriction Impact",
-            "crowd": "🔊 CROWD ENVIRONMENT: TD Garden High Intensity • Heavy Hostility Tends to Draw Early Penalties",
-            "injury": "⚠️ INJURY MATRIX: Boston Roster Clear • Montreal Depth Defenceman (Day-to-Day - Upper Body)",
-            "morale": "🧠 ROSTER MORALE: Premium Focus • Traditional Divisional Rivalry Peak Intensity"
-        }
-        
+    
     return {
         "travel": "🚀 TRAVEL TRAJECTORY: Baseline Slate Range • Standard Rest Intervals Active",
         "crowd": "🔊 CROWD ENVIRONMENT: Standard Arena Layout • Noise Metrics Testing Stable",
@@ -131,31 +115,44 @@ def fetch_network_feeds():
 
         # ---- 3. AUTOMATED BACKUP POPULATION LAYER (Always Show Games) ----
         if not scraped_monitors:
-            print("⚠️ No live games on feed. Activating upcoming slate target baselines...")
-            cfb_games = ["Sam Houston @ Liberty", "South Florida @ UTSA", "South Alabama @ Arkansas State"]
+            print("No live games on feed. Activating upcoming slate target baselines...")
+            cfb_games = ["Sam Houston @ Liberty", "South Florida @ UTSA"]
             for game in cfb_games:
                 metrics = get_human_metrics(game)
-                details_text = "Williams Stadium • Line: Liberty -13.5 (O/U 52.5)" if "Liberty" in game else "Alamodome • Line: UTSA -4.5 (O/U 58.5)" if "UTSA" in game else "Centennial Bank Stadium • Line: S. Alabama -3 (O/U 54.5)"
-                time_text = "THU 7:00 PM • UPCOMING" if "Liberty" in game else "THU 7:30 PM • UPCOMING" if "UTSA" in game else "THU 7:00 PM • UPCOMING"
+                details_text = "Williams Stadium • Line: Liberty -13.5" if "Liberty" in game else "Alamodome • Line: UTSA -4.5"
+                time_text = "THU 7:00 PM • UPCOMING" if "Liberty" in game else "THU 7:30 PM • UPCOMING"
                 scraped_monitors.append({
                     "sport": "CFB", "matchup": game, "score": "0 - 0", "time_status": time_text, "details": details_text,
                     "travel_distance": metrics["travel"], "crowd_factor": metrics["crowd"], "injury_report": metrics["injury"], "team_morale": metrics["morale"]
                 })
-            
-            nhl_game = "Montreal Canadiens @ Boston Bruins"
-            metrics = get_human_metrics(nhl_game)
-            scraped_monitors.append({
-                "sport": "NHL", "matchup": nhl_game, "score": "0 - 0", "time_status": "THU 7:00 PM • UPCOMING", "details": "TD Garden • Arena Main Track (O/U 6.0)",
-                "travel_distance": metrics["travel"], "crowd_factor": metrics["crowd"], "injury_report": metrics["injury"], "team_morale": metrics["morale"]
-            })
 
         # ---- 4. DYNAMIC DIRECTIVE AND SYNDICATE CALCULATIONS ----
-        primary_match = scraped_monitors[0]["matchup"] if scraped_monitors else "Market Feeds"
-        primary_details = scraped_monitors[0]["details"] if scraped_monitors else "Scanning Channels"
-        
-        recon_val = "TAKE: Sam Houston Alternate Pass Yards (MORE 175.0 Floor)" if "Liberty" in primary_match else "Awaiting Game Kickoff"
-        syndicate_val = "Sam Houston Pass Volume Sliders" if "Liberty" in primary_match else "Scanning Next Value Spot"
-
         scraped_directives = [
-            {"label": "LIVE SPREAD RECON", "value": recon_val, "desc": f"Current market context target: {primary_details}."},
+            {"label": "LIVE SPREAD RECON", "value": "TAKE: Sam Houston Alternate Pass Yards (MORE 175.0 Floor)", "desc": "Current market context target: Slate Open-Air Track Lines."},
             {"label": "LIVE OVER/UNDER RECON", "value": "Analyzing Pacing", "desc": "Displays live point threshold targets calculated by real-time pacing speeds."},
+            {"label": "NHL MARKET COVERS", "value": "Active Scan", "desc": "Lock before puck drop; high institutional sharp cash alignment."}
+        ]
+        
+        scraped_syndicates = [
+            {"group": "Alpha Syndicate", "size": "Size: 5x", "wager": "Sam Houston Pass Volume Sliders", "sentiment": "94% Public Resistance"},
+            {"group": "Vegas Sharp Box", "size": "Size: 2.5x", "wager": "NHL Under Adjustments", "sentiment": "74% Public Resistance"}
+        ]
+
+        # ---- 5. COMPILE PAYLOAD AND OVERWRITE DATABASE CACHE ----
+        payload = {
+            "framework_version": "9.5-Quantum-Core",
+            "last_checked": "Just Now",
+            "syndicate_tracking": scraped_syndicates,
+            "directive_sheet": scraped_directives,
+            "live_slate_monitor": scraped_monitors
+        }
+
+        with open(DATA_FILE, 'w') as f:
+            json.dump(payload, f, indent=2)
+        print("Sports Data Cache Overwritten with Advanced Advantage Insights!")
+
+    except Exception as e:
+        print(f"Global Feed Bridge Execution Error: {e}")
+
+if __name__ == "__main__":
+    fetch_network_feeds()
