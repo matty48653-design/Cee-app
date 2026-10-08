@@ -1,45 +1,82 @@
 import os
-import random
-from flask import Flask, request, render_template_string
+import json
+import time
+import requests
+from flask import Flask, render_template, jsonify, request, render_template_string
 
 app = Flask(__name__)
 
-# System database stream for your active slates
-def get_live_matrix_feeds():
-    return [
-        {
-            "id": "game_1",
-            "sport": "CFB",
-            "matchup": "Sam Houston @ Liberty",
-            "venue": "Williams Stadium",
-            "time_label": "THU 7:00 PM • UPCOMING",
-            "spread_line": "Liberty -13.5",
-            "ou_line": "O/U 52.5",
-            "trajectory": "1,220 Miles East • Severe Fatigue Threshold Cross",
-            "crowd_env": "Lynchburg Hostile • Decibel Index: High (Cap Playbook Comm)",
-            "injury_notes": "INJURY MATRIX: Sam Houston WR1 (Questionable)",
-            "rec_play": "Sam Houston Alternate Pass Yards (MORE 175.0 Floor)",
-            "ticket_pct": 6,   # Crowd Count
-            "handle_pct": 44,  # Real Cash
-        },
-        {
-            "id": "game_2",
-            "sport": "NFL",
-            "matchup": "Tampa Bay @ Dallas",
-            "venue": "AT&T Stadium",
-            "time_label": "THU 8:15 PM • UPCOMING",
-            "spread_line": "Cowboys -8.5",
-            "ou_line": "O/U 47.5",
-            "trajectory": "Inside Territory • High Humidity Transition Floor",
-            "crowd_env": "Arlington Loud • Structural Acoustics Maximized",
-            "injury_notes": "INJURY MATRIX: Baker Mayfield OUT (Thumb) • Jalon Daniels Starting",
-            "rec_play": "Jalon Daniels MORE 15+ Alternate Completions",
-            "ticket_pct": 19,  # Crowd Count
-            "handle_pct": 52,  # Real Cash
-        }
-    ]
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DATA_FILE = os.path.join(BASE_DIR, 'sports_data.json')
 
-# Integrated Frontend HTML Layout Template Structure
+# STEP 1 & 2: Safe API Ingestion Function using your Environment Key
+def get_live_matrix_feeds():
+    # Safely look for your hidden master token variable on the server
+    api_key = os.environ.get("SPORTS_DATA_KEY")
+    
+    # Fallback to pristine local mock array if key isn't active yet
+    if not api_key:
+        return [
+            {
+                "id": "game_1",
+                "sport": "CFB",
+                "matchup": "Sam Houston @ Liberty",
+                "venue": "Williams Stadium",
+                "time_label": "THU 7:00 PM • UPCOMING",
+                "spread_line": "Liberty -13.5",
+                "ou_line": "O/U 52.5",
+                "trajectory": "1,220 Miles East • Severe Fatigue Threshold Cross",
+                "crowd_env": "Lynchburg Hostile • Decibel Index: High (Cap Playbook Comm)",
+                "injury_notes": "INJURY MATRIX: Sam Houston WR1 (Questionable)",
+                "rec_play": "Sam Houston Alternate Pass Yards (MORE 175.0 Floor)",
+                "ticket_pct": 6,   # Crowd Count
+                "handle_pct": 44,  # Real Cash
+            },
+            {
+                "id": "game_2",
+                "sport": "NFL",
+                "matchup": "Tampa Bay @ Dallas",
+                "venue": "AT&T Stadium",
+                "time_label": "THU 8:15 PM • UPCOMING",
+                "spread_line": "Cowboys -8.5",
+                "ou_line": "O/U 47.5",
+                "trajectory": "Inside Territory • High Humidity Transition Floor",
+                "crowd_env": "Arlington Loud • Structural Acoustics Maximized",
+                "injury_notes": "INJURY MATRIX: Baker Mayfield OUT (Thumb) • Jalon Daniels Starting",
+                "rec_play": "Jalon Daniels MORE 15+ Alternate Completions",
+                "ticket_pct": 19,  # Crowd Count
+                "handle_pct": 52,  # Real Cash
+            }
+        ]
+    
+    # Official whitelisted datacenter endpoint connection string
+    url = "https://api-sports.io"
+    headers = {"x-apisports-key": api_key}
+    
+    try:
+        response = requests.get(url, headers=headers, timeout=10)
+        return response.json().get("results", [])
+    except Exception:
+        return []
+
+# Core data management from your stable original version
+def load_data():
+    if os.path.exists(DATA_FILE):
+        try:
+            with open(DATA_FILE, 'r') as f:
+                return json.load(f)
+        except Exception:
+            return {}
+    return {}
+
+def save_data(data):
+    try:
+        with open(DATA_FILE, 'w') as f:
+            json.dump(data, f, indent=4)
+    except Exception as e:
+        print(f"Error saving data: {e}")
+
+# Integrated Web Interface Layout Template Structure
 HTML_TEMPLATE = """
 <!DOCTYPE html>
 <html lang="en">
@@ -197,7 +234,7 @@ HTML_TEMPLATE = """
 </head>
 <body>
     <div class="app-container">
-        <form method="POST" action="/">
+        <form method="POST" action="/api/update_unit_form">
             <div class="header-box">
                 <div class="title-main">🟢 CEE SUPREME ACTION MATRIX</div>
                 <div class="status-sync">LIVE SYNCING</div>
@@ -242,41 +279,3 @@ HTML_TEMPLATE = """
                             <div class="grid-val text-high">{{ game.handle_pct }}%</div>
                         </div>
                         <div>
-                            <div style="font-size: 0.65rem; color: var(--text-dim);">📊 CASH GAP</div>
-                            <div class="grid-val text-alert">+{{ gap }}%</div>
-                        </div>
-                    </div>
-                    
-                    <div style="font-size: 0.65rem; color: var(--text-dim); margin-top: 8px; line-height: 1.2;">
-                        📍 Environment: {{ game.crowd_env }} <br>
-                        ⚠️ {{ game.injury_notes }}
-                    </div>
-                </div>
-            {% endfor %}
-
-            <div class="footer-inputs">
-                <div class="unit-input-box">
-                    <label style="font-size: 0.8rem; font-weight: bold;">CEE Multiplier Level:</label>
-                    <input type="number" name="unit_size" value="{{ unit_size }}" min="1" max="100">
-                </div>
-                <button type="submit" class="btn-update">RE-SCALE CALCULATOR</button>
-            </div>
-        </form>
-    </div>
-</body>
-</html>
-"""
-
-@app.route("/", methods=["GET", "POST"])
-def index():
-    unit_size = 3
-    if request.method == "POST":
-        try:
-            unit_size = int(request.form.get("unit_size", 3))
-        except ValueError:
-            unit_size = 3
-
-    games_data = get_live_matrix_feeds()
-    return render_template_string(HTML_TEMPLATE, games=games_data, unit_size=unit_size)
-
-if __name__ == "__main__":
