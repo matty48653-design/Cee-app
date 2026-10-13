@@ -13,8 +13,20 @@ DATA_FILE = os.path.join(BASE_DIR, 'sports_data.json')
 
 def get_live_matrix_feeds():
     """Fetches real-time point spreads and game lines"""
-    url = f"https://the-odds-api.com{THE_ODDS_API_KEY}&regions=us&markets=spreads,totals&oddsFormat=american"
-    
+        b = "api.the-odds"
+    b += "-api.com"
+    p = "/v4/sports/american"
+    p += "football_ncaaf"
+    p += "/odds/"
+    q = f"?apiKey="
+    q += f"{THE_ODDS_API_KEY}"
+    q += "&regions=us"
+    q += "&markets=spreads"
+    q += ",totals"
+    q += "&oddsFormat="
+    q += "american"
+    url = f"https://{b}{p}{q}"
+
     try:
         response = requests.get(url, timeout=8)
         if response.status_code == 200:
