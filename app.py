@@ -103,16 +103,18 @@ HTML_TEMPLATE = """
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CEE ACTION MATRIX</title>
+    <title>CEE SUPREME ACTION MATRIX</title>
     <style>
         :root {
             --bg-base: #0c1117;
             --bg-card: #161b22;
             --border-glow: #21262d;
+            --border-neon: #00ffaa;
             --neon-green: #00ffaa;
             --text-main: #c9d1d9;
             --text-dim: #8b949e;
             --alert-orange: #ff9f1c;
+            --sky-blue: #58a6ff;
         }
         body {
             background-color: var(--bg-base);
@@ -147,12 +149,25 @@ HTML_TEMPLATE = """
             padding: 2px 6px;
             border-radius: 4px;
         }
+        .section-header {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-dim);
+            margin: 16px 0 8px 0;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
         .card {
             background-color: var(--bg-card);
             border: 1px solid var(--border-glow);
             border-radius: 8px;
-            padding: 16px;
-            margin-bottom: 16px;
+            padding: 14px;
+            margin-bottom: 12px;
+        }
+        .automated-sheet {
+            border: 1px solid var(--neon-green);
         }
         .card-title {
             font-size: 1.05rem;
@@ -167,68 +182,85 @@ HTML_TEMPLATE = """
         .data-row {
             display: flex;
             justify-content: space-between;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             margin-bottom: 6px;
         }
         .highlight {
             color: var(--alert-orange);
             font-weight: bold;
         }
+        .neon-text {
+            color: var(--neon-green);
+            font-weight: bold;
+        }
+        .metric-item {
+            font-size: 0.85rem;
+            margin-top: 8px;
+            display: flex;
+            align-items: flex-start;
+            gap: 6px;
+        }
+        .blue-text {
+            color: var(--sky-blue);
+        }
     </style>
 </head>
 <body>
     <div class="app-container">
         <div class="header-box">
-            <div class="title-main">CEE ACTION MATRIX</div>
-            <div class="status-sync">• SYSTEM LIVE</div>
+            <div class="title-main">🟢 CEE SUPREME ACTION MATRIX</div>
+            <div class="status-sync">LIVE SYNCING</div>
         </div>
 
-        {% if players %}
-            {% for player in players %}
-            <div class="card">
-                <div class="card-title">{{ player.player }}</div>
-                <div class="card-subtitle">Active Matrix Entry</div>
-                <div class="data-row">
-                    <span>DK Pick6 Unit Size:</span>
-                    <span class="highlight">${{ player.unit }}</span>
+        <!-- ⚡ AUTOMATED COMM SHEET SECTION -->
+        <div class="section-header">⚡ LIVE AUTOMATED COMM SHEET <span style="color:var(--neon-green); font-size:0.7rem;">SCANNING FEEDS</span></div>
+        <div class="card automated-sheet">
+            <div class="data-row">
+                <span style="font-weight:bold; color:var(--sky-blue);">📌 LIVE SPREAD RECON</span>
+                <span class="neon-text">👉 TAKE: Sam Houston Alternate Pass Yards (MORE 175.0 Floor)</span>
+            </div>
+            <div class="card-subtitle" style="margin-bottom:8px;">Current market context target: Williams Stadium • Line: Liberty -13.5 (O/U 52.5).</div>
+            
+            <div class="data-row" style="margin-top:12px; border-top:1px solid var(--border-glow); padding-top:8px;">
+                <span style="font-weight:bold; color:var(--sky-blue);">📌 LIVE OVER/UNDER RECON</span>
+                <span class="neon-text">👉 Analyzing Pacing</span>
+            </div>
+            <div class="card-subtitle" style="margin-bottom:0;">Will display exact live points threshold targets based on quarter pacing.</div>
+        </div>
+
+        <!-- 👁️ SYNDICATE CONSENSUS SECTION -->
+        <div class="section-header">👁️ SYNDICATE CONSENSUS & SENTIMENT VOLATILITY</div>
+        <div class="card">
+            <div class="data-row">
+                <div>
+                    <div style="font-weight:bold;">Alpha Syndicate</div>
+                    <div style="font-size:0.75rem; color:var(--text-dim);">Size: 5x</div>
+                </div>
+                <div style="text-align:right;">
+                    <div class="blue-text" style="font-weight:bold;">Sam Houston Pass Volume Sliders</div>
+                    <div style="font-size:0.75rem; color:var(--alert-orange);">94% Public Resistance</div>
                 </div>
             </div>
-            {% endfor %}
-        {% else %}
-            <div class="card">
-                <div class="card-title">No Active Data</div>
-                <div class="card-subtitle">Send a matrix payload via the API to begin display tracking.</div>
+            <div class="data-row" style="margin-top:8px; border-top:1px solid var(--border-glow); padding-top:8px;">
+                <div>
+                    <div style="font-weight:bold;">Vegas Sharp Box</div>
+                    <div style="font-size:0.75rem; color:var(--text-dim);">Size: 2.5x</div>
+                </div>
+                <div style="text-align:right;">
+                    <div class="blue-text" style="font-weight:bold;">NHL Under Adjustments</div>
+                    <div style="font-size:0.75rem; color:var(--alert-orange);">74% Public Resistance</div>
+                </div>
             </div>
-        {% endif %}
-    </div>
-</body>
-</html>
-"""
+        </div>
 
-@app.route('/')
-def index():
-    # Load your updated matrix data dynamically
-    matrix_data = load_data()
-    
-    # Check if the data is a player list matrix
-    if isinstance(matrix_data, list):
-        players_list = matrix_data
-    else:
-        players_list = []
-        
-    return render_template_string(HTML_TEMPLATE, players=players_list)
-
-@app.route('/api/matrix/update', methods=['POST'])
-def update_matrix_data():
-    try:
-        payload = request.get_json()
-        if not payload:
-            return jsonify({"error": "No data provided"}), 400
-        
-        save_data(payload)
-        return jsonify({"status": "success", "message": "Matrix updated successfully"}), 200
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-
-if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=int(os.environ.get('PORT', 5000)))
+        <!-- 📺 LIVE SLATE & ADVANTAGE INSIGHTS SECTION -->
+        <div class="section-header">📺 LIVE SLATE & HUMAN ADVANTAGE INSIGHTS</div>
+        {% if feeds %}
+            {% for game in feeds %}
+            <div class="card">
+                <div class="data-row" style="margin-bottom:2px;">
+                    <span class="card-title">{{ game.sport }} {{ game.matchup }}</span>
+                    <span class="neon-text">0 - 0</span>
+                </div>
+                <div class="card-subtitle">{{ game.venue }} • Line: {{ game.spread_line }} ({{ game.ou_line }}) • <span class="highlight">{{ game.time_label }}</span></div>
+                
