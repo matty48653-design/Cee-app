@@ -10,7 +10,7 @@ app = Flask(__name__)
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DATA_FILE = os.path.join(BASE_DIR, 'sports_data.json')
 
-# 🐋 NEW ADDITION: CEE Syndicate Implied Probability Value Algorithm
+# 🐋 CEE Syndicate Implied Probability Value Algorithm
 def calculate_whale_probability_edge(american_odds, real_world_probability):
     if american_odds > 0:
         implied_prob = 100 / (american_odds + 100)
@@ -145,156 +145,82 @@ HTML_TEMPLATE = """
             font-size: 0.75rem;
             border: 1px solid var(--neon-green);
             padding: 2px 6px;
-            border-radius: 3px;
-            font-weight: bold;
-        }
-        .banner-alert {
-            background: linear-gradient(90deg, #3a221d, #161b22);
-            border-left: 4px solid var(--alert-orange);
-            padding: 10px;
             border-radius: 4px;
-            font-size: 0.8rem;
-            margin-bottom: 16px;
         }
-        .recon-section {
-            border: 1px dashed var(--neon-green);
-            padding: 10px;
-            border-radius: 4px;
-            margin-bottom: 16px;
-            font-size: 0.85rem;
-        }
-        .section-label {
-            font-size: 0.75rem;
-            color: var(--text-dim);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 4px;
-            display: block;
-        }
-        .whale-card {
+        .matrix-card {
             background-color: var(--bg-card);
             border: 1px solid var(--border-glow);
-            border-radius: 6px;
-            padding: 12px;
-            margin-bottom: 14px;
+            border-radius: 8px;
+            padding: 14px;
+            margin-bottom: 12px;
         }
-        .whale-card.active-alert {
-            border-color: var(--alert-orange);
-            box-shadow: 0 0 8px rgba(255, 159, 28, 0.2);
+        .game-title {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 4px;
         }
-        .whale-header {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-weight: bold;
-            font-size: 0.85rem;
-            margin-bottom: 10px;
+        .meta-line {
+            font-size: 0.8rem;
+            color: var(--text-dim);
+            margin-bottom: 8px;
         }
-        .whale-badge {
-            font-size: 1.2rem;
-            animation: pulse 2s infinite alternate;
-        }
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            100% { transform: scale(1.15); }
-        }
-        .grid-3 {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 8px;
-            text-align: center;
-            background: #0d1117;
-            padding: 8px;
-            border-radius: 4px;
-        }
-        .grid-val {
-            font-size: 0.95rem;
-            font-weight: bold;
-            margin-top: 2px;
-        }
-        .text-high { color: var(--neon-green); }
-        .text-alert { color: var(--alert-orange); }
-        
-        .footer-inputs {
-            background-color: var(--bg-card);
-            padding: 12px;
-            border-radius: 6px;
+        .metric-row {
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            margin-top: 20px;
-            border-top: 1px solid var(--border-glow);
+            margin-top: 6px;
+            font-size: 0.85rem;
         }
-        .unit-input-box {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-        .unit-input-box input {
-            width: 45px;
-            background: #0d1117;
-            border: 1px solid var(--border-glow);
-            color: #fff;
-            padding: 6px;
-            border-radius: 4px;
-            text-align: center;
-            font-weight: bold;
-        }
-        .btn-update {
-            background-color: var(--neon-green);
-            color: #000;
-            border: none;
-            padding: 7px 14px;
-            font-weight: bold;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 0.8rem;
+        .highlight-play {
+            color: var(--alert-orange);
+            font-weight: 600;
+            border-top: 1px dashed var(--border-glow);
+            margin-top: 8px;
+            padding-top: 8px;
         }
     </style>
 </head>
 <body>
     <div class="app-container">
-        <form method="POST" action="/api/update_unit_form">
-            <div class="header-box">
-                <div class="title-main">🟢 CEE SUPREME ACTION MATRIX</div>
-                <div class="status-sync">LIVE SYNCING</div>
-            </div>
-
-            <div class="banner-alert">
-                ⚡ <strong>LIVE AUTOMATED COMM SHEET:</strong> SCANNING FEEDS
-            </div>
-
-            <div class="recon-section">
-                <span class="section-label">📌 Target Strategy Play</span>
-                <span style="color: var(--neon-green); font-weight: bold;">
-                    TAKE: Sam Houston Alternate Pass Yards (MORE 175.0 Floor)
-                </span>
-            </div>
-
-            <span class="section-label">👥 Syndicate Consensus & Sentiment Volatility</span>
+        <div class="header-box">
+            <div class="title-main">CEE ACTION MATRIX</div>
+            <div class="status-sync">● SYSTEM LIVE</div>
+        </div>
+        
+        {% for game in games %}
+        <div class="matrix-card">
+            <div class="game-title">[{{ game.sport }}] {{ game.matchup }}</div>
+            <div class="meta-line">{{ game.time_label }} | {{ game.venue }}</div>
             
-            {% for game in games %}
-                {% set gap = game.handle_pct - game.ticket_pct %}
-                <div class="whale-card {% if gap >= 20 %}active-alert{% endif %}">
-                    <div class="whale-header">
-                        {% if gap >= 20 %}
-                            <span class="whale-badge">🐋</span>
-                            <span style="color: var(--alert-orange);">ALPHA SYNDICATE WHALE PLACEMENT</span>
-                        {% else %}
-                            <span>📊 STANDARD MARKET SPREAD</span>
-                        {% endif %}
-                    </div>
-                    
-                    <div style="font-size: 0.8rem; margin-bottom: 6px; color: var(--text-dim);">
-                        <strong>{{ game.sport }}: {{ game.matchup }}</strong> | Spread: {{ game.spread_line }}
-                    </div>
-
-                    </div>
-               </div>         
-    </body>
+            <div class="metric-row">
+                <span>Spread: <strong>{{ game.spread_line }}</strong></span>
+                <span>Total: <strong>{{ game.ou_line }}</strong></span>
+            </div>
+            
+            <div class="metric-row" style="font-size:0.8rem; color:var(--text-dim);">
+                <span>Tickets: {{ game.ticket_pct }}%</span>
+                <span>Handle Money: {{ game.handle_pct }}%</span>
+            </div>
+            
+            <div style="font-size:0.75rem; margin-top:8px; color:var(--text-dim);">
+                <div>📍 {{ game.trajectory }}</div>
+                <div>🔊 {{ game.crowd_env }}</div>
+                <div style="color:#ff6b6b;">⚠️ {{ game.injury_notes }}</div>
+            </div>
+            
+            <div class="highlight-play">
+                🎯 RECOMMENDED RUN: {{ game.rec_play }}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</body>
 </html>
 """
 
+@app.route('/')
+def home():
+    games = get_live_matrix_feeds()
+    return render_template_string(HTML_TEMPLATE, games=games)
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
-
