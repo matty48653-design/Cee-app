@@ -103,7 +103,7 @@ HTML_TEMPLATE = """
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CEE SUPREME ACTION MATRIX</title>
+    <title>CEE ACTION MATRIX</title>
     <style>
         :root {
             --bg-base: #0c1117;
@@ -147,35 +147,32 @@ HTML_TEMPLATE = """
             padding: 2px 6px;
             border-radius: 4px;
         }
-        .matrix-card {
+        .card {
             background-color: var(--bg-card);
             border: 1px solid var(--border-glow);
             border-radius: 8px;
-            padding: 14px;
-            margin-bottom: 12px;
+            padding: 16px;
+            margin-bottom: 16px;
         }
-        .game-title {
-            font-size: 1rem;
-            font-weight: 700;
+        .card-title {
+            font-size: 1.05rem;
+            font-weight: bold;
             margin-bottom: 4px;
         }
-        .meta-line {
+        .card-subtitle {
             font-size: 0.8rem;
             color: var(--text-dim);
-            margin-bottom: 8px;
+            margin-bottom: 12px;
         }
-        .metric-row {
+        .data-row {
             display: flex;
             justify-content: space-between;
-            margin-top: 6px;
-            font-size: 0.85rem;
+            font-size: 0.9rem;
+            margin-bottom: 6px;
         }
-        .highlight-play {
+        .highlight {
             color: var(--alert-orange);
-            font-weight: 600;
-            border-top: 1px dashed var(--border-glow);
-            margin-top: 8px;
-            padding-top: 8px;
+            font-weight: bold;
         }
     </style>
 </head>
@@ -183,47 +180,44 @@ HTML_TEMPLATE = """
     <div class="app-container">
         <div class="header-box">
             <div class="title-main">CEE ACTION MATRIX</div>
-            <div class="status-sync">● SYSTEM LIVE</div>
+            <div class="status-sync">• SYSTEM LIVE</div>
         </div>
-        
-        {% for game in games %}
-        <div class="matrix-card">
-            <div class="game-title">[{{ game.sport }}] {{ game.matchup }}</div>
-            <div class="meta-line">{{ game.time_label }} | {{ game.venue }}</div>
-            
-            <div class="metric-row">
-                <span>Spread: <strong>{{ game.spread_line }}</strong></span>
-                <span>Total: <strong>{{ game.ou_line }}</strong></span>
+
+        {% if players %}
+            {% for player in players %}
+            <div class="card">
+                <div class="card-title">{{ player.player }}</div>
+                <div class="card-subtitle">Active Matrix Entry</div>
+                <div class="data-row">
+                    <span>DK Pick6 Unit Size:</span>
+                    <span class="highlight">${{ player.unit }}</span>
+                </div>
             </div>
-            
-            <div class="metric-row" style="font-size:0.8rem; color:var(--text-dim);">
-                <span>Tickets: {{ game.ticket_pct }}%</span>
-                <span>Handle Money: {{ game.handle_pct }}%</span>
+            {% endfor %}
+        {% else %}
+            <div class="card">
+                <div class="card-title">No Active Data</div>
+                <div class="card-subtitle">Send a matrix payload via the API to begin display tracking.</div>
             </div>
-            
-            <div style="font-size:0.75rem; margin-top:8px; color:var(--text-dim);">
-                <div>📍 {{ game.trajectory }}</div>
-                <div>🔊 {{ game.crowd_env }}</div>
-                <div style="color:#ff6b6b;">⚠️ {{ game.injury_notes }}</div>
-            </div>
-            
-            <div class="highlight-play">
-                🎯 RECOMMENDED RUN: {{ game.rec_play }}
-            </div>
-        </div>
-        {% endfor %}
+        {% endif %}
     </div>
 </body>
 </html>
 """
 
 @app.route('/')
-def home():
-    games = get_live_matrix_feeds()
-    return render_template_string(HTML_TEMPLATE, games=games)
+def index():
+    # Load your updated matrix data dynamically
+    matrix_data = load_data()
+    
+    # Check if the data is a player list matrix
+    if isinstance(matrix_data, list):
+        players_list = matrix_data
+    else:
+        players_list = []
+        
+    return render_template_string(HTML_TEMPLATE, players=players_list)
 
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
 @app.route('/api/matrix/update', methods=['POST'])
 def update_matrix_data():
     try:
@@ -231,7 +225,6 @@ def update_matrix_data():
         if not payload:
             return jsonify({"error": "No data provided"}), 400
         
-        # Save the incoming player data to your JSON file
         save_data(payload)
         return jsonify({"status": "success", "message": "Matrix updated successfully"}), 200
     except Exception as e:
