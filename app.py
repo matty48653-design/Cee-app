@@ -49,25 +49,34 @@ def get_live_matrix_feeds():
                 "ou_line": "O/U 52.5",
                 "trajectory": "1,220 Miles East • Severe Fatigue Threshold Cross",
                 "crowd_env": "Lynchburg Hostile • Decibel Index: High (Cap Playbook Comm)",
-                "injury_notes": "INJURY MATRIX: Sam Houston WR1 (Questionable)",
-                "rec_play": "Sam Houston Alternate Pass Yards (MORE 175.0 Floor)",
-                "ticket_pct": 6,   
-                "handle_pct": 44,  
+                "injury_notes": "Sam Houston WR1 (Questionable - Hamstring) • Limits deep vertical options",
+                "morale_notes": "High Volatility • Body language from coaching staff brushing late-game defensive lapse"
             },
             {
                 "id": "game_2",
-                "sport": "NFL",
-                "matchup": "Tampa Bay @ Dallas",
-                "venue": "AT&T Stadium",
-                "time_label": "THU 8:15 PM • UPCOMING",
-                "spread_line": "Cowboys -8.5",
-                "ou_line": "O/U 47.5",
-                "trajectory": "Inside Territory • High Humidity Transition Floor",
-                "crowd_env": "Arlington Loud • Structural Acoustics Maximized",
-                "injury_notes": "INJURY MATRIX: Baker Mayfield OUT (Thumb) • Jalon Daniels Starting",
-                "rec_play": "Jalon Daniels MORE 15+ Alternate Completions",
-                "ticket_pct": 19,  
-                "handle_pct": 52,  
+                "sport": "CFB",
+                "matchup": "South Florida @ UTSA",
+                "venue": "Alamodome",
+                "time_label": "THU 7:30 PM • UPCOMING",
+                "spread_line": "UTSA -4.5",
+                "ou_line": "O/U 58.5",
+                "trajectory": "1,140 Miles West • 2 Time Zone Shift Effect",
+                "crowd_env": "Dome Enclosure Noise Multiplier • Favors Ground Cadence",
+                "injury_notes": "USF Starting Right Tackle (OUT - Ankle) • Weakens front edge protection",
+                "morale_notes": "Stable Core • Focused on heavy trench script to offset line injuries"
+            },
+            {
+                "id": "game_3",
+                "sport": "NHL",
+                "matchup": "Montreal Canadiens @ Boston Bruins",
+                "venue": "TD Garden • Arena Main Track",
+                "time_label": "THU 7:00 PM • UPCOMING",
+                "spread_line": "Bruins Moneyline",
+                "ou_line": "O/U 6.0",
+                "trajectory": "310 Miles South • Minimal Rest Restriction Impact",
+                "crowd_env": "TD Garden High Intensity • Amplifies Early Period Whistles",
+                "injury_notes": "Boston Clear • Montreal Defenceman (Day-to-Day - Upper Body)",
+                "morale_notes": "Rivalry Peak Intensity"
             }
         ]
     
@@ -113,6 +122,7 @@ HTML_TEMPLATE = """
             --text-dim: #8b949e;
             --alert-orange: #ff9f1c;
             --sky-blue: #58a6ff;
+            --light-pink: #ff8ebb;
         }
         body {
             background-color: var(--bg-base);
@@ -192,6 +202,7 @@ HTML_TEMPLATE = """
             font-size: 0.85rem;
             margin-top: 8px;
             color: var(--text-main);
+            line-height: 1.4;
         }
         .blue-text {
             color: var(--sky-blue);
@@ -209,13 +220,13 @@ HTML_TEMPLATE = """
         <div class="section-header">⚡ LIVE AUTOMATED COMM SHEET</div>
         <div class="card automated-sheet">
             <div class="data-row">
-                <span style="font-weight:bold; color:var(--sky-blue);">📌 LIVE SPREAD RECON</span>
+                <span style="font-weight:bold; color:var(--sky-blue);">自由 LIVE SPREAD RECON</span>
                 <span class="neon-text">👉 TAKE: Sam Houston Alternate Pass Yards (MORE 175.0 Floor)</span>
             </div>
             <div class="card-subtitle" style="margin-bottom:8px;">Current market context target: Williams Stadium • Line: Liberty -13.5 (O/U 52.5).</div>
             
             <div class="data-row" style="margin-top:12px; border-top:1px solid var(--border-glow); padding-top:8px;">
-                <span style="font-weight:bold; color:var(--sky-blue);">📌 LIVE OVER/UNDER RECON</span>
+                <span style="font-weight:bold; color:var(--sky-blue);">自由 LIVE OVER/UNDER RECON</span>
                 <span class="neon-text">👉 Analyzing Pacing</span>
             </div>
             <div class="card-subtitle" style="margin-bottom:0;">Will display exact live points threshold targets based on quarter pacing.</div>
@@ -251,11 +262,3 @@ HTML_TEMPLATE = """
         {% if feeds %}
             {% for game in feeds %}
             <div class="card">
-                <div class="data-row" style="margin-bottom:2px;">
-                    <span class="card-title">{{ game.sport }} {{ game.matchup }}</span>
-                    <span class="neon-text">0 - 0</span>
-                </div>
-                <div class="card-subtitle">{{ game.venue }} • Line: {{ game.spread_line }} ({{ game.ou_line }}) • <span class="highlight">{{ game.time_label }}</span></div>
-                
-                <div class="metric-item">📌 <span class="blue-text">TRAVEL TRAJECTORY:</span> {{ game.trajectory }}</div>
-                <div class="metric-item">🔊 <span class="blue-text">CROWD ENVIRONMENT:</span> {{ game.crowd_env }}</div>
