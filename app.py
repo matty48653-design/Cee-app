@@ -37,7 +37,6 @@ def calculate_whale_probability_edge(american_odds, real_world_probability):
 def get_live_matrix_feeds():
     api_key = os.environ.get("SPORTS_DATA_KEY")
     
-    # Fallback to local structured data if key isn't live
     if not api_key:
         return [
             {
@@ -109,7 +108,6 @@ HTML_TEMPLATE = """
             --bg-base: #0c1117;
             --bg-card: #161b22;
             --border-glow: #21262d;
-            --border-neon: #00ffaa;
             --neon-green: #00ffaa;
             --text-main: #c9d1d9;
             --text-dim: #8b949e;
@@ -155,9 +153,6 @@ HTML_TEMPLATE = """
             letter-spacing: 1px;
             color: var(--text-dim);
             margin: 16px 0 8px 0;
-            display: flex;
-            align-items: center;
-            gap: 6px;
         }
         .card {
             background-color: var(--bg-card);
@@ -196,9 +191,7 @@ HTML_TEMPLATE = """
         .metric-item {
             font-size: 0.85rem;
             margin-top: 8px;
-            display: flex;
-            align-items: flex-start;
-            gap: 6px;
+            color: var(--text-main);
         }
         .blue-text {
             color: var(--sky-blue);
@@ -213,7 +206,7 @@ HTML_TEMPLATE = """
         </div>
 
         <!-- ⚡ AUTOMATED COMM SHEET SECTION -->
-        <div class="section-header">⚡ LIVE AUTOMATED COMM SHEET <span style="color:var(--neon-green); font-size:0.7rem;">SCANNING FEEDS</span></div>
+        <div class="section-header">⚡ LIVE AUTOMATED COMM SHEET</div>
         <div class="card automated-sheet">
             <div class="data-row">
                 <span style="font-weight:bold; color:var(--sky-blue);">📌 LIVE SPREAD RECON</span>
@@ -264,3 +257,5 @@ HTML_TEMPLATE = """
                 </div>
                 <div class="card-subtitle">{{ game.venue }} • Line: {{ game.spread_line }} ({{ game.ou_line }}) • <span class="highlight">{{ game.time_label }}</span></div>
                 
+                <div class="metric-item">📌 <span class="blue-text">TRAVEL TRAJECTORY:</span> {{ game.trajectory }}</div>
+                <div class="metric-item">🔊 <span class="blue-text">CROWD ENVIRONMENT:</span> {{ game.crowd_env }}</div>
