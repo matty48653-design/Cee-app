@@ -5,247 +5,191 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CEE SUPREME ACTION MATRIX</title>
     <style>
-        body { 
-            background-color: #0d1117; 
-            color: #c9d1d9; 
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
-            padding: 16px;
+        :root {
+            --bg-base: #0c1117;
+            --bg-card: #161b22;
+            --border-glow: #21262d;
+            --neon-green: #00ffaa;
+            --text-main: #c9d1d9;
+            --text-dim: #8b949e;
+            --alert-orange: #ff9f1c;
+            --sky-blue: #58a6ff;
+            --light-pink: #ff8ebb;
+        }
+        body {
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             margin: 0;
-            -webkit-font-smoothing: antialiased;
+            padding: 12px;
+            display: flex;
+            justify-content: center;
         }
-        
-        .banner { 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center;
-            margin-bottom: 20px; 
+        .app-container {
+            width: 100%;
+            max-width: 480px;
         }
-        .banner-title {
-            color: #ffffff;
-            font-size: 15px;
-            font-weight: 800;
-            letter-spacing: 0.05em;
-            text-transform: uppercase;
-        }
-        .sync-badge { 
-            color: #10b981; 
-            font-size: 11px; 
-            font-weight: 800; 
-            border: 1px solid #10b981;
-            padding: 4px 10px;
-            border-radius: 4px;
-            letter-spacing: 0.05em;
-        }
-
-        .directive-panel {
-            border: 1px solid #10b981;
-            background: rgba(9, 15, 17, 0.95);
-            border-radius: 8px;
-            padding: 16px;
-            margin-bottom: 24px;
-        }
-        .directive-title-row {
+        .header-box {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 14px;
-        }
-        .directive-header { color: #ffffff; font-size: 13px; font-weight: 800; }
-        .directive-status { color: #10b981; font-size: 11px; font-weight: 800; }
-        .directive-row { margin-bottom: 14px; }
-        .directive-row:last-child { margin-bottom: 0; }
-        .directive-meta {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            font-size: 13px;
-        }
-        .directive-label { color: #58a6ff; font-weight: 800; }
-        .directive-value { color: #10b981; font-weight: 800; text-align: right; }
-        .directive-desc { color: #8b949e; font-size: 12px; margin-top: 3px; }
-
-        .syndicate-panel {
-            background: #161b22;
-            border: 1px solid #30363d;
-            border-radius: 8px;
-            padding: 16px;
-            margin-bottom: 24px;
-        }
-        .syndicate-title {
-            color: #8b949e;
-            font-size: 11px;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 0.08em;
-            margin-bottom: 14px;
-        }
-        .syndicate-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 13px;
-            margin-bottom: 12px;
-        }
-        .group-name { color: #ffffff; font-weight: 700; }
-        .group-size { color: #8b949e; font-size: 11px; }
-        .wager-value { color: #58a6ff; font-weight: 800; }
-        .resistance-value { color: #f0883e; font-size: 11px; font-weight: bold; }
-
-        .section-separator { 
-            font-size: 12px; 
-            font-weight: 800; 
-            color: #8b949e; 
-            text-transform: uppercase; 
-            margin: 24px 0 14px 0; 
-            letter-spacing: 0.08em;
-        }
-
-        .monitor-card {
-            background: #161b22;
-            border: 1px solid #30363d;
-            border-radius: 8px;
-            padding: 16px;
+            border-bottom: 2px solid var(--border-glow);
+            padding-bottom: 8px;
             margin-bottom: 16px;
         }
-        .card-main-line {
+        .title-main {
+            font-weight: 800;
+            letter-spacing: 1px;
+            font-size: 1.1rem;
+        }
+        .status-sync {
+            color: var(--neon-green);
+            font-size: 0.75rem;
+            border: 1px solid var(--neon-green);
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+        .section-header {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-dim);
+            margin: 16px 0 8px 0;
+        }
+        .card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-glow);
+            border-radius: 8px;
+            padding: 14px;
+            margin-bottom: 12px;
+        }
+        .automated-sheet {
+            border: 1px solid var(--neon-green);
+        }
+        .card-title {
+            font-size: 1.05rem;
+            font-weight: bold;
+            margin-bottom: 4px;
+        }
+        .card-subtitle {
+            font-size: 0.8rem;
+            color: var(--text-dim);
+            margin-bottom: 12px;
+        }
+        .data-row {
             display: flex;
             justify-content: space-between;
-            align-items: center;
+            font-size: 0.85rem;
             margin-bottom: 6px;
         }
-        .matchup-text { font-size: 15px; font-weight: 800; color: #f0f6fc; }
-        .score-display { font-size: 16px; font-weight: 800; color: #10b981; font-family: monospace; }
-        
-        .card-sub-line {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 12px;
-            border-bottom: 1px solid #21262d;
-            padding-bottom: 10px;
-            margin-bottom: 10px;
+        .highlight {
+            color: var(--alert-orange);
+            font-weight: bold;
         }
-        .weather-details { color: #8b949e; }
-        .time-status { color: #f0883e; font-weight: 800; text-transform: uppercase; }
-
-        .metric-block { font-size: 12px; margin-top: 6px; line-height: 1.4; }
-        .met-travel { color: #58a6ff; font-weight: 600; }
-        .met-crowd  { color: #ff7b72; font-weight: 600; }
-        .met-injury { color: #d2a8ff; font-weight: 600; }
-        .met-morale { color: #ffa657; font-weight: 600; }
-        
-        /* New Premium Tactical Spacing Styles */
-        .met-handle { color: #79c0ff; font-weight: 700; border-top: 1px dashed #21262d; padding-top: 6px; margin-top: 8px; }
-        .met-index  { color: #56d364; font-weight: 700; }
+        .neon-text {
+            color: var(--neon-green);
+            font-weight: bold;
+        }
+        .metric-item {
+            font-size: 0.85rem;
+            margin-top: 8px;
+            color: var(--text-main);
+            line-height: 1.4;
+        }
+        .blue-text {
+            color: var(--sky-blue);
+        }
     </style>
 </head>
 <body>
-
-    <div class="banner">
-        <div class="banner-title">🟢 CEE SUPREME ACTION MATRIX</div>
-        <span id="sync-status" class="sync-badge">LIVE SYNCING</span>
-    </div>
-
-    <div class="directive-panel">
-        <div class="directive-title-row">
-            <span class="directive-header">⚡ LIVE AUTOMATED COMM SHEET</span>
-            <span class="directive-status">SCANNING FEEDS</span>
+    <div class="app-container">
+        <div class="header-box">
+            <div class="title-main">🟢 CEE SUPREME ACTION MATRIX</div>
+            <div class="status-sync">LIVE SYNCING</div>
         </div>
-        <div style="border-bottom: 1px solid rgba(16, 185, 129, 0.2); margin-bottom: 14px;"></div>
-        <div id="directive-container">
-            {% for row in cache.directive_sheet %}
-            <div class="directive-row">
-                <div class="directive-meta">
-                    <span class="directive-label">📌 {{ row.label }}</span>
-                    <span class="directive-value">👉 {{ row.value }}</span>
+
+        <!-- ⚡ AUTOMATED COMM SHEET SECTION -->
+        <div class="section-header">⚡ LIVE AUTOMATED COMM SHEET</div>
+        <div class="card automated-sheet">
+            <div class="data-row">
+                <span style="font-weight:bold; color:var(--sky-blue);">📌 LIVE SPREAD RECON</span>
+                <span class="neon-text">👉 TAKE: Sam Houston Alternate Pass Yards (MORE 175.0 Floor)</span>
+            </div>
+            <div class="card-subtitle" style="margin-bottom:8px;">Current market context target: Williams Stadium • Line: Liberty -13.5 (O/U 52.5).</div>
+            
+            <div class="data-row" style="margin-top:12px; border-top:1px solid var(--border-glow); padding-top:8px;">
+                <span style="font-weight:bold; color:var(--sky-blue);">📌 LIVE OVER/UNDER RECON</span>
+                <span class="neon-text">👉 Analyzing Pacing</span>
+            </div>
+            <div class="card-subtitle" style="margin-bottom:0;">Will display exact live points threshold targets based on quarter pacing.</div>
+        </div>
+
+        <!-- 👁️ SYNDICATE CONSENSUS SECTION -->
+        <div class="section-header">👁️ SYNDICATE CONSENSUS & SENTIMENT VOLATILITY</div>
+        <div class="card">
+            <div class="data-row">
+                <div>
+                    <div style="font-weight:bold;">Alpha Syndicate</div>
+                    <div style="font-size:0.75rem; color:var(--text-dim);">Size: 5x</div>
                 </div>
-                <div class="directive-desc">{{ row.desc }}</div>
+                <div style="text-align:right;">
+                    <div class="blue-text" style="font-weight:bold;">Sam Houston Pass Volume Sliders</div>
+                    <div style="font-size:0.75rem; color:var(--alert-orange);">94% Public Resistance</div>
+                </div>
+            </div>
+            <div class="data-row" style="margin-top:8px; border-top:1px solid var(--border-glow); padding-top:8px;">
+                <div>
+                    <div style="font-weight:bold;">Vegas Sharp Box</div>
+                    <div style="font-size:0.75rem; color:var(--text-dim);">Size: 2.5x</div>
+                </div>
+                <div style="text-align:right;">
+                    <div class="blue-text" style="font-weight:bold;">NHL Under Adjustments</div>
+                    <div style="font-size:0.75rem; color:var(--alert-orange);">74% Public Resistance</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 📺 LIVE SLATE & ADVANTAGE INSIGHTS SECTION -->
+        <div class="section-header">📺 LIVE SLATE & HUMAN ADVANTAGE INSIGHTS</div>
+        {% if feeds %}
+            {% for game in feeds %}
+            <div class="card">
+                <div class="data-row" style="margin-bottom:2px;">
+                    <span class="card-title">{{ game.sport }} {{ game.matchup }}</span>
+                    <span class="neon-text">0 - 0</span>
+                </div>
+                <div class="card-subtitle">{{ game.venue }} • Line: {{ game.spread_line }} ({{ game.ou_line }}) • <span class="highlight">{{ game.time_label }}</span></div>
+                
+                <div class="metric-item">🚀 <span class="blue-text" style="font-weight:bold;">TRAVEL TRAJECTORY:</span> {{ game.trajectory }}</div>
+                <div class="metric-item">🔊 <span style="color:#ff4444; font-weight:bold;">CROWD ENVIRONMENT:</span> {{ game.crowd_env }}</div>
+                <div class="metric-item">⚠️ <span class="highlight">INJURY MATRIX:</span> {{ game.injury_notes }}</div>
+                <div class="metric-item">🧠 <span style="color:var(--light-pink); font-weight:bold;">ROSTER MORALE:</span> {{ game.morale_notes }}</div>
             </div>
             {% endfor %}
-        </div>
-    </div>
+        {% else %}
+            <div class="card">
+                <div class="card-subtitle">No Insight Feed Data Live.</div>
+            </div>
+        {% endif %}
 
-    <div class="syndicate-panel">
-        <div class="syndicate-title">👁️ SYNDICATE CONSENSUS & SENTIMENT VOLATILITY</div>
-        <div style="border-bottom: 1px solid #30363d; margin-bottom: 14px;"></div>
-        <div id="syndicate-container">
-            {% for group in cache.syndicate_tracking %}
-            <div class="syndicate-row">
-                <div>
-                    <div class="group-name">{{ group.group }}</div>
-                    <div class="group-size">{{ group.size }}</div>
+        <!-- 🐋 LIVE AUTOMATED WHALE MOVES -->
+        <div class="section-header">🐋 LIVE AUTOMATED WHALE MOVES</div>
+        {% if whale_data and whale_data.moves %}
+            {% for move in whale_data.moves %}
+            <div class="card" style="border-left: 3px solid var(--neon-green);">
+                <div class="data-row">
+                    <span style="font-weight:bold; color:var(--text-main);">🎯 {{ move.player }} ({{ move.sport }})</span>
+                    <span class="neon-text">{{ move.action }}</span>
                 </div>
-                <div>
-                    <div class="wager-value">{{ group.wager }}</div>
-                    <div class="resistance-value">{{ group.sentiment }}</div>
-                </div>
+                <div class="card-subtitle" style="margin-top:4px; margin-bottom:4px;">Line Target: {{ move.line }} | Public Resistance: <span class="highlight">{{ move.public_resistance }}</span></div>
+                <div style="font-size:0.8rem; color:var(--sky-blue); font-weight:bold; margin-top:6px;">EVAL: {{ move.matrix_evaluation }}</div>
             </div>
             {% endfor %}
-        </div>
-    </div>
-
-    <div class="section-separator">📺 LIVE SLATE & HUMAN ADVANTAGE INSIGHTS</div>
-
-    <div id="monitor-container">
-        {% for game in cache.live_slate_monitor %}
-        <div class="monitor-card">
-            <div class="card-main-line">
-                <span class="matchup-text"><small style="color: #8b949e; font-weight: bold;">{{ game.sport }}</small> {{ game.matchup }}</span>
-                <span class="score-display">{{ game.score }}</span>
+        {% else %}
+            <div class="card">
+                <div class="card-subtitle" style="margin-bottom:0;">No whale movements tracked yet. Submit payload data via your API tool to load instructions.</div>
             </div>
-            <div class="card-sub-line">
-                <span class="weather-details">{{ game.details }}</span>
-                <span class="time-status">{{ game.time_status }}</span>
-            </div>
-            <div class="metric-block met-travel">{{ game.travel_distance }}</div>
-            <div class="metric-block met-crowd">{{ game.crowd_factor }}</div>
-            <div class="metric-block met-injury">{{ game.injury_report }}</div>
-            <div class="metric-block met-morale">{{ game.team_morale }}</div>
-            <div class="metric-block met-handle">{{ game.sharp_handle }}</div>
-            <div class="metric-block met-index">{{ game.power_trajectory }}</div>
-        </div>
-        {% endfor %}
+        {% endif %}
     </div>
-
-    <script>
-        async function fetchMatrixUpdate() {
-            const statusIndicator = document.getElementById('sync-status');
-            try {
-                statusIndicator.textContent = "FETCHING...";
-                statusIndicator.style.borderColor = "#f0883e";
-                statusIndicator.style.color = "#f0883e";
-
-                const response = await fetch('/api/v9/engine/cache');
-                if (!response.ok) throw new Error("Stalled data connection");
-                const data = await response.json();
-
-                const directiveContainer = document.getElementById('directive-container');
-                directiveContainer.innerHTML = '';
-                data.directive_sheet.forEach(row => {
-                    directiveContainer.innerHTML += `
-                        <div class="directive-row">
-                            <div class="directive-meta">
-                                <span class="directive-label">📌 ${row.label}</span>
-                                <span class="directive-value">👉 ${row.value}</span>
-                            </div>
-                            <div class="directive-desc">${row.desc}</div>
-                        </div>`;
-                });
-
-                const syndicateContainer = document.getElementById('syndicate-container');
-                syndicateContainer.innerHTML = '';
-                data.syndicate_tracking.forEach(group => {
-                    syndicateContainer.innerHTML += `
-                        <div class="syndicate-row">
-                            <div>
-                                <div class="group-name">${group.group}</div>
-                                <div class="group-size">${group.size}</div>
-                            </div>
-                            <div>
-                                <div class="wager-value">${group.wager}</div>
-                                <div class="resistance-value">${group.sentiment}</div>
-                            </div>
-                        </div>`;
-                });
-
-                const monitorContainer = document.getElementById('monitor-container');
+</body>
+</html>
