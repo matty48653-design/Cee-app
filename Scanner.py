@@ -3,9 +3,9 @@ import requests
 
 # CONFIGURATION PARAMETERS
 ODDS_API_KEY = 'f4d35efa9891beef9b72344e501ddc31
-YOUR_MATRIX_WEBHOOK = 'https://onrender.com'
-
-
+YOUR_MATRIX_WEBHOOK = (
+    "https://onrender.com"
+)
 
 # WHALE TRIGGER THRESHOLDS 
 MIN_GAP_THRESHOLD = 25  # Trigger if the Money Handle % is 25%+ higher than the Ticket %
