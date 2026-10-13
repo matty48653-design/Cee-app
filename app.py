@@ -224,3 +224,18 @@ def home():
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
+@app.route('/api/matrix/update', methods=['POST'])
+def update_matrix_data():
+    try:
+        payload = request.get_json()
+        if not payload:
+            return jsonify({"error": "No data provided"}), 400
+        
+        # Save the incoming player data to your JSON file
+        save_data(payload)
+        return jsonify({"status": "success", "message": "Matrix updated successfully"}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+if __name__ == '__main__':
+    app.run(debug=True, host='0.0.0.0', port=int(os.environ.get('PORT', 5000)))
