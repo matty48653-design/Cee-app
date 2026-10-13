@@ -1,100 +1,31 @@
 import os
 import json
 import requests
-from flask import Flask, jsonify, request, render_template_string
+from flask import Flask, request, jsonify, render_template_string
 
 app = Flask(__name__)
 
-# 🔑 LIVE API FEED TOKEN KEY INJECTED
-THE_ODDS_API_KEY = "f4d3sefa9891beef9b72344e5"
-
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DATA_FILE = os.path.join(BASE_DIR, 'sports_data.json')
-
-def get_live_matrix_feeds():
-    """Fetches real-time point spreads and game lines"""
-    b = "api.the-odds"
-    b += "-api.com"
-    p = "/v4/sports/american"
-    p += "football_ncaaf"
-    p += "/odds/"
-    q = "?apiKey="
-    q += f"{THE_ODDS_API_KEY}"
-    q += "&regions=us"
-    q += "&markets=spreads"
-    q += ",totals"
-    q += "&oddsFormat="
-    q += "american"
-    url = f"https://{b}{p}{q}"
-
-    try:
-        response = requests.get(url, timeout=10)
-        if response.status_code == 200:
-            raw_games = response.json()
-            formatted_feeds = []
-
-            for game in raw_games[:4]:
-                home_team = game.get("home_team", "Unknown")
-                away_team = game.get("away_team", "Unknown")
-                spread_info = "Line Pending"
-                ou_info = "O/U Unassigned"
-
-                if game.get("bookmakers"):
-                    primary_book = game["bookmakers"][0]
-                    markets = primary_book.get("markets", [])
-                    for market in markets:
-                        if market.get("key") == "spreads":
-                            outcomes = market.get("outcomes", [])
-                            if len(outcomes) >= 2:
-                                spread_info = f"{outcomes[0].get('name')} {outcomes[0].get('price')}"
-                        elif market.get("key") == "totals":
-                            outcomes = market.get("outcomes", [])
-                            if outcomes:
-                                ou_info = f"O/U {outcomes[0].get('point')}"
-
-                formatted_feeds.append({
-                    "sport": "CFB",
-                    "matchup": f"{away_team} @ {home_team}",
-                    "spread_line": spread_info,
-                    "ou_line": ou_info
-                })
-            
-            if formatted_feeds:
-                return formatted_feeds
-    except Exception as e:
-        print(f"API Fetch Error, running fallback: {e}")
-
-    # Fallback default data if API fails
-    return [
-        {
-            "sport": "CFB",
-            "matchup": "Sam Houston @ Liberty",
-            "venue": "Williams Stadium",
-            "time_label": "THU 7:00 PM",
-            "spread_line": "Liberty -13.5",
-            "ou_line": "O/U 52.5",
-            "trajectory": "1,220 Miles East",
-            "crowd_env": "Lynchburg Hostile",
-            "injury_notes": "Sam Houston WR Questionable",
-            "morale_notes": "High Volatility Slate"
-        }
-    ]
 
 def load_data():
     if os.path.exists(DATA_FILE):
         try:
             with open(DATA_FILE, 'r') as f:
                 return json.load(f)
-        except Exception:
-            return {}
-    return {}
+        except:
+            return []
+    return []
 
 def save_data(data):
     try:
         with open(DATA_FILE, 'w') as f:
-            json.dump(data, f)
-    except Exception:
-        pass
+            json.dump(data, f, indent=4)
+    except Exception as e:
+        print(f"Error saving data: {e}")
+
+def get_live_matrix_feeds():
+    return load_data()
 
 HTML_TEMPLATE = """
 <!DOCTYPE html>
@@ -102,44 +33,110 @@ HTML_TEMPLATE = """
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CEE SUPREME ACTION MATRIX</title>
+    <title>CEE AUTOMATION MATRIX</title>
     <style>
-        :root {
-            --bg-base: #0c1117;
-            --bg-card: #161b22;
-            --neon-green: #00ffaa;
-            --text-main: #c9d1d9;
-            --alert-orange: #ff9f1c;
-            --sky-blue: #58a6ff;
+        body {
+            background-color: #0b0f19;
+            color: #ffffff;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
         }
-        body { 
-            background-color: var(--bg-base); 
-            color: var(--text-main); 
-            font-family: sans-serif; 
-            margin: 0; 
-            padding: 20px; 
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            border-bottom: 1px solid #1e293b;
+            padding-bottom: 15px;
         }
-        .app-container { width: 100%; max-width: 480px; margin: 0 auto; }
-        .header-box { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .title-main { font-weight: 800; font-size: 1.2rem; color: #fff; }
-        .status-sync { color: var(--neon-green); font-size: 0.8rem; }
-        .card { background-color: var(--bg-card); padding: 15px; border-radius: 8px; margin-bottom: 15px; border: 1px solid #30363d; }
-        .matchup-text { font-size: 1.1rem; font-weight: bold; margin-bottom: 5px; }
-        .line-text { color: var(--neon-green); font-weight: bold; }
+        .title {
+            font-size: 20px;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            font-weight: 700;
+            color: #10b981;
+        }
+        .pulse-dot {
+            width: 12px;
+            height: 12px;
+            background-color: #10b981;
+            border-radius: 50%;
+        }
+        .matrix-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .card {
+            background-color: #111827;
+            border: 1px solid #1f2937;
+            border-radius: 12px;
+            padding: 20px;
+        }
+        .matchup-text {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: #f3f4f6;
+        }
+        .line-item {
+            font-size: 14px;
+            color: #9ca3af;
+            margin: 4px 0;
+        }
+        .line-text {
+            font-weight: 700;
+            color: #10b981;
+        }
+        .metrics-box {
+            margin-top: 15px;
+            padding-top: 12px;
+            border-top: 1px dashed #374151;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .metric-row {
+            font-size: 12px;
+            color: #d1d5db;
+            line-height: 1.4;
+        }
     </style>
 </head>
 <body>
-    <div class="app-container">
-        <div class="header-box">
-            <div class="title-main">🟢 CEE AUTOMATION MATRIX</div>
-            <div class="status-sync">LIVE API FEED ACTIVE</div>
+    <div class="header">
+        <div class="title">🟢 CEE AUTOMATION MATRIX</div>
+        <div class="status-indicator">
+            <div class="pulse-dot"></div>
+            LIVE API FEED ACTIVE
         </div>
-        
+    </div>
+    
+    <div class="matrix-container">
         {% for game in games %}
         <div class="card">
             <div class="matchup-text">{{ game.matchup }}</div>
-            <div>Spread: <span class="line-text">{{ game.spread_line }}</span></div>
-            <div>Total: <span class="line-text">{{ game.ou_line }}</span></div>
+            <div class="line-item">Spread: <span class="line-text">{{ game.spread }}</span></div>
+            <div class="line-item">Total: <span class="line-text">{{ game.total }}</span></div>
+            
+            {% if game.metrics %}
+            <div class="metrics-box">
+                <div class="metric-row">{{ game.metrics.travel }}</div>
+                <div class="metric-row">{{ game.metrics.crowd }}</div>
+                <div class="metric-row">{{ game.metrics.injury }}</div>
+                <div class="metric-row">{{ game.metrics.morale }}</div>
+                <div class="metric-row">{{ game.metrics.handle }}</div>
+                <div class="metric-row">{{ game.metrics.trajectory }}</div>
+            </div>
+            {% endif %}
         </div>
         {% endfor %}
     </div>
@@ -159,4 +156,6 @@ def webhook():
     return jsonify({"status": "success"}), 200
 
 if __name__ == '__main__':
+    import os
+    os.system("python Scanner.py")
     app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 5000)))
