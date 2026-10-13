@@ -289,5 +289,12 @@ HTML_TEMPLATE = """
                         <strong>{{ game.sport }}: {{ game.matchup }}</strong> | Spread: {{ game.spread_line }}
                     </div>
 
-                    <div class="grid-3">
-                        <div>
+                    </div>
+               </div>         
+    </body>
+</html>
+"""
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=5000)
+
