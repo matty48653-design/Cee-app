@@ -6,13 +6,13 @@ from flask import Flask, jsonify, request, render_template_string
 app = Flask(__name__)
 
 # 🔑 LIVE API FEED TOKEN KEY INJECTED
-THE_ODDS_API_KEY = os.environ.get("THE_ODDS_API_KEY", "f4d35efa9891beef9b72344e501ddc31")
+THE_ODDS_API_KEY = "f4d35efa9891beef9b72344e501ddc31"
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DATA_FILE = os.path.join(BASE_DIR, 'sports_data.json')
 
 def get_live_matrix_feeds():
-    """Fetches real-time point spreads, lines, and money volumes from global books"""
+    """Fetches real-time point spreads and game lines"""
     url = f"https://the-odds-api.com{THE_ODDS_API_KEY}&regions=us&markets=spreads,totals&oddsFormat=american"
     
     try:
@@ -24,12 +24,11 @@ def get_live_matrix_feeds():
             for game in raw_games[:4]:
                 home_team = game.get("home_team", "Home Team")
                 away_team = game.get("away_team", "Away Team")
-                
                 spread_info = "Line Pending"
                 ou_info = "O/U Unassigned"
                 
                 if game.get("bookmakers"):
-                    primary_book = game["bookmakers"][0]
+                    primary_book = game["bookmakers"][0] if game["bookmakers"] else {}
                     markets = primary_book.get("markets", [])
                     for market in markets:
                         if market["key"] == "spreads":
@@ -85,7 +84,6 @@ def save_data(data):
     try:
         with open(DATA_FILE, 'w') as f: json.dump(data, f, indent=4)
     except Exception: pass
-
 HTML_TEMPLATE = """
 <!DOCTYPE html>
 <html lang="en">
