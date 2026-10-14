@@ -1,12 +1,20 @@
 import os
 import json
-import requests
 from flask import Flask, request, jsonify, render_template_string
 
 app = Flask(__name__)
+DATA_FILE = "sports_data.json"
 
-# This function now supplies static data so your dashboard is never blank
 def get_live_matrix_feeds():
+    # If the scanner has successfully sent live data, read it!
+    if os.path.exists(DATA_FILE):
+        try:
+            with open(DATA_FILE, "r") as f:
+                return json.load(f)
+        except Exception:
+            pass
+            
+    # FALLBACK STATIC DATA: Keeps your screen beautiful if live data fails
     return [
         {
             "matchup": "Dallas Cowboys vs New York Giants",
@@ -160,9 +168,15 @@ def home():
 
 @app.route('/webhook', methods=['POST'])
 def webhook():
-    # Keep webhook active so endpoints remain open
-    return jsonify({"status": "success"}), 200
+    try:
+        incoming_data = request.get_json()
+        if incoming_data:
+            with open(DATA_FILE, "w") as f:
+                json.dump(incoming_data, f)
+            return jsonify({"status": "success", "message": "Data saved"}), 200
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+    return jsonify({"status": "error", "message": "No data received"}), 400
 
 if __name__ == '__main__':
-    import os
     app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 5000)))
