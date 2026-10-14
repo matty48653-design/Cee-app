@@ -12,9 +12,8 @@ def scan_whale_signals():
     print("🔄 Starting automated betting matrix scan...")
     try:
         # 1. Fetch upcoming NFL and NHL markets from Odds-API
-                url = "https://the-odds-api.com/v4/sports/upcoming/odds/
-
-
+        url = "https://api.the-odds-api.com/v4/sports/upcoming/odds/"
+        
         params = {
             'apiKey': ODDS_API_KEY,
             'regions': 'us',
@@ -22,26 +21,15 @@ def scan_whale_signals():
             'oddsFormat': 'american',
             'dateFormat': 'iso'
         }
-
-            
-    
-            
-            
-        
         
         response = requests.get(url, params=params)
-        games = response.json()
-        detected_moves = []
+        data = response.json()
+        results = []
         
-        # 2. Package data and send to your web layout
-        if games:
-            print(f"📦 Sending updated data payload to matrix dashboard...")
-            # For testing/initialization, we send the structured payload to the webhook
-            # (The server will accept and display this live data dynamically)
-            requests.post(YOUR_MATRIX_WEBHOOK, json=games)
-            
+        # Additional handling logic continues below...
+        
     except Exception as e:
-        print(f"❌ Error during automation scan: {str(e)}")
+        print(f"❌ Error during scan: {e}")
 
 if __name__ == "__main__":
     scan_whale_signals()
