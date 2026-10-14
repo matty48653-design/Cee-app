@@ -1,6 +1,6 @@
 import os
 import json
-from flask import Flask, request, jsonify, render_template_string
+from flask import Flask, request, jsonify
 
 app = Flask(__name__)
 DATA_FILE = "sports_data.json"
@@ -161,22 +161,41 @@ HTML_TEMPLATE = """
 </html>
 """
 
-@app.route('/')
-def home():
-    games = get_live_matrix_feeds()
-    return render_template_string(HTML_TEMPLATE, games=games)
+@app.route("/")
+def index():
+    games_data = get_live_matrix_feeds()
+    return render_template_string(HTML_TEMPLATE, games=games_data)
 
-@app.route('/webhook', methods=['POST'])
-def webhook():
+@app.route("/update", methods=["POST"])
+def update_matrix():
     try:
         incoming_data = request.get_json()
-        if incoming_data:
-            with open(DATA_FILE, "w") as f:
-                json.dump(incoming_data, f)
-            return jsonify({"status": "success", "message": "Data saved"}), 200
+        if not incoming_data or "moves" not in incoming_data:
+            return jsonify({"status": "error", "message": "Invalid matrix payload format"}), 400
+            
+        # Structure payload to fit matrix model parameters
+        formatted_games = []
+        for move in incoming_data["moves"]:
+            formatted_games.append({
+                "matchup": f"{move.get('player', 'Unknown')} ({move.get('sport', 'NFL')})",
+                "spread": move.get("line", "N/A"),
+                "total": "N/A",
+                "metrics": {
+                    "travel": f"🎬 Action: {move.get('action', 'N/A')}",
+                    "crowd": f"📊 Resistance: {move.get('public_resistance', 'N/A')}",
+                    "injury": f"🔬 Evaluation: {move.get('matrix_evaluation', 'N/A')}",
+                    "morale": "⚙️ Live Node Stream Synced",
+                    "handle": "💰 Operational",
+                    "trajectory": "📈 Analytical Matrix Locked"
+                }
+            })
+            
+        with open(DATA_FILE, "w") as f:
+            json.dump(formatted_games, f, indent=4)
+            
+        return jsonify({"status": "success", "message": "Matrix synced successfully"}), 200
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
-    return jsonify({"status": "error", "message": "No data received"}), 400
 
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 5000)))
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
