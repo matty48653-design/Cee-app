@@ -12,13 +12,22 @@ def scan_whale_signals():
     print("🔄 Starting automated betting matrix scan...")
     try:
         # 1. Fetch upcoming NFL and NHL markets from Odds-API
-        url = "https://the-odds-api.com"
+                url = "https://the-odds-api.com/v4/sports/upcoming/odds/
+
+
         params = {
             'apiKey': ODDS_API_KEY,
-            'regions': 'us,uk',
-            'markets': 'h2h',
-            'oddsFormat': 'american'
+            'regions': 'us',
+            'markets': 'h2h,spreads',
+            'oddsFormat': 'american',
+            'dateFormat': 'iso'
         }
+
+            
+    
+            
+            
+        
         
         response = requests.get(url, params=params)
         games = response.json()
