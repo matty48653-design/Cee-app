@@ -138,6 +138,7 @@ HTML_TEMPLATE = """
                 <span style="font-weight:bold; color:var(--sky-blue);">📌 LIVE OVER/UNDER RECON</span>
                 <span class="neon-text">👉 Analyzing Pacing</span>
             </div>
+            <div class="card-subtitle" style="font-size: 0.8rem; color: var(--text-dim); margin-top: 4px;">Will display exact live points threshold targets based on quarter pacing.</div>
         </div>
 
         <!-- 👁️ SYNDICATE CONSENSUS SECTION -->
@@ -171,7 +172,6 @@ def home():
 
 @app.route("/update", methods=["POST"])
 def update():
-    """Receives JSON arrays from Postman/Scraper backend and overwrites storage disk."""
     try:
         incoming_data = request.get_json()
         if not incoming_data:
