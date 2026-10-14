@@ -3,7 +3,7 @@ import requests
 
 # CONFIGURATION PARAMETERS
 ODDS_API_KEY = 'f4d35efa9891beef9b72344e501ddac3'
-YOUR_MATRIX_WEBHOOK = https://cee-app-1.onrender.com
+YOUR_MATRIX_WEBHOOK = "https://cee-app-1.onrender.com"
 
 # WHALE TRIGGER THRESHOLDS
 MIN_GAP_THRESHOLD = 25 # Trigger if the Money Handle/Bets gap is wide
