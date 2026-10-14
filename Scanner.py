@@ -15,8 +15,8 @@ def scan_whale_signals():
         url = "https://the-odds-api.com"
         params = {
             'apiKey': ODDS_API_KEY,
-            'regions': 'us',
-            'markets': 'totals,spreads',
+            'regions': 'us,uk',
+            'markets': 'h2h',
             'oddsFormat': 'american'
         }
         
